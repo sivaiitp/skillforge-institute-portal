@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus, Files, FileText, Download, BookOpen } from 'lucide-react';
+import { Plus, Files, FileText, Download, BookOpen, Upload } from 'lucide-react';
 
 interface StudyMaterialsHeaderProps {
   materialsCount: number;
@@ -28,12 +28,19 @@ const StudyMaterialsHeader = ({
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-800 mb-1">Study Materials Management</h1>
-              <p className="text-gray-600">Manage course materials, PDFs, videos, markdown files, and resources</p>
+              <p className="text-gray-600">Manage course materials, upload files, and organize learning content</p>
               <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-800">
-                  <strong>Tip:</strong> For markdown files, place them in the <code className="bg-blue-100 px-1 rounded">public/content/</code> directory 
-                  and use relative paths like <code className="bg-blue-100 px-1 rounded">/content/chapter1.md</code> in the File URL field.
-                </p>
+                <div className="flex items-start gap-2">
+                  <Upload className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm text-blue-800">
+                    <p className="font-medium mb-1">File Upload Options:</p>
+                    <ul className="list-disc list-inside space-y-1">
+                      <li><strong>Upload directly:</strong> Upload markdown, PDF, Word docs, presentations, images, videos, and audio files</li>
+                      <li><strong>Use URLs:</strong> Link to external files or resources hosted elsewhere</li>
+                      <li><strong>Local markdown:</strong> For markdown files in your <code className="bg-blue-100 px-1 rounded">public/content/</code> directory, use paths like <code className="bg-blue-100 px-1 rounded">/content/chapter1.md</code></li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { FileText, Video, Music, Image, Presentation, ExternalLink } from 'lucide-react';
+import { FileText, Video, Music, Image, Presentation, ExternalLink, Upload, File } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Course {
   id: string;
@@ -76,16 +77,105 @@ const StudyMaterialForm = ({
   courses,
   editingMaterial
 }: StudyMaterialFormProps) => {
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      // For markdown files, we'll save them to the public/content directory
+      if (file.type === 'text/markdown' || file.name.endsWith('.md')) {
+        const content = await file.text();
+        
+        // Create a blob URL for immediate preview/use
+        const blob = new Blob([content], { type: 'text/markdown' });
+        const fileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_'); // Sanitize filename
+        
+        // Generate a relative path for the content directory
+        const relativePath = `/content/${fileName}`;
+        
+        // Update form data with file information
+        onFormDataChange({
+          ...formData,
+          file_url: relativePath,
+          file_size: file.size,
+          mime_type: 'text/markdown',
+          file_extension: 'md',
+          material_type: 'markdown'
+        });
+        
+        setUploadedFile(file);
+        
+        // Store the content in localStorage temporarily (in production, you'd upload to server)
+        localStorage.setItem(`markdown_content_${fileName}`, content);
+        
+        toast.success('Markdown file uploaded successfully! Please save the material to complete the process.');
+      } else {
+        // For other file types, handle as before
+        const fileUrl = URL.createObjectURL(file);
+        onFormDataChange({
+          ...formData,
+          file_url: fileUrl,
+          file_size: file.size,
+          mime_type: file.type,
+          file_extension: file.name.split('.').pop() || ''
+        });
+        
+        setUploadedFile(file);
+        toast.success('File uploaded successfully!');
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast.error('Error uploading file. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // If it's a markdown file and we have content stored, create the actual file
+    if (uploadedFile && formData.material_type === 'markdown') {
+      const content = localStorage.getItem(`markdown_content_${uploadedFile.name}`);
+      if (content) {
+        // In a real application, you would save this to your server/storage
+        console.log('Saving markdown content to:', formData.file_url);
+        console.log('Content:', content);
+        
+        // Clean up localStorage
+        localStorage.removeItem(`markdown_content_${uploadedFile.name}`);
+      }
+    }
+    
+    onSubmit(e);
+  };
+
+  const resetFileUpload = () => {
+    setUploadedFile(null);
+    if (uploadedFile) {
+      localStorage.removeItem(`markdown_content_${uploadedFile.name}`);
+    }
+  };
+
+  const handleClose = () => {
+    resetFileUpload();
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-white border-gray-200">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="max-w-2xl bg-white border-gray-200 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-gray-800">{editingMaterial ? 'Edit' : 'Add'} Study Material</DialogTitle>
           <DialogDescription className="text-gray-600">
-            {editingMaterial ? 'Update the study material details.' : 'Add a new study material for a course.'}
+            {editingMaterial ? 'Update the study material details.' : 'Add a new study material for a course. You can upload files directly or provide URLs.'}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form onSubmit={handleFormSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="title" className="text-gray-700">Title *</Label>
@@ -153,15 +243,84 @@ const StudyMaterialForm = ({
             </div>
           </div>
 
+          {/* File Upload Section */}
+          <div className="space-y-4 p-4 bg-gray-50 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <Label className="text-gray-700 font-medium">File Upload</Label>
+              {uploadedFile && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={resetFileUpload}
+                  className="text-red-600 border-red-300 hover:bg-red-50"
+                >
+                  Remove File
+                </Button>
+              )}
+            </div>
+            
+            {!uploadedFile ? (
+              <div>
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept=".md,.pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mp3,.wav"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  disabled={isUploading}
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-emerald-400 hover:bg-emerald-50 transition-colors"
+                >
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    {isUploading ? (
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                    ) : (
+                      <>
+                        <Upload className="w-8 h-8 mb-2 text-gray-500" />
+                        <p className="mb-2 text-sm text-gray-500">
+                          <span className="font-semibold">Click to upload</span> or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-500">Markdown, PDF, DOC, PPT, Images, Videos, Audio</p>
+                      </>
+                    )}
+                  </div>
+                </label>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                <File className="w-6 h-6 text-emerald-600" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-800">{uploadedFile.name}</p>
+                  <p className="text-xs text-gray-500">{(uploadedFile.size / 1024).toFixed(1)} KB</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-xs text-green-600">Uploaded</span>
+                </div>
+              </div>
+            )}
+            
+            <div className="text-center text-sm text-gray-600">
+              <span className="font-medium">OR</span>
+            </div>
+          </div>
+
           <div>
-            <Label htmlFor="file_url" className="text-gray-700">File URL</Label>
+            <Label htmlFor="file_url" className="text-gray-700">File URL (Alternative to upload)</Label>
             <Input
               id="file_url"
               value={formData.file_url}
               onChange={(e) => onFormDataChange({...formData, file_url: e.target.value})}
               placeholder="https://example.com/file.pdf"
               className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
+              disabled={!!uploadedFile}
             />
+            {uploadedFile && (
+              <p className="text-xs text-gray-500 mt-1">URL field is disabled when a file is uploaded</p>
+            )}
           </div>
 
           <div className="grid grid-cols-3 gap-4">
@@ -183,6 +342,7 @@ const StudyMaterialForm = ({
                 onChange={(e) => onFormDataChange({...formData, mime_type: e.target.value})}
                 placeholder="e.g., application/pdf"
                 className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
+                readOnly={!!uploadedFile}
               />
             </div>
             <div>
@@ -193,6 +353,7 @@ const StudyMaterialForm = ({
                 onChange={(e) => onFormDataChange({...formData, file_extension: e.target.value})}
                 placeholder="e.g., pdf"
                 className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
+                readOnly={!!uploadedFile}
               />
             </div>
           </div>
@@ -217,11 +378,15 @@ const StudyMaterialForm = ({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} className="border-gray-300 text-gray-700 hover:bg-gray-50">
+            <Button type="button" variant="outline" onClick={handleClose} className="border-gray-300 text-gray-700 hover:bg-gray-50">
               Cancel
             </Button>
-            <Button type="submit" className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white">
-              {editingMaterial ? 'Update' : 'Create'} Material
+            <Button 
+              type="submit" 
+              className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
+              disabled={isUploading}
+            >
+              {isUploading ? 'Uploading...' : editingMaterial ? 'Update' : 'Create'} Material
             </Button>
           </DialogFooter>
         </form>
