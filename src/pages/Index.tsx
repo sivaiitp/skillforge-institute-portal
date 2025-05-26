@@ -7,6 +7,7 @@ import Hero from "@/components/Hero";
 import FeaturedCourses from "@/components/FeaturedCourses";
 import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   return (
@@ -48,14 +49,14 @@ const Index = () => {
             Join thousands of successful professionals who have transformed their careers with our training programs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-blue-600 hover:bg-gray-100">
-              Enroll Now
+            <Button size="lg" variant="secondary" className="text-blue-600 hover:bg-gray-100" asChild>
+              <Link to="/courses">Enroll Now</Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600">
-              Contact Us
+            <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600" asChild>
+              <Link to="/contact">Contact Us</Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600">
-              Take Assessment
+            <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600" asChild>
+              <Link to="/career">Take Assessment</Link>
             </Button>
           </div>
         </div>

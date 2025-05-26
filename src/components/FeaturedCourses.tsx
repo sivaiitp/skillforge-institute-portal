@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Clock, Users, Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const FeaturedCourses = () => {
   const navigate = useNavigate();
-
+  
   const { data: courses, isLoading } = useQuery({
     queryKey: ['featured-courses'],
     queryFn: async () => {
@@ -25,26 +25,13 @@ const FeaturedCourses = () => {
     }
   });
 
-  // Fallback images for courses
-  const courseImages = [
-    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-  ];
-
   if (isLoading) {
     return (
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              Featured Training Programs
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Loading courses...
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Courses</h2>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
           </div>
         </div>
       </section>
@@ -55,68 +42,54 @@ const FeaturedCourses = () => {
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-            Featured Training Programs
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Courses</h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover our most popular courses designed by industry experts to help you 
-            master in-demand skills and advance your career.
+            Discover our most popular training programs designed to accelerate your career growth
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {courses?.map((course, index) => (
-            <Card key={course.id} className="hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group overflow-hidden">
-              <div className="relative h-48 overflow-hidden">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {courses?.map((course) => (
+            <Card key={course.id} className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
+              <div className="relative h-48 overflow-hidden rounded-t-lg">
                 <img 
-                  src={course.image_url || courseImages[index % courseImages.length]} 
+                  src={course.image_url || `https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80`}
                   alt={course.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-4 left-4">
-                  <Badge variant="secondary" className="bg-white/90 text-gray-800">
+                  <Badge className="bg-blue-600 hover:bg-blue-700 text-white">
                     {course.level}
                   </Badge>
                 </div>
-                <div className="absolute top-4 right-4">
-                  <span className="bg-white/90 text-blue-600 px-3 py-1 rounded-full font-bold text-sm">
-                    ₹{course.price?.toLocaleString('en-IN')}
-                  </span>
-                </div>
               </div>
               
-              <CardHeader>
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                  <Clock className="h-4 w-4" />
+                  <span>{course.duration}</span>
+                  <Users className="h-4 w-4 ml-2" />
+                  <span>500+ students</span>
+                </div>
                 <CardTitle className="text-xl group-hover:text-blue-600 transition-colors">
                   {course.title}
                 </CardTitle>
-                <CardDescription className="text-gray-600 leading-relaxed">
+                <CardDescription className="text-gray-600">
                   {course.description}
                 </CardDescription>
               </CardHeader>
               
-              <CardContent>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge variant="outline" className="text-xs">
-                    {course.category}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {course.certification}
-                  </Badge>
-                </div>
-                
-                <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
+              <CardContent className="pt-0">
+                <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-1">
-                    <Clock size={16} />
-                    {course.duration}
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                    <span className="text-sm text-gray-500 ml-1">(4.8)</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Users size={16} />
-                    Available
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Star size={16} className="text-yellow-500 fill-current" />
-                    4.8
-                  </div>
+                  <span className="text-2xl font-bold text-blue-600">
+                    ₹{course.price?.toLocaleString('en-IN') || '0'}
+                  </span>
                 </div>
                 
                 <div className="space-y-2">
@@ -126,23 +99,22 @@ const FeaturedCourses = () => {
                   >
                     View Details
                   </Button>
-                  <Button variant="outline" className="w-full">
-                    Enroll Now
-                  </Button>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
-        
-        <div className="text-center mt-12">
+
+        <div className="text-center">
           <Button 
-            variant="outline" 
             size="lg" 
-            className="border-blue-600 text-blue-600 hover:bg-blue-50"
-            onClick={() => navigate('/courses')}
+            variant="outline" 
+            className="px-8 py-3 text-lg border-2 hover:bg-gray-50"
+            asChild
           >
-            View All Courses
+            <Link to="/courses">
+              View All Courses
+            </Link>
           </Button>
         </div>
       </div>
