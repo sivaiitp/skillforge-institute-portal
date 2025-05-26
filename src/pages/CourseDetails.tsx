@@ -17,18 +17,59 @@ const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  console.log('Course ID from params:', id);
+
   const { data: course, isLoading, error } = useQuery({
     queryKey: ['course', id],
     queryFn: async () => {
+      if (!id) {
+        throw new Error('Course ID is required');
+      }
+
+      // Check if the ID is a valid UUID format
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      
+      if (!uuidRegex.test(id)) {
+        console.log('Invalid UUID format, trying to find course by numeric ID');
+        // If it's not a UUID, try to find by a numeric ID or convert
+        // For now, let's try to query all courses and find one that matches
+        const { data: allCourses, error: coursesError } = await supabase
+          .from('courses')
+          .select('*')
+          .eq('is_active', true);
+        
+        if (coursesError) throw coursesError;
+        
+        // Try to find course by index or any other identifier
+        const courseIndex = parseInt(id) - 1; // Assuming 1-based indexing in URL
+        const foundCourse = allCourses?.[courseIndex];
+        
+        if (!foundCourse) {
+          throw new Error('Course not found');
+        }
+        
+        return foundCourse;
+      }
+
       const { data, error } = await supabase
         .from('courses')
         .select('*')
         .eq('id', id)
-        .single();
+        .eq('is_active', true)
+        .maybeSingle();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
+      if (!data) {
+        throw new Error('Course not found');
+      }
+      
       return data;
-    }
+    },
+    enabled: !!id
   });
 
   const { data: relatedCourses } = useQuery({
@@ -39,7 +80,7 @@ const CourseDetails = () => {
         .from('courses')
         .select('*')
         .eq('category', course.category)
-        .neq('id', id)
+        .neq('id', course.id)
         .eq('is_active', true)
         .limit(3);
       
@@ -67,7 +108,10 @@ const CourseDetails = () => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
         <div className="container mx-auto px-4 py-20">
-          <div className="text-center">Loading course details...</div>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p>Loading course details...</p>
+          </div>
         </div>
         <Footer />
       </div>
@@ -75,12 +119,16 @@ const CourseDetails = () => {
   }
 
   if (error || !course) {
+    console.error('Course loading error:', error);
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
         <div className="container mx-auto px-4 py-20">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Course Not Found</h1>
+            <p className="text-gray-600 mb-6">
+              {error?.message || 'The course you are looking for does not exist or has been removed.'}
+            </p>
             <Button onClick={() => navigate('/courses')}>Back to Courses</Button>
           </div>
         </div>
