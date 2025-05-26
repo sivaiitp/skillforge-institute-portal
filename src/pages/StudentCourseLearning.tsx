@@ -165,24 +165,26 @@ const StudentCourseLearning = () => {
           courseDuration={course?.duration}
         />
         
-        <SidebarInset className="flex-1 flex flex-col min-w-0">
-          <CourseLearningHeader courseTitle={course?.title} />
-          
-          <main className="flex-1 p-6 overflow-auto">
-            <div className="max-w-4xl mx-auto">
-              <MaterialContentArea
-                selectedMaterial={selectedMaterial}
-                progressData={progressData}
-                progressLoading={progressLoading}
-                onDownload={handleDownload}
-                onMaterialCompletion={handleMaterialCompletion}
-                onNext={goToNext}
-                onPrevious={goToPrevious}
-                hasNext={hasNextMaterial()}
-                hasPrevious={hasPreviousMaterial()}
-              />
-            </div>
-          </main>
+        <SidebarInset className="flex-1 min-w-0">
+          <div className="flex flex-col h-screen">
+            <CourseLearningHeader courseTitle={course?.title} />
+            
+            <main className="flex-1 p-6 overflow-auto bg-gray-50">
+              <div className="max-w-4xl mx-auto">
+                <MaterialContentArea
+                  selectedMaterial={selectedMaterial}
+                  progressData={progressData}
+                  progressLoading={progressLoading}
+                  onDownload={handleDownload}
+                  onMaterialCompletion={handleMaterialCompletion}
+                  onNext={goToNext}
+                  onPrevious={goToPrevious}
+                  hasNext={hasNextMaterial()}
+                  hasPrevious={hasPreviousMaterial()}
+                />
+              </div>
+            </main>
+          </div>
         </SidebarInset>
       </div>
     </SidebarProvider>
