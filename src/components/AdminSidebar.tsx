@@ -10,7 +10,8 @@ import {
   DollarSign,
   BarChart3,
   Home,
-  ExternalLink
+  ExternalLink,
+  Files
 } from 'lucide-react';
 
 const AdminSidebar = () => {
@@ -34,6 +35,12 @@ const AdminSidebar = () => {
       icon: BookOpen,
       href: '/admin/courses',
       description: 'Add/edit/remove courses'
+    },
+    {
+      title: 'Study Materials',
+      icon: Files,
+      href: '/admin/study-materials',
+      description: 'Manage course materials and resources'
     },
     {
       title: 'Assessment Management',

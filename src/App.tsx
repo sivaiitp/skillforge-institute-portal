@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 // Admin pages
 import AdminDashboard from "./pages/AdminDashboard";
 import CourseManagement from "./pages/CourseManagement";
+import StudyMaterialManagement from "./pages/StudyMaterialManagement";
 import StudentManagement from "./pages/StudentManagement";
 import AssessmentManagement from "./pages/AssessmentManagement";
 import CertificationManagement from "./pages/CertificationManagement";
@@ -56,6 +57,7 @@ function App() {
               {/* Admin routes */}
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/courses" element={<CourseManagement />} />
+              <Route path="/admin/study-materials" element={<StudyMaterialManagement />} />
               <Route path="/admin/students" element={<StudentManagement />} />
               <Route path="/admin/assessments" element={<AssessmentManagement />} />
               <Route path="/admin/certifications" element={<CertificationManagement />} />
