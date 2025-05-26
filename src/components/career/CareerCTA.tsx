@@ -25,7 +25,7 @@ const CareerCTA = () => {
             size="lg" 
             variant="outline" 
             className="border-white text-white hover:bg-white hover:text-blue-600"
-            onClick={() => navigate('/contact')}
+            onClick={() => navigate('/free-assessment')}
           >
             Take Skill Assessment
           </Button>

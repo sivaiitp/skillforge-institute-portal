@@ -71,7 +71,7 @@ const Index = () => {
               size="lg" 
               variant="outline" 
               className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600"
-              onClick={() => navigate('/career')}
+              onClick={() => navigate('/free-assessment')}
             >
               Take Assessment
             </Button>
