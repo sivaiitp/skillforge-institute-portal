@@ -108,7 +108,7 @@ const StudentPayments = () => {
         <div className="flex min-h-screen w-full">
           <StudentSidebar />
           
-          <SidebarInset className="flex-1 ml-64">
+          <SidebarInset className="flex-1">
             <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
               <SidebarTrigger className="-ml-1" />
               <div className="flex items-center gap-3">
@@ -121,8 +121,8 @@ const StudentPayments = () => {
               </div>
             </header>
             
-            <div className="flex justify-center">
-              <div className="p-8 space-y-8 max-w-7xl w-full">
+            <div className="p-6">
+              <div className="max-w-7xl mx-auto space-y-8">
                 <div className="text-center space-y-4">
                   <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">
                     Payment History
