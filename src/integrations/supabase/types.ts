@@ -296,32 +296,115 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          course_id: string | null
+          currency: string
+          description: string | null
+          id: string
+          payment_date: string
+          payment_method: string | null
+          status: string
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          course_id?: string | null
+          currency?: string
+          description?: string | null
+          id?: string
+          payment_date?: string
+          payment_method?: string | null
+          status?: string
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          course_id?: string | null
+          currency?: string
+          description?: string | null
+          id?: string
+          payment_date?: string
+          payment_method?: string | null
+          status?: string
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          address: string | null
+          bio: string | null
+          city: string | null
+          company: string | null
+          country: string | null
           created_at: string | null
+          education_level: string | null
           email: string | null
+          field_of_study: string | null
           full_name: string | null
+          graduation_year: number | null
           id: string
+          institution: string | null
+          occupation: string | null
           phone: string | null
+          postal_code: string | null
           role: string | null
+          state: string | null
           updated_at: string | null
         }
         Insert: {
+          address?: string | null
+          bio?: string | null
+          city?: string | null
+          company?: string | null
+          country?: string | null
           created_at?: string | null
+          education_level?: string | null
           email?: string | null
+          field_of_study?: string | null
           full_name?: string | null
+          graduation_year?: number | null
           id: string
+          institution?: string | null
+          occupation?: string | null
           phone?: string | null
+          postal_code?: string | null
           role?: string | null
+          state?: string | null
           updated_at?: string | null
         }
         Update: {
+          address?: string | null
+          bio?: string | null
+          city?: string | null
+          company?: string | null
+          country?: string | null
           created_at?: string | null
+          education_level?: string | null
           email?: string | null
+          field_of_study?: string | null
           full_name?: string | null
+          graduation_year?: number | null
           id?: string
+          institution?: string | null
+          occupation?: string | null
           phone?: string | null
+          postal_code?: string | null
           role?: string | null
+          state?: string | null
           updated_at?: string | null
         }
         Relationships: []

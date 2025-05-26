@@ -18,6 +18,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
 import StudentCourses from "./pages/StudentCourses";
 import StudentAssessments from "./pages/StudentAssessments";
+import StudentCertificates from "./pages/StudentCertificates";
+import StudentProfile from "./pages/StudentProfile";
+import StudentPayments from "./pages/StudentPayments";
 import StudentManagement from "./pages/StudentManagement";
 import CourseManagement from "./pages/CourseManagement";
 import AssessmentManagement from "./pages/AssessmentManagement";
@@ -53,10 +56,10 @@ const App = () => (
             <Route path="/dashboard" element={<StudentDashboard />} />
             <Route path="/dashboard/courses" element={<StudentCourses />} />
             <Route path="/dashboard/assessments" element={<StudentAssessments />} />
-            <Route path="/dashboard/certificates" element={<StudentDashboard />} />
+            <Route path="/dashboard/certificates" element={<StudentCertificates />} />
             <Route path="/dashboard/materials" element={<StudentDashboard />} />
-            <Route path="/dashboard/profile" element={<StudentDashboard />} />
-            <Route path="/dashboard/payments" element={<StudentDashboard />} />
+            <Route path="/dashboard/profile" element={<StudentProfile />} />
+            <Route path="/dashboard/payments" element={<StudentPayments />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
