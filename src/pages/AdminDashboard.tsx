@@ -108,7 +108,7 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/certificates')}>
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/certifications')}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Certificates Issued</CardTitle>
               <Award className="h-4 w-4 text-muted-foreground" />
@@ -121,7 +121,7 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/reports')}>
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/payments')}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Enrollments</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -154,7 +154,7 @@ const AdminDashboard = () => {
                 Add New Course
               </Button>
               <Button 
-                onClick={() => navigate('/admin/certificates')} 
+                onClick={() => navigate('/admin/certifications')} 
                 className="w-full justify-start"
                 variant="outline"
               >

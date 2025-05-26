@@ -51,13 +51,13 @@ const AdminSidebar = () => {
     {
       title: 'Certification Management',
       icon: Award,
-      href: '/admin/certificates',
+      href: '/admin/certifications',
       description: 'Issue and validate certificates'
     },
     {
       title: 'Payment & Reports',
       icon: DollarSign,
-      href: '/admin/reports',
+      href: '/admin/payments',
       description: 'Financial reports and analytics'
     }
   ];
