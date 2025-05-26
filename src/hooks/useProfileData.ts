@@ -113,8 +113,8 @@ export const useProfileData = () => {
     try {
       console.log('Saving profile data:', formData);
       
+      // Prepare the profile data for update/insert
       const profileData = {
-        id: user.id,
         full_name: formData.full_name,
         phone: formData.phone,
         address: formData.address,
@@ -133,14 +133,38 @@ export const useProfileData = () => {
         updated_at: new Date().toISOString()
       };
 
-      const { data, error } = await supabase
+      // Check if profile exists first
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .upsert(profileData, { 
-          onConflict: 'id',
-          ignoreDuplicates: false 
-        })
-        .select()
-        .single();
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      let result;
+      
+      if (existingProfile) {
+        // Update existing profile
+        console.log('Updating existing profile');
+        result = await supabase
+          .from('profiles')
+          .update(profileData)
+          .eq('id', user.id)
+          .select()
+          .single();
+      } else {
+        // Insert new profile
+        console.log('Creating new profile');
+        result = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            ...profileData
+          })
+          .select()
+          .single();
+      }
+
+      const { data, error } = result;
 
       if (error) {
         console.error('Error saving profile:', error);
