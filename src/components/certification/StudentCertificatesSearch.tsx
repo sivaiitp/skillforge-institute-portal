@@ -1,10 +1,9 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Search, Award, Calendar, CheckCircle, XCircle } from 'lucide-react';
+import { Search, Award, Calendar, CheckCircle, XCircle, Mail } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -120,99 +119,171 @@ const StudentCertificatesSearch = () => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Search className="w-5 h-5" />
-          Search Student Certificates
-        </CardTitle>
-        <CardDescription>
-          Search for certificates by student email address
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSearchCertificates} className="space-y-4">
-          <div>
-            <Label htmlFor="studentEmail">Student Email</Label>
+    <div className="space-y-6">
+      {/* Search Form */}
+      <form onSubmit={handleSearchCertificates} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="studentEmail" className="text-sm font-medium text-gray-700">
+            Student Email Address
+          </Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
               id="studentEmail"
               type="email"
               value={studentEmail}
               onChange={(e) => setStudentEmail(e.target.value)}
               placeholder="Enter student email address"
+              className="pl-10 h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
               required
             />
           </div>
+        </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Searching...' : 'Search Certificates'}
-          </Button>
-        </form>
+        <Button 
+          type="submit" 
+          className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300" 
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Searching...
+            </>
+          ) : (
+            <>
+              <Search className="w-4 h-4 mr-2" />
+              Search Certificates
+            </>
+          )}
+        </Button>
+      </form>
 
-        {studentName && (
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-4">
-              Certificates for {studentName} ({studentEmail})
-            </h3>
-            
-            {certificates.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <Award className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>No certificates found for this student</p>
+      {/* Results Section */}
+      {studentName && (
+        <div className="space-y-4">
+          {/* Student Info Header */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Award className="w-5 h-5 text-blue-600" />
               </div>
-            ) : (
-              <div className="space-y-4">
-                {certificates.map((certificate) => (
-                  <div
-                    key={certificate.id}
-                    className={`p-4 rounded-lg border ${
-                      certificate.is_valid 
-                        ? 'bg-green-50 border-green-200' 
-                        : 'bg-red-50 border-red-200'
-                    }`}
-                  >
+              <div>
+                <h3 className="font-semibold text-gray-900">{studentName}</h3>
+                <p className="text-sm text-blue-700">{studentEmail}</p>
+              </div>
+              <div className="ml-auto text-right">
+                <p className="text-sm text-gray-600">Certificates Found</p>
+                <p className="text-xl font-bold text-blue-600">{certificates.length}</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Certificates List */}
+          {certificates.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Award className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No Certificates Found</h3>
+              <p className="text-gray-600">This student hasn't been issued any certificates yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {certificates.map((certificate) => (
+                <div
+                  key={certificate.id}
+                  className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 hover:shadow-md ${
+                    certificate.is_valid 
+                      ? 'bg-gradient-to-r from-emerald-50 to-green-50 border-emerald-200 hover:border-emerald-300' 
+                      : 'bg-gradient-to-r from-red-50 to-rose-50 border-red-200 hover:border-red-300'
+                  }`}
+                >
+                  <div className="p-6">
                     <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
+                      <div className="flex-1 space-y-3">
+                        {/* Status Badge */}
+                        <div className="flex items-center gap-2">
                           {certificate.is_valid ? (
-                            <CheckCircle className="w-5 h-5 text-green-600" />
+                            <>
+                              <CheckCircle className="w-5 h-5 text-emerald-600" />
+                              <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-sm font-medium rounded-full">
+                                Valid Certificate
+                              </span>
+                            </>
                           ) : (
-                            <XCircle className="w-5 h-5 text-red-600" />
+                            <>
+                              <XCircle className="w-5 h-5 text-red-600" />
+                              <span className="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
+                                Revoked Certificate
+                              </span>
+                            </>
                           )}
-                          <span className={`font-medium ${
-                            certificate.is_valid ? 'text-green-800' : 'text-red-800'
-                          }`}>
-                            {certificate.is_valid ? 'Valid Certificate' : 'Revoked Certificate'}
-                          </span>
                         </div>
                         
-                        <div className="text-sm space-y-1">
-                          <p><strong>Certificate Number:</strong> {certificate.certificate_number}</p>
-                          <p><strong>Course:</strong> {certificate.courses?.title || 'N/A'}</p>
-                          <p><strong>Certification:</strong> {certificate.courses?.certification || 'N/A'}</p>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4" />
-                            <span><strong>Issued:</strong> {new Date(certificate.issued_date).toLocaleDateString()}</span>
+                        {/* Certificate Details */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <p className="text-gray-600 mb-1">Certificate Number</p>
+                            <p className="font-mono font-medium text-gray-900 bg-white px-3 py-1 rounded-lg border">
+                              {certificate.certificate_number}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600 mb-1">Course</p>
+                            <p className="font-medium text-gray-900">{certificate.courses?.title || 'N/A'}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600 mb-1">Certification Type</p>
+                            <p className="font-medium text-gray-900">{certificate.courses?.certification || 'N/A'}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600 mb-1">Issue Date</p>
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-gray-400" />
+                              <p className="font-medium text-gray-900">
+                                {new Date(certificate.issued_date).toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric'
+                                })}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
                       
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => toggleCertificateValidity(certificate.id, certificate.is_valid)}
-                      >
-                        {certificate.is_valid ? 'Revoke' : 'Validate'}
-                      </Button>
+                      {/* Action Button */}
+                      <div className="ml-6">
+                        <Button
+                          variant={certificate.is_valid ? "destructive" : "default"}
+                          size="sm"
+                          onClick={() => toggleCertificateValidity(certificate.id, certificate.is_valid)}
+                          className={`min-w-[80px] transition-all duration-300 ${
+                            certificate.is_valid 
+                              ? 'bg-red-600 hover:bg-red-700 text-white' 
+                              : 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                          }`}
+                        >
+                          {certificate.is_valid ? 'Revoke' : 'Validate'}
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                  
+                  {/* Decorative Element */}
+                  <div className={`absolute bottom-0 left-0 w-full h-1 ${
+                    certificate.is_valid 
+                      ? 'bg-gradient-to-r from-emerald-400 to-green-500' 
+                      : 'bg-gradient-to-r from-red-400 to-rose-500'
+                  }`}></div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 
