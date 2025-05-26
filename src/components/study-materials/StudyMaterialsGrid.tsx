@@ -50,6 +50,12 @@ const StudyMaterialsGrid = ({ materials, onEdit, onDelete, onAddFirst, selectedC
     return type ? type.icon : FileText;
   };
 
+  const handleTitleClick = (material: StudyMaterial) => {
+    if (material.file_url) {
+      window.open(material.file_url, '_blank');
+    }
+  };
+
   if (materials.length === 0) {
     return (
       <Card className="text-center py-12 bg-white shadow-sm border">
@@ -109,7 +115,12 @@ const StudyMaterialsGrid = ({ materials, onEdit, onDelete, onAddFirst, selectedC
                   </Button>
                 </div>
               </div>
-              <CardTitle className="text-lg text-gray-800">{material.title}</CardTitle>
+              <CardTitle 
+                className="text-lg text-gray-800 cursor-pointer hover:text-emerald-600 transition-colors"
+                onClick={() => handleTitleClick(material)}
+              >
+                {material.title}
+              </CardTitle>
               <CardDescription>
                 <span className="font-medium text-emerald-600">
                   {material.courses?.title}
@@ -132,14 +143,9 @@ const StudyMaterialsGrid = ({ materials, onEdit, onDelete, onAddFirst, selectedC
                   {material.is_downloadable ? 'Downloadable' : 'View Only'}
                 </span>
                 {material.file_url && (
-                  <a 
-                    href={material.file_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
-                  >
-                    View File
-                  </a>
+                  <span className="text-emerald-600 text-xs">
+                    Click title to open
+                  </span>
                 )}
               </div>
             </CardContent>
