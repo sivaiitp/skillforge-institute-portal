@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,6 +6,7 @@ import AdminSidebar from '@/components/AdminSidebar';
 import IssueCertificateForm from '@/components/certification/IssueCertificateForm';
 import VerifyCertificateForm from '@/components/certification/VerifyCertificateForm';
 import CertificatesList from '@/components/certification/CertificatesList';
+import { Award, Shield, CheckCircle, Users } from 'lucide-react';
 
 interface Certificate {
   id: string;
@@ -145,35 +145,91 @@ const CertificationManagement = () => {
 
   if (userRole !== 'admin') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <AdminSidebar />
         <div className="ml-64 p-8">
-          <div>Access denied</div>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-8 text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
+            <p className="text-gray-300">You don't have permission to access this page.</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <AdminSidebar />
       
       <div className="ml-64 p-8">
+        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Certification Management</h1>
-          <p className="text-gray-600">Issue and validate certificates</p>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-3 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg">
+                <Award className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white mb-1">Certification Management</h1>
+                <p className="text-gray-300">Issue and validate digital certificates</p>
+              </div>
+            </div>
+            
+            {/* Quick Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+              <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-yellow-200 text-sm">Total Certificates</p>
+                    <p className="text-2xl font-bold text-white">{certificates.length}</p>
+                  </div>
+                  <Award className="w-8 h-8 text-yellow-400" />
+                </div>
+              </div>
+              <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-green-200 text-sm">Valid Certificates</p>
+                    <p className="text-2xl font-bold text-white">{certificates.filter(c => c.is_valid).length}</p>
+                  </div>
+                  <CheckCircle className="w-8 h-8 text-green-400" />
+                </div>
+              </div>
+              <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-blue-200 text-sm">Certified Students</p>
+                    <p className="text-2xl font-bold text-white">{new Set(certificates.map(c => c.user_id)).size}</p>
+                  </div>
+                  <Users className="w-8 h-8 text-blue-400" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <IssueCertificateForm
-            students={students}
-            courses={courses}
-            onCertificateIssued={fetchCertificates}
-          />
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-300">
+            <div className="flex items-center gap-2 mb-4">
+              <Shield className="w-5 h-5 text-yellow-400" />
+              <h2 className="text-xl font-semibold text-white">Issue Certificate</h2>
+            </div>
+            <IssueCertificateForm
+              students={students}
+              courses={courses}
+              onCertificateIssued={fetchCertificates}
+            />
+          </div>
           
-          <VerifyCertificateForm
-            onCertificateUpdated={fetchCertificates}
-          />
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 hover:bg-white/15 transition-all duration-300">
+            <div className="flex items-center gap-2 mb-4">
+              <CheckCircle className="w-5 h-5 text-green-400" />
+              <h2 className="text-xl font-semibold text-white">Verify Certificate</h2>
+            </div>
+            <VerifyCertificateForm
+              onCertificateUpdated={fetchCertificates}
+            />
+          </div>
         </div>
 
         <CertificatesList

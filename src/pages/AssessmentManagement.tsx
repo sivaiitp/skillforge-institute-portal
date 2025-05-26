@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,9 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, FileText, Clock } from 'lucide-react';
+import { Plus, Edit, Trash2, FileText, Clock, GraduationCap, CheckCircle } from 'lucide-react';
 import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
 import AdminSidebar from '@/components/AdminSidebar';
 
 const AssessmentManagement = () => {
@@ -144,32 +142,88 @@ const AssessmentManagement = () => {
   };
 
   if (userRole !== 'admin') {
-    return <div>Access denied</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <Navigation />
+        <AdminSidebar />
+        <div className="ml-64 pt-20 p-8">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-8 text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
+            <p className="text-gray-300">You don't have permission to access this page.</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <Navigation />
       <AdminSidebar />
       
       <div className="ml-64 pt-20">
         <section className="py-8">
           <div className="container mx-auto px-4">
-            <div className="mb-8 flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold mb-2">Assessment Management</h1>
-                <p className="text-gray-600">Add, edit, and remove online assessments</p>
+            {/* Header */}
+            <div className="mb-8">
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg">
+                      <FileText className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <h1 className="text-3xl font-bold text-white mb-1">Assessment Management</h1>
+                      <p className="text-gray-300">Create and manage online assessments</p>
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => setShowForm(true)} 
+                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add New Assessment
+                  </Button>
+                </div>
+                
+                {/* Quick Stats */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                  <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-orange-200 text-sm">Total Assessments</p>
+                        <p className="text-2xl font-bold text-white">{assessments.length}</p>
+                      </div>
+                      <FileText className="w-8 h-8 text-orange-400" />
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-green-200 text-sm">Active Assessments</p>
+                        <p className="text-2xl font-bold text-white">{assessments.filter(a => a.is_active).length}</p>
+                      </div>
+                      <CheckCircle className="w-8 h-8 text-green-400" />
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-blue-200 text-sm">Linked Courses</p>
+                        <p className="text-2xl font-bold text-white">{courses.length}</p>
+                      </div>
+                      <GraduationCap className="w-8 h-8 text-blue-400" />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                Add New Assessment
-              </Button>
             </div>
 
+            {/* Form */}
             {showForm && (
-              <Card className="mb-6">
+              <Card className="mb-6 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300">
                 <CardHeader>
-                  <CardTitle>
+                  <CardTitle className="text-white">
                     {editingAssessment ? 'Edit Assessment' : 'Add New Assessment'}
                   </CardTitle>
                 </CardHeader>
@@ -177,23 +231,24 @@ const AssessmentManagement = () => {
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="title">Assessment Title</Label>
+                        <Label htmlFor="title" className="text-gray-200">Assessment Title</Label>
                         <Input
                           id="title"
                           value={formData.title}
                           onChange={(e) => setFormData({...formData, title: e.target.value})}
                           required
+                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-orange-400/50"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="course_id">Course</Label>
+                        <Label htmlFor="course_id" className="text-gray-200">Course</Label>
                         <Select value={formData.course_id} onValueChange={(value) => setFormData({...formData, course_id: value})}>
-                          <SelectTrigger>
+                          <SelectTrigger className="bg-white/10 border-white/20 text-white focus:bg-white/15 focus:border-orange-400/50">
                             <SelectValue placeholder="Select course (optional)" />
                           </SelectTrigger>
-                          <SelectContent>
+                          <SelectContent className="bg-slate-800 border-white/20">
                             {courses.map((course) => (
-                              <SelectItem key={course.id} value={course.id}>
+                              <SelectItem key={course.id} value={course.id} className="text-white hover:bg-white/10">
                                 {course.title}
                               </SelectItem>
                             ))}
@@ -201,53 +256,60 @@ const AssessmentManagement = () => {
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="duration_minutes">Duration (minutes)</Label>
+                        <Label htmlFor="duration_minutes" className="text-gray-200">Duration (minutes)</Label>
                         <Input
                           id="duration_minutes"
                           type="number"
                           value={formData.duration_minutes}
                           onChange={(e) => setFormData({...formData, duration_minutes: e.target.value})}
                           placeholder="60"
+                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-orange-400/50"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="total_marks">Total Marks</Label>
+                        <Label htmlFor="total_marks" className="text-gray-200">Total Marks</Label>
                         <Input
                           id="total_marks"
                           type="number"
                           value={formData.total_marks}
                           onChange={(e) => setFormData({...formData, total_marks: e.target.value})}
                           placeholder="100"
+                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-orange-400/50"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="passing_marks">Passing Marks</Label>
+                        <Label htmlFor="passing_marks" className="text-gray-200">Passing Marks</Label>
                         <Input
                           id="passing_marks"
                           type="number"
                           value={formData.passing_marks}
                           onChange={(e) => setFormData({...formData, passing_marks: e.target.value})}
                           placeholder="60"
+                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-orange-400/50"
                         />
                       </div>
                     </div>
                     <div>
-                      <Label htmlFor="description">Description</Label>
+                      <Label htmlFor="description" className="text-gray-200">Description</Label>
                       <Textarea
                         id="description"
                         value={formData.description}
                         onChange={(e) => setFormData({...formData, description: e.target.value})}
                         rows={3}
+                        className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-orange-400/50"
                       />
                     </div>
                     <div className="flex gap-4">
-                      <Button type="submit">
+                      <Button 
+                        type="submit"
+                        className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
+                      >
                         {editingAssessment ? 'Update Assessment' : 'Create Assessment'}
                       </Button>
                       <Button type="button" variant="outline" onClick={() => {
                         setShowForm(false);
                         setEditingAssessment(null);
-                      }}>
+                      }} className="border-white/20 text-white hover:bg-white/10">
                         Cancel
                       </Button>
                     </div>
@@ -256,75 +318,79 @@ const AssessmentManagement = () => {
               </Card>
             )}
 
-            <Card>
+            {/* Assessments Table */}
+            <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <FileText className="w-5 h-5" />
                   All Assessments ({assessments.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Course</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Marks</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {assessments.map((assessment) => (
-                      <TableRow key={assessment.id}>
-                        <TableCell className="font-medium">{assessment.title}</TableCell>
-                        <TableCell>
-                          {assessment.courses?.title || 'General'}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-4 h-4 text-gray-400" />
-                            {assessment.duration_minutes || 'N/A'} min
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {assessment.passing_marks}/{assessment.total_marks}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={assessment.is_active ? 'default' : 'secondary'}>
-                            {assessment.is_active ? 'Active' : 'Inactive'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEdit(assessment)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDelete(assessment.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-white/20 hover:bg-white/5">
+                        <TableHead className="text-gray-200">Title</TableHead>
+                        <TableHead className="text-gray-200">Course</TableHead>
+                        <TableHead className="text-gray-200">Duration</TableHead>
+                        <TableHead className="text-gray-200">Marks</TableHead>
+                        <TableHead className="text-gray-200">Status</TableHead>
+                        <TableHead className="text-gray-200">Actions</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {assessments.map((assessment) => (
+                        <TableRow key={assessment.id} className="border-white/20 hover:bg-white/5 transition-colors">
+                          <TableCell className="font-medium text-white">{assessment.title}</TableCell>
+                          <TableCell className="text-gray-300">
+                            {assessment.courses?.title || 'General'}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2 text-gray-300">
+                              <Clock className="w-4 h-4 text-orange-400" />
+                              {assessment.duration_minutes || 'N/A'} min
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-gray-300">
+                            {assessment.passing_marks}/{assessment.total_marks}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={assessment.is_active ? 'default' : 'secondary'} 
+                                   className={assessment.is_active ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gray-500/20 text-gray-400 border-gray-500/30'}>
+                              {assessment.is_active ? 'Active' : 'Inactive'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEdit(assessment)}
+                                className="border-white/20 text-white hover:bg-white/10 hover:border-white/30"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDelete(assessment.id)}
+                                className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:border-red-500"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </div>
         </section>
       </div>
-
-      <Footer />
     </div>
   );
 };
