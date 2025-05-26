@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, BookOpen } from 'lucide-react';
+import { Plus, Edit, Trash2, BookOpen, Upload } from 'lucide-react';
 import AdminSidebar from '@/components/AdminSidebar';
 
 const CourseManagement = () => {
@@ -27,9 +27,29 @@ const CourseManagement = () => {
     category: '',
     price: '',
     certification: '',
+    image_url: '',
+    brochure_url: '',
+    detailed_description: '',
+    prerequisites: '',
+    learning_outcomes: '',
     is_featured: false,
     is_active: true
   });
+
+  const courseCategories = [
+    'Web Development',
+    'Data Science',
+    'Machine Learning',
+    'Artificial Intelligence',
+    'Mobile Development',
+    'Cloud Computing',
+    'Cybersecurity',
+    'DevOps',
+    'Database Management',
+    'UI/UX Design',
+    'Digital Marketing',
+    'Project Management'
+  ];
 
   useEffect(() => {
     if (userRole === 'admin') {
@@ -86,6 +106,11 @@ const CourseManagement = () => {
       category: '',
       price: '',
       certification: '',
+      image_url: '',
+      brochure_url: '',
+      detailed_description: '',
+      prerequisites: '',
+      learning_outcomes: '',
       is_featured: false,
       is_active: true
     });
@@ -102,6 +127,11 @@ const CourseManagement = () => {
       category: course.category || '',
       price: course.price?.toString() || '',
       certification: course.certification || '',
+      image_url: course.image_url || '',
+      brochure_url: course.brochure_url || '',
+      detailed_description: course.detailed_description || '',
+      prerequisites: course.prerequisites || '',
+      learning_outcomes: course.learning_outcomes || '',
       is_featured: course.is_featured || false,
       is_active: course.is_active !== false
     });
@@ -160,7 +190,7 @@ const CourseManagement = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="title">Course Title</Label>
@@ -195,12 +225,18 @@ const CourseManagement = () => {
                   </div>
                   <div>
                     <Label htmlFor="category">Category</Label>
-                    <Input
-                      id="category"
-                      value={formData.category}
-                      onChange={(e) => setFormData({...formData, category: e.target.value})}
-                      placeholder="e.g., Programming"
-                    />
+                    <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {courseCategories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label htmlFor="price">Price (₹)</Label>
@@ -221,16 +257,89 @@ const CourseManagement = () => {
                       placeholder="Certificate name"
                     />
                   </div>
+                  <div>
+                    <Label htmlFor="image_url">Hero Image URL</Label>
+                    <Input
+                      id="image_url"
+                      value={formData.image_url}
+                      onChange={(e) => setFormData({...formData, image_url: e.target.value})}
+                      placeholder="https://example.com/image.jpg"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="brochure_url">Brochure PDF URL</Label>
+                    <Input
+                      id="brochure_url"
+                      value={formData.brochure_url}
+                      onChange={(e) => setFormData({...formData, brochure_url: e.target.value})}
+                      placeholder="https://example.com/brochure.pdf"
+                    />
+                  </div>
                 </div>
+                
                 <div>
-                  <Label htmlFor="description">Description</Label>
+                  <Label htmlFor="description">Short Description</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    rows={3}
+                    rows={2}
+                    placeholder="Brief course overview for cards and listings"
                   />
                 </div>
+
+                <div>
+                  <Label htmlFor="detailed_description">Detailed Description</Label>
+                  <Textarea
+                    id="detailed_description"
+                    value={formData.detailed_description}
+                    onChange={(e) => setFormData({...formData, detailed_description: e.target.value})}
+                    rows={4}
+                    placeholder="Comprehensive course description for the details page"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="prerequisites">Prerequisites</Label>
+                  <Textarea
+                    id="prerequisites"
+                    value={formData.prerequisites}
+                    onChange={(e) => setFormData({...formData, prerequisites: e.target.value})}
+                    rows={2}
+                    placeholder="What students need to know before taking this course"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="learning_outcomes">Learning Outcomes</Label>
+                  <Textarea
+                    id="learning_outcomes"
+                    value={formData.learning_outcomes}
+                    onChange={(e) => setFormData({...formData, learning_outcomes: e.target.value})}
+                    rows={3}
+                    placeholder="What students will learn (one per line)"
+                  />
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.is_featured}
+                      onChange={(e) => setFormData({...formData, is_featured: e.target.checked})}
+                    />
+                    Featured Course
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={formData.is_active}
+                      onChange={(e) => setFormData({...formData, is_active: e.target.checked})}
+                    />
+                    Active
+                  </label>
+                </div>
+                
                 <div className="flex gap-4">
                   <Button type="submit">
                     {editingCourse ? 'Update Course' : 'Create Course'}
@@ -259,6 +368,7 @@ const CourseManagement = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
+                  <TableHead>Category</TableHead>
                   <TableHead>Level</TableHead>
                   <TableHead>Duration</TableHead>
                   <TableHead>Price</TableHead>
@@ -270,6 +380,9 @@ const CourseManagement = () => {
                 {courses.map((course) => (
                   <TableRow key={course.id}>
                     <TableCell className="font-medium">{course.title}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{course.category || 'N/A'}</Badge>
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline">{course.level || 'N/A'}</Badge>
                     </TableCell>

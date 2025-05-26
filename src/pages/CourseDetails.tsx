@@ -8,7 +8,7 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Clock, Users, Star, BookOpen, CheckCircle, Award, Calendar, Target } from 'lucide-react';
+import { Clock, Users, Star, BookOpen, CheckCircle, Award, Calendar, Target, Download } from 'lucide-react';
 import { toast } from 'sonner';
 
 const CourseDetails = () => {
@@ -51,6 +51,15 @@ const CourseDetails = () => {
     toast.success('Enrollment process initiated! Please contact us to complete your registration.');
   };
 
+  const handleDownloadBrochure = () => {
+    if (course?.brochure_url) {
+      window.open(course.brochure_url, '_blank');
+      toast.success('Brochure download started!');
+    } else {
+      toast.error('Brochure not available for this course');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -78,15 +87,25 @@ const CourseDetails = () => {
     );
   }
 
-  const syllabusItems = course.syllabus ? course.syllabus.split(',').map(item => item.trim()) : [
-    'Course Introduction & Fundamentals',
-    'Core Concepts & Theory',
-    'Practical Implementation',
-    'Advanced Topics',
-    'Real-world Projects',
-    'Industry Best Practices',
-    'Certification Preparation'
-  ];
+  // Parse learning outcomes or use default ones
+  const learningOutcomes = course.learning_outcomes ? 
+    course.learning_outcomes.split('\n').filter(item => item.trim()) : [
+      'Master fundamental concepts and best practices',
+      'Gain hands-on experience with real-world projects',
+      'Develop industry-relevant skills and knowledge',
+      'Build a strong foundation for career advancement',
+      'Learn from expert instructors with industry experience',
+      'Receive comprehensive study materials and resources',
+      'Get certified upon successful completion'
+    ];
+
+  // Parse prerequisites or use default ones
+  const prerequisites = course.prerequisites ? 
+    course.prerequisites.split('\n').filter(item => item.trim()) : [
+      'Basic computer literacy',
+      'Passion for learning new technologies',
+      'No prior experience required for beginner courses'
+    ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -117,6 +136,12 @@ const CourseDetails = () => {
                   <Star className="w-5 h-5 text-yellow-400 fill-current" />
                   <span>4.8 Rating</span>
                 </div>
+                {course.category && (
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5" />
+                    <span>{course.category}</span>
+                  </div>
+                )}
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
@@ -126,7 +151,13 @@ const CourseDetails = () => {
                 >
                   Enroll Now - ₹{course.price?.toLocaleString('en-IN')}
                 </Button>
-                <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600"
+                  onClick={handleDownloadBrochure}
+                >
+                  <Download className="w-4 h-4 mr-2" />
                   Download Brochure
                 </Button>
               </div>
@@ -134,7 +165,7 @@ const CourseDetails = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-3xl blur-3xl opacity-20"></div>
               <img 
-                src={`https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80`}
+                src={course.image_url || `https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80`}
                 alt={course.title}
                 className="relative rounded-3xl shadow-2xl w-full h-80 object-cover"
               />
@@ -158,10 +189,10 @@ const CourseDetails = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-4">
-                    {syllabusItems.map((item, index) => (
+                    {learningOutcomes.map((outcome, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-700">{item}</span>
+                        <span className="text-gray-700">{outcome}</span>
                       </div>
                     ))}
                   </div>
@@ -178,20 +209,28 @@ const CourseDetails = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="prose max-w-none">
-                    <p className="text-gray-700 leading-relaxed mb-4">
-                      This comprehensive {course.title.toLowerCase()} program is designed to provide you with 
-                      the skills and knowledge needed to excel in today's competitive market. Our expert 
-                      instructors bring years of industry experience to deliver practical, hands-on training.
-                    </p>
-                    <p className="text-gray-700 leading-relaxed mb-4">
-                      Throughout this course, you'll work on real-world projects that simulate actual 
-                      industry challenges. This approach ensures that you not only learn the theoretical 
-                      concepts but also gain practical experience that employers value.
-                    </p>
-                    <p className="text-gray-700 leading-relaxed">
-                      Upon successful completion, you'll receive an industry-recognized certificate that 
-                      validates your skills and enhances your career prospects.
-                    </p>
+                    {course.detailed_description ? (
+                      <div className="text-gray-700 leading-relaxed whitespace-pre-line">
+                        {course.detailed_description}
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-gray-700 leading-relaxed mb-4">
+                          This comprehensive {course.title.toLowerCase()} program is designed to provide you with 
+                          the skills and knowledge needed to excel in today's competitive market. Our expert 
+                          instructors bring years of industry experience to deliver practical, hands-on training.
+                        </p>
+                        <p className="text-gray-700 leading-relaxed mb-4">
+                          Throughout this course, you'll work on real-world projects that simulate actual 
+                          industry challenges. This approach ensures that you not only learn the theoretical 
+                          concepts but also gain practical experience that employers value.
+                        </p>
+                        <p className="text-gray-700 leading-relaxed">
+                          Upon successful completion, you'll receive an industry-recognized certificate that 
+                          validates your skills and enhances your career prospects.
+                        </p>
+                      </>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -203,18 +242,12 @@ const CourseDetails = () => {
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 text-gray-700">
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      Basic computer literacy
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      Passion for learning new technologies
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500" />
-                      No prior experience required for beginner courses
-                    </li>
+                    {prerequisites.map((prerequisite, index) => (
+                      <li key={index} className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        {prerequisite}
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -236,6 +269,16 @@ const CourseDetails = () => {
                   <Button className="w-full" size="lg" onClick={handleEnrollment}>
                     Enroll Now
                   </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full" 
+                    size="lg" 
+                    onClick={handleDownloadBrochure}
+                    disabled={!course.brochure_url}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    {course.brochure_url ? 'Download Brochure' : 'Brochure Not Available'}
+                  </Button>
                   <div className="space-y-3 text-sm">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-gray-500" />
@@ -253,17 +296,30 @@ const CourseDetails = () => {
                 </CardContent>
               </Card>
 
-              {/* Course Tags */}
+              {/* Course Info */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Technologies Covered</CardTitle>
+                  <CardTitle className="text-lg">Course Information</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline">{course.category}</Badge>
-                    <Badge variant="outline">{course.level}</Badge>
+                  <div className="space-y-4">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Category:</span>
+                      <Badge variant="outline">{course.category}</Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Level:</span>
+                      <Badge variant="outline">{course.level}</Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Duration:</span>
+                      <span>{course.duration}</span>
+                    </div>
                     {course.certification && (
-                      <Badge variant="outline">{course.certification}</Badge>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Certificate:</span>
+                        <Badge variant="outline">{course.certification}</Badge>
+                      </div>
                     )}
                   </div>
                 </CardContent>
@@ -277,16 +333,27 @@ const CourseDetails = () => {
       {relatedCourses && relatedCourses.length > 0 && (
         <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">Related Courses</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">More {course.category} Courses</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {relatedCourses.map((relatedCourse) => (
-                <Card key={relatedCourse.id} className="hover:shadow-lg transition-all duration-300 cursor-pointer"
+                <Card key={relatedCourse.id} className="hover:shadow-lg transition-all duration-300 cursor-pointer group"
                       onClick={() => navigate(`/courses/${relatedCourse.id}`)}>
+                  <div className="relative h-48 overflow-hidden">
+                    <img 
+                      src={relatedCourse.image_url || `https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80`}
+                      alt={relatedCourse.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <Badge variant="secondary" className="bg-white/90 text-gray-800">
+                        {relatedCourse.level}
+                      </Badge>
+                    </div>
+                  </div>
                   <CardHeader>
-                    <Badge variant="secondary" className="w-fit">
-                      {relatedCourse.level}
-                    </Badge>
-                    <CardTitle className="text-lg">{relatedCourse.title}</CardTitle>
+                    <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
+                      {relatedCourse.title}
+                    </CardTitle>
                     <CardDescription>{relatedCourse.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
