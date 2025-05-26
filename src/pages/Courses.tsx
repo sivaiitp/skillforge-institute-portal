@@ -5,10 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Users, Star, BookOpen } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Courses = () => {
+  const navigate = useNavigate();
+
   const courses = [
     {
+      id: 1,
       title: "Full Stack Web Development",
       description: "Complete web development program covering frontend and backend technologies.",
       duration: "6 months",
@@ -18,9 +22,11 @@ const Courses = () => {
       tags: ["React", "Node.js", "MongoDB", "Express"],
       level: "Beginner to Advanced",
       syllabus: ["HTML/CSS/JavaScript", "React.js", "Node.js & Express", "MongoDB", "Project Development"],
-      certification: "Industry Recognized Certificate"
+      certification: "Industry Recognized Certificate",
+      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
+      id: 2,
       title: "Data Science & Machine Learning",
       description: "Comprehensive data science program with hands-on ML projects.",
       duration: "8 months",
@@ -30,9 +36,11 @@ const Courses = () => {
       tags: ["Python", "ML", "AI", "Statistics"],
       level: "Intermediate",
       syllabus: ["Python Programming", "Statistics", "Machine Learning", "Deep Learning", "Real-world Projects"],
-      certification: "Data Science Professional Certificate"
+      certification: "Data Science Professional Certificate",
+      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
+      id: 3,
       title: "Mobile App Development",
       description: "Build native and cross-platform mobile applications.",
       duration: "5 months",
@@ -42,9 +50,11 @@ const Courses = () => {
       tags: ["React Native", "Flutter", "iOS", "Android"],
       level: "Beginner",
       syllabus: ["Mobile UI/UX", "React Native", "Flutter", "API Integration", "App Store Deployment"],
-      certification: "Mobile Developer Certificate"
+      certification: "Mobile Developer Certificate",
+      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
+      id: 4,
       title: "Cloud Computing & DevOps",
       description: "Master cloud platforms and DevOps practices for modern development.",
       duration: "4 months",
@@ -54,9 +64,11 @@ const Courses = () => {
       tags: ["AWS", "Docker", "Kubernetes", "CI/CD"],
       level: "Intermediate",
       syllabus: ["Cloud Fundamentals", "AWS Services", "Docker & Containers", "Kubernetes", "CI/CD Pipelines"],
-      certification: "Cloud & DevOps Certificate"
+      certification: "Cloud & DevOps Certificate",
+      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
+      id: 5,
       title: "Cybersecurity Fundamentals",
       description: "Essential cybersecurity skills for protecting digital assets.",
       duration: "3 months",
@@ -66,9 +78,11 @@ const Courses = () => {
       tags: ["Security", "Ethical Hacking", "Network Security"],
       level: "Beginner to Intermediate",
       syllabus: ["Security Basics", "Network Security", "Ethical Hacking", "Risk Management", "Compliance"],
-      certification: "Cybersecurity Professional Certificate"
+      certification: "Cybersecurity Professional Certificate",
+      image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
+      id: 6,
       title: "UI/UX Design Mastery",
       description: "Create stunning user interfaces and exceptional user experiences.",
       duration: "4 months",
@@ -78,7 +92,8 @@ const Courses = () => {
       tags: ["Figma", "Design Systems", "Prototyping"],
       level: "Beginner",
       syllabus: ["Design Principles", "Figma", "User Research", "Prototyping", "Design Systems"],
-      certification: "UI/UX Design Certificate"
+      certification: "UI/UX Design Certificate",
+      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     }
   ];
 
@@ -87,8 +102,15 @@ const Courses = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4 text-center">
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-20"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')`
+          }}
+        ></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Training Programs</h1>
           <p className="text-xl max-w-3xl mx-auto leading-relaxed">
             Discover comprehensive courses designed to transform your career and master in-demand technologies.
@@ -101,14 +123,26 @@ const Courses = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses.map((course, index) => (
-              <Card key={index} className="hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
-                <CardHeader>
-                  <div className="flex justify-between items-start mb-2">
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              <Card key={index} className="hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group overflow-hidden">
+                <div className="relative h-48 overflow-hidden">
+                  <img 
+                    src={course.image} 
+                    alt={course.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <Badge variant="secondary" className="bg-white/90 text-gray-800">
                       {course.level}
                     </Badge>
-                    <span className="text-2xl font-bold text-blue-600">{course.price}</span>
                   </div>
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-white/90 text-blue-600 px-3 py-1 rounded-full font-bold text-sm">
+                      {course.price}
+                    </span>
+                  </div>
+                </div>
+                
+                <CardHeader>
                   <CardTitle className="text-xl group-hover:text-blue-600 transition-colors">
                     {course.title}
                   </CardTitle>
@@ -165,9 +199,17 @@ const Courses = () => {
                     </Badge>
                   </div>
                   
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                    Enroll Now
-                  </Button>
+                  <div className="space-y-2">
+                    <Button 
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                      onClick={() => navigate(`/courses/${course.id}`)}
+                    >
+                      View Details
+                    </Button>
+                    <Button variant="outline" className="w-full">
+                      Enroll Now
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -176,8 +218,14 @@ const Courses = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4 text-center">
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')`
+          }}
+        ></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Not Sure Which Course to Choose?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Take our free career assessment to find the perfect program for your goals.
