@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -19,6 +20,7 @@ import CourseLearning from "./pages/CourseLearning";
 import AdminDashboard from "./pages/AdminDashboard";
 import CourseManagement from "./pages/CourseManagement";
 import StudyMaterialManagement from "./pages/StudyMaterialManagement";
+import CourseMaterialsDetail from "./pages/CourseMaterialsDetail";
 import StudentManagement from "./pages/StudentManagement";
 import AssessmentManagement from "./pages/AssessmentManagement";
 import CertificationManagement from "./pages/CertificationManagement";
@@ -59,6 +61,7 @@ function App() {
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/courses" element={<CourseManagement />} />
               <Route path="/admin/study-materials" element={<StudyMaterialManagement />} />
+              <Route path="/admin/study-materials/course/:courseId" element={<CourseMaterialsDetail />} />
               <Route path="/admin/students" element={<StudentManagement />} />
               <Route path="/admin/assessments" element={<AssessmentManagement />} />
               <Route path="/admin/certifications" element={<CertificationManagement />} />
