@@ -30,7 +30,7 @@ const StudentProfile = () => {
         <div className="flex min-h-screen w-full">
           <StudentSidebar />
           
-          <SidebarInset className="flex-1 ml-64">
+          <SidebarInset className="flex-1">
             <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
               <SidebarTrigger className="-ml-1" />
               <div className="flex items-center gap-3">
@@ -43,24 +43,24 @@ const StudentProfile = () => {
               </div>
             </header>
             
-            <div className="flex justify-center">
-              <div className="p-8 space-y-8 max-w-7xl w-full">
+            <div className="p-6">
+              <div className="max-w-6xl mx-auto space-y-6">
                 {/* Enhanced Header Section */}
-                <div className="text-center space-y-6 relative">
+                <div className="text-center space-y-4 relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-violet-100/20 to-indigo-100/20 rounded-3xl blur-3xl"></div>
-                  <div className="relative">
+                  <div className="relative bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-violet-100">
                     <div className="flex items-center justify-center gap-3 mb-4">
-                      <div className="p-4 bg-gradient-to-r from-violet-500 to-indigo-500 rounded-2xl shadow-lg">
-                        <Sparkles className="h-8 w-8 text-white" />
+                      <div className="p-3 bg-gradient-to-r from-violet-500 to-indigo-500 rounded-2xl shadow-lg">
+                        <Sparkles className="h-6 w-6 text-white" />
                       </div>
-                      <h2 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+                      <h2 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
                         Profile Information
                       </h2>
                     </div>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                    <p className="text-gray-600 max-w-2xl mx-auto mb-4">
                       Manage your personal information and preferences to enhance your learning experience
                     </p>
-                    <div className="flex items-center justify-center gap-2 mt-4">
+                    <div className="flex items-center justify-center gap-2">
                       <Shield className="h-4 w-4 text-violet-500" />
                       <span className="text-sm text-gray-500">Your information is secure and encrypted</span>
                     </div>
@@ -76,15 +76,16 @@ const StudentProfile = () => {
 
                 {loading ? (
                   <div className="text-center py-20">
-                    <div className="relative">
-                      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-violet-500 mx-auto mb-6"></div>
-                      <div className="absolute inset-0 animate-pulse rounded-full h-16 w-16 border-t-2 border-indigo-300 mx-auto mb-6"></div>
+                    <div className="relative mx-auto w-16 h-16 mb-6">
+                      <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-violet-500"></div>
+                      <div className="absolute inset-0 animate-pulse rounded-full h-16 w-16 border-t-2 border-indigo-300"></div>
                     </div>
                     <p className="text-lg text-gray-600">Loading your profile...</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 space-y-8">
+                  <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                    {/* Main Content - Takes 2 columns on xl screens */}
+                    <div className="xl:col-span-2 space-y-6">
                       <BasicInfoCard
                         editing={editing}
                         formData={formData}
@@ -94,7 +95,8 @@ const StudentProfile = () => {
                       />
                     </div>
 
-                    <div className="space-y-8">
+                    {/* Sidebar Content - Takes 1 column on xl screens */}
+                    <div className="space-y-6">
                       <AddressCard
                         editing={editing}
                         formData={formData}
