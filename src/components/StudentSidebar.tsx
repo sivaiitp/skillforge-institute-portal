@@ -20,11 +20,7 @@ import {
   ClipboardList, 
   LogOut, 
   ExternalLink,
-  GraduationCap,
-  BookOpenCheck,
-  FileClock,
-  BadgeCheck,
-  Receipt
+  GraduationCap
 } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "./AuthProvider"
@@ -124,63 +120,6 @@ export function StudentSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            <div className="flex items-center gap-2">
-              <BookOpenCheck className="h-4 w-4" /> 
-              <span>Quick Access</span>
-            </div>
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/courses" onClick={(e) => {
-                    e.preventDefault()
-                    navigate('/courses')
-                  }}>
-                    <BookOpen />
-                    <span>Browse Courses</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/dashboard/certificates" onClick={(e) => {
-                    e.preventDefault()
-                    navigate('/dashboard/certificates')
-                  }}>
-                    <BadgeCheck />
-                    <span>My Certifications</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/verify-certificate" onClick={(e) => {
-                    e.preventDefault()
-                    navigate('/verify-certificate')
-                  }}>
-                    <FileClock />
-                    <span>Verify Certificate</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <a href="/dashboard/payments" onClick={(e) => {
-                    e.preventDefault()
-                    navigate('/dashboard/payments')
-                  }}>
-                    <Receipt />
-                    <span>Payment History</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
