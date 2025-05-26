@@ -97,7 +97,7 @@ const Navigation = () => {
                 className="bg-blue-600 hover:bg-blue-700"
                 onClick={() => navigate('/auth')}
               >
-                Student Login
+                Login
               </Button>
             )}
           </div>
@@ -160,7 +160,7 @@ const Navigation = () => {
                 className="w-full mt-4 bg-blue-600 hover:bg-blue-700"
                 onClick={() => navigate('/auth')}
               >
-                Student Login
+                Login
               </Button>
             )}
           </div>
