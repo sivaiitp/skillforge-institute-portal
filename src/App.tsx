@@ -16,6 +16,8 @@ import Auth from "./pages/Auth";
 import CertificateVerification from "./pages/CertificateVerification";
 import AdminDashboard from "./pages/AdminDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
+import StudentCourses from "./pages/StudentCourses";
+import StudentAssessments from "./pages/StudentAssessments";
 import StudentManagement from "./pages/StudentManagement";
 import CourseManagement from "./pages/CourseManagement";
 import AssessmentManagement from "./pages/AssessmentManagement";
@@ -49,6 +51,12 @@ const App = () => (
             <Route path="/admin/certificates" element={<CertificationManagement />} />
             <Route path="/admin/reports" element={<PaymentReports />} />
             <Route path="/dashboard" element={<StudentDashboard />} />
+            <Route path="/dashboard/courses" element={<StudentCourses />} />
+            <Route path="/dashboard/assessments" element={<StudentAssessments />} />
+            <Route path="/dashboard/certificates" element={<StudentDashboard />} />
+            <Route path="/dashboard/materials" element={<StudentDashboard />} />
+            <Route path="/dashboard/profile" element={<StudentDashboard />} />
+            <Route path="/dashboard/payments" element={<StudentDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -2,18 +2,20 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Download, Award } from "lucide-react";
+import { Award, BookOpen, ClipboardList, TrendingUp } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import { useNavigate } from "react-router-dom";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import { StudentSidebar } from "@/components/StudentSidebar";
 
 const StudentDashboard = () => {
   const { user, userRole } = useAuth();
   const navigate = useNavigate();
   const [certificates, setCertificates] = useState([]);
+  const [enrollments, setEnrollments] = useState([]);
+  const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,104 +29,228 @@ const StudentDashboard = () => {
       return;
     }
     
-    fetchMyCertificates();
+    fetchDashboardData();
   }, [user, userRole, navigate]);
 
-  const fetchMyCertificates = async () => {
+  const fetchDashboardData = async () => {
     if (!user) return;
     
     setLoading(true);
-    const { data, error } = await supabase
-      .from('certificates')
-      .select(`
-        *,
-        courses (title, certification, description)
-      `)
-      .eq('user_id', user.id)
-      .eq('is_valid', true)
-      .order('issued_date', { ascending: false });
+    try {
+      // Fetch certificates
+      const { data: certsData } = await supabase
+        .from('certificates')
+        .select(`
+          *,
+          courses (title, certification, description)
+        `)
+        .eq('user_id', user.id)
+        .eq('is_valid', true)
+        .order('issued_date', { ascending: false })
+        .limit(3);
 
-    if (error) {
-      toast.error('Error fetching certificates');
+      // Fetch enrollments
+      const { data: enrollData } = await supabase
+        .from('enrollments')
+        .select(`
+          *,
+          courses (title, description, duration, category)
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .order('enrollment_date', { ascending: false })
+        .limit(3);
+
+      // Fetch recent assessment results
+      const { data: assessData } = await supabase
+        .from('assessment_results')
+        .select(`
+          *,
+          assessments (title, total_marks, passing_marks)
+        `)
+        .eq('user_id', user.id)
+        .order('taken_at', { ascending: false })
+        .limit(3);
+
+      setCertificates(certsData || []);
+      setEnrollments(enrollData || []);
+      setAssessments(assessData || []);
+    } catch (error) {
+      toast.error('Error fetching dashboard data');
       console.error('Error:', error);
-    } else {
-      setCertificates(data || []);
     }
     setLoading(false);
   };
 
   if (!user) return null;
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navigation />
-      
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h1 className="text-3xl font-bold mb-4">My Certificates</h1>
-            <p className="text-gray-600">View and manage your earned certificates</p>
-          </div>
-
-          {loading ? (
-            <div className="text-center">
-              <p>Loading certificates...</p>
+  if (loading) {
+    return (
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <StudentSidebar />
+          <SidebarInset>
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p>Loading dashboard...</p>
+              </div>
             </div>
-          ) : certificates.length === 0 ? (
-            <Card className="max-w-md mx-auto text-center">
-              <CardHeader>
-                <Award className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <CardTitle>No Certificates Yet</CardTitle>
-                <CardDescription>
-                  Complete courses to earn certificates that will appear here.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {certificates.map((cert) => (
-                <Card key={cert.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <Award className="h-8 w-8 text-blue-600" />
-                      <Badge className="bg-green-100 text-green-800">
-                        Grade: {cert.grade}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-lg">{cert.courses?.title}</CardTitle>
-                    <CardDescription>{cert.courses?.certification}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm">
-                      <div>
-                        <span className="font-semibold">Certificate Number:</span>
-                        <p className="font-mono text-xs">{cert.certificate_number}</p>
-                      </div>
-                      <div>
-                        <span className="font-semibold">Completion Date:</span>
-                        <p>{cert.completion_date ? new Date(cert.completion_date).toLocaleDateString() : 'N/A'}</p>
-                      </div>
-                      <div>
-                        <span className="font-semibold">Issued Date:</span>
-                        <p>{new Date(cert.issued_date).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-4 pt-4 border-t">
-                      <p className="text-xs text-gray-500 mb-2">
-                        This certificate can be verified at {window.location.origin}/verify
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+          </SidebarInset>
         </div>
-      </section>
+      </SidebarProvider>
+    );
+  }
 
-      <Footer />
-    </div>
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <StudentSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
+            <SidebarTrigger className="-ml-1" />
+            <h1 className="text-xl font-semibold">Dashboard</h1>
+          </header>
+          
+          <div className="flex-1 p-6 space-y-6">
+            {/* Welcome Section */}
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold">Welcome back!</h2>
+              <p className="text-gray-600">Here's your learning progress overview</p>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Active Courses</CardTitle>
+                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{enrollments.length}</div>
+                  <p className="text-xs text-muted-foreground">Currently enrolled</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Certificates Earned</CardTitle>
+                  <Award className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{certificates.length}</div>
+                  <p className="text-xs text-muted-foreground">Completed courses</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Recent Tests</CardTitle>
+                  <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{assessments.length}</div>
+                  <p className="text-xs text-muted-foreground">Assessments taken</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Current Courses */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    Current Courses
+                  </CardTitle>
+                  <CardDescription>Your active enrollments</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {enrollments.length === 0 ? (
+                    <p className="text-sm text-gray-500">No active courses yet</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {enrollments.map((enrollment) => (
+                        <div key={enrollment.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div>
+                            <h4 className="font-medium">{enrollment.courses?.title}</h4>
+                            <p className="text-sm text-gray-600">{enrollment.courses?.duration}</p>
+                          </div>
+                          <Badge variant="outline">{enrollment.courses?.category}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Recent Certificates */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Award className="h-5 w-5" />
+                    Recent Certificates
+                  </CardTitle>
+                  <CardDescription>Your latest achievements</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {certificates.length === 0 ? (
+                    <p className="text-sm text-gray-500">No certificates earned yet</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {certificates.map((cert) => (
+                        <div key={cert.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div>
+                            <h4 className="font-medium">{cert.courses?.title}</h4>
+                            <p className="text-sm text-gray-600">
+                              Issued: {new Date(cert.issued_date).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <Badge className="bg-green-100 text-green-800">
+                            Certified
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent Test Results */}
+            {assessments.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Recent Test Results
+                  </CardTitle>
+                  <CardDescription>Your latest assessment performance</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {assessments.map((result) => (
+                      <div key={result.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div>
+                          <h4 className="font-medium">{result.assessments?.title}</h4>
+                          <p className="text-sm text-gray-600">
+                            Score: {result.score}/{result.total_marks}
+                          </p>
+                        </div>
+                        <Badge variant={result.passed ? "default" : "destructive"}>
+                          {result.passed ? "Passed" : "Failed"}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 
