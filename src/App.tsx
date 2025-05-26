@@ -13,6 +13,8 @@ import Contact from "./pages/Contact";
 import Career from "./pages/Career";
 import Auth from "./pages/Auth";
 import CertificateVerification from "./pages/CertificateVerification";
+import AdminDashboard from "./pages/AdminDashboard";
+import StudentDashboard from "./pages/StudentDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +35,8 @@ const App = () => (
             <Route path="/career" element={<Career />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/verify" element={<CertificateVerification />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/dashboard" element={<StudentDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

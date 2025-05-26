@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut } from "lucide-react";
+import { Menu, X, User, LogOut, Shield, BookOpen } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
 import {
@@ -24,6 +24,7 @@ const Navigation = () => {
     { name: "Events", href: "/events" },
     { name: "Career Guidance", href: "/career" },
     { name: "Contact", href: "/contact" },
+    { name: "Verify Certificate", href: "/verify" },
   ];
 
   const handleSignOut = async () => {
@@ -73,6 +74,18 @@ const Navigation = () => {
                     <span>Profile ({userRole})</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
+                  {userRole === 'admin' ? (
+                    <DropdownMenuItem onClick={() => navigate('/admin')}>
+                      <Shield className="mr-2 h-4 w-4" />
+                      <span>Admin Dashboard</span>
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      <span>My Dashboard</span>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sign Out</span>
@@ -117,6 +130,23 @@ const Navigation = () => {
                 <p className="text-sm text-gray-600 mb-2">
                   {user.user_metadata?.full_name || user.email} ({userRole})
                 </p>
+                {userRole === 'admin' ? (
+                  <Button 
+                    variant="outline" 
+                    className="w-full mb-2"
+                    onClick={() => navigate('/admin')}
+                  >
+                    Admin Dashboard
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="outline" 
+                    className="w-full mb-2"
+                    onClick={() => navigate('/dashboard')}
+                  >
+                    My Dashboard
+                  </Button>
+                )}
                 <Button 
                   variant="outline" 
                   className="w-full"
