@@ -149,16 +149,17 @@ const CourseDetails = () => {
                   className="bg-white text-blue-600 hover:bg-gray-100"
                   onClick={handleEnrollment}
                 >
-                  Enroll Now - ₹{course.price?.toLocaleString('en-IN')}
+                  Enroll Now - ₹{course.price?.toLocaleString('en-IN') || '0'}
                 </Button>
                 <Button 
                   size="lg" 
                   variant="outline" 
                   className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600"
                   onClick={handleDownloadBrochure}
+                  disabled={!course.brochure_url}
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  Download Brochure
+                  {course.brochure_url ? 'Download Brochure' : 'Brochure Not Available'}
                 </Button>
               </div>
             </div>
@@ -260,7 +261,7 @@ const CourseDetails = () => {
                 <CardHeader>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-blue-600 mb-2">
-                      ₹{course.price?.toLocaleString('en-IN')}
+                      ₹{course.price?.toLocaleString('en-IN') || '0'}
                     </div>
                     <p className="text-gray-600">One-time payment</p>
                   </div>
@@ -359,7 +360,7 @@ const CourseDetails = () => {
                   <CardContent>
                     <div className="flex justify-between items-center">
                       <span className="text-2xl font-bold text-blue-600">
-                        ₹{relatedCourse.price?.toLocaleString('en-IN')}
+                        ₹{relatedCourse.price?.toLocaleString('en-IN') || '0'}
                       </span>
                       <Button variant="outline" size="sm">
                         View Details

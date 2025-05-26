@@ -158,48 +158,60 @@ export type Database = {
       }
       courses: {
         Row: {
+          brochure_url: string | null
           category: string | null
           certification: string | null
           created_at: string | null
           description: string | null
+          detailed_description: string | null
           duration: string | null
           id: string
           image_url: string | null
           is_active: boolean | null
           is_featured: boolean | null
+          learning_outcomes: string | null
           level: string | null
+          prerequisites: string | null
           price: number | null
           syllabus: string | null
           title: string
           updated_at: string | null
         }
         Insert: {
+          brochure_url?: string | null
           category?: string | null
           certification?: string | null
           created_at?: string | null
           description?: string | null
+          detailed_description?: string | null
           duration?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
           is_featured?: boolean | null
+          learning_outcomes?: string | null
           level?: string | null
+          prerequisites?: string | null
           price?: number | null
           syllabus?: string | null
           title: string
           updated_at?: string | null
         }
         Update: {
+          brochure_url?: string | null
           category?: string | null
           certification?: string | null
           created_at?: string | null
           description?: string | null
+          detailed_description?: string | null
           duration?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
           is_featured?: boolean | null
+          learning_outcomes?: string | null
           level?: string | null
+          prerequisites?: string | null
           price?: number | null
           syllabus?: string | null
           title?: string
