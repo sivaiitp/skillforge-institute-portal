@@ -26,34 +26,44 @@ const StudentManagement = () => {
   }, [userRole]);
 
   const fetchStudents = async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('role', 'student')
-      .order('created_at', { ascending: false });
-    
-    if (error) {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('role', 'student')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching students:', error);
+        toast.error('Error fetching students');
+        return;
+      }
+      setStudents(data || []);
+    } catch (error) {
+      console.error('Error fetching students:', error);
       toast.error('Error fetching students');
-      return;
+    } finally {
+      setLoading(false);
     }
-    setStudents(data || []);
-    setLoading(false);
   };
 
   const fetchEnrollments = async () => {
-    const { data, error } = await supabase
-      .from('enrollments')
-      .select(`
-        *,
-        courses (title),
-        profiles (full_name)
-      `);
-    
-    if (error) {
-      toast.error('Error fetching enrollments');
-      return;
+    try {
+      const { data, error } = await supabase
+        .from('enrollments')
+        .select(`
+          *,
+          courses (title)
+        `);
+      
+      if (error) {
+        console.error('Error fetching enrollments:', error);
+        return;
+      }
+      setEnrollments(data || []);
+    } catch (error) {
+      console.error('Error fetching enrollments:', error);
     }
-    setEnrollments(data || []);
   };
 
   const filteredStudents = students.filter(student =>
@@ -66,7 +76,14 @@ const StudentManagement = () => {
   };
 
   if (userRole !== 'admin') {
-    return <div>Access denied</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <AdminSidebar />
+        <div className="ml-64 p-8">
+          <div>Access denied</div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -105,8 +122,8 @@ const StudentManagement = () => {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div>Loading...</div>
-            ) : (
+              <div className="text-center py-4">Loading...</div>
+            ) : filteredStudents.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -129,7 +146,7 @@ const StudentManagement = () => {
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <Mail className="w-4 h-4 text-gray-400" />
-                            {student.email}
+                            {student.email || 'N/A'}
                           </div>
                         </TableCell>
                         <TableCell>
@@ -159,6 +176,13 @@ const StudentManagement = () => {
                   })}
                 </TableBody>
               </Table>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No students found</p>
+                <p className="text-sm text-gray-400 mt-2">
+                  {searchTerm ? 'Try adjusting your search terms' : 'No students have registered yet'}
+                </p>
+              </div>
             )}
           </CardContent>
         </Card>
