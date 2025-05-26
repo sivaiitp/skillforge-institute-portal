@@ -14,6 +14,7 @@ const CourseManagement = () => {
   const [courses, setCourses] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -53,49 +54,75 @@ const CourseManagement = () => {
   }, [userRole]);
 
   const fetchCourses = async () => {
-    const { data, error } = await supabase
-      .from('courses')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (error) {
-      toast.error('Error fetching courses');
-      return;
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('courses')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching courses:', error);
+        toast.error('Error fetching courses: ' + error.message);
+        return;
+      }
+      setCourses(data || []);
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('Unexpected error occurred');
+    } finally {
+      setLoading(false);
     }
-    setCourses(data || []);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const courseData = {
-      ...formData,
-      price: formData.price ? parseFloat(formData.price) : null
-    };
-
-    let error;
-    if (editingCourse) {
-      ({ error } = await supabase
-        .from('courses')
-        .update(courseData)
-        .eq('id', editingCourse.id));
-    } else {
-      ({ error } = await supabase
-        .from('courses')
-        .insert([courseData]));
-    }
-
-    if (error) {
-      toast.error(`Error ${editingCourse ? 'updating' : 'creating'} course`);
+    if (!formData.title.trim()) {
+      toast.error('Course title is required');
       return;
     }
 
-    toast.success(`Course ${editingCourse ? 'updated' : 'created'} successfully!`);
-    resetForm();
-    fetchCourses();
+    try {
+      setLoading(true);
+      const courseData = {
+        ...formData,
+        price: formData.price ? parseFloat(formData.price) : null
+      };
+
+      let result;
+      if (editingCourse) {
+        result = await supabase
+          .from('courses')
+          .update(courseData)
+          .eq('id', editingCourse.id)
+          .select();
+      } else {
+        result = await supabase
+          .from('courses')
+          .insert([courseData])
+          .select();
+      }
+
+      if (result.error) {
+        console.error('Database error:', result.error);
+        toast.error(`Error ${editingCourse ? 'updating' : 'creating'} course: ` + result.error.message);
+        return;
+      }
+
+      toast.success(`Course ${editingCourse ? 'updated' : 'created'} successfully!`);
+      resetForm();
+      fetchCourses();
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('Unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEdit = (course) => {
+    console.log('Editing course:', course);
     setEditingCourse(course);
     setFormData({
       title: course.title || '',
@@ -117,20 +144,27 @@ const CourseManagement = () => {
   };
 
   const handleDelete = async (courseId) => {
-    if (!confirm('Are you sure you want to delete this course?')) return;
+    try {
+      setLoading(true);
+      const { error } = await supabase
+        .from('courses')
+        .delete()
+        .eq('id', courseId);
 
-    const { error } = await supabase
-      .from('courses')
-      .delete()
-      .eq('id', courseId);
+      if (error) {
+        console.error('Delete error:', error);
+        toast.error('Error deleting course: ' + error.message);
+        return;
+      }
 
-    if (error) {
-      toast.error('Error deleting course');
-      return;
+      toast.success('Course deleted successfully!');
+      fetchCourses();
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('Unexpected error occurred');
+    } finally {
+      setLoading(false);
     }
-
-    toast.success('Course deleted successfully!');
-    fetchCourses();
   };
 
   const resetForm = () => {
@@ -156,7 +190,7 @@ const CourseManagement = () => {
 
   if (userRole !== 'admin') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gray-50">
         <AdminSidebar />
         <div className="ml-64 p-6">
           <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
@@ -173,7 +207,7 @@ const CourseManagement = () => {
   const totalRevenue = courses.reduce((sum, course) => sum + (course.price || 0), 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gray-50">
       <AdminSidebar />
       
       <div className="ml-64 p-6">
@@ -192,6 +226,7 @@ const CourseManagement = () => {
               </div>
               <Button 
                 onClick={() => setShowForm(true)} 
+                disabled={loading}
                 className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
@@ -243,26 +278,22 @@ const CourseManagement = () => {
 
         {showForm && (
           <div className="mb-6">
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <CourseForm
-                formData={formData}
-                setFormData={setFormData}
-                onSubmit={handleSubmit}
-                onCancel={resetForm}
-                editingCourse={editingCourse}
-                courseCategories={courseCategories}
-              />
-            </div>
+            <CourseForm
+              formData={formData}
+              setFormData={setFormData}
+              onSubmit={handleSubmit}
+              onCancel={resetForm}
+              editingCourse={editingCourse}
+              courseCategories={courseCategories}
+            />
           </div>
         )}
 
-        <div className="bg-white rounded-xl shadow-sm border">
-          <CourseTable
-            courses={courses}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </div>
+        <CourseTable
+          courses={courses}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       </div>
     </div>
   );
