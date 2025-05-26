@@ -36,6 +36,17 @@ const Navigation = () => {
     }
   };
 
+  // Get the first name from user metadata, fallback to email
+  const getDisplayName = () => {
+    if (user?.user_metadata?.first_name) {
+      return user.user_metadata.first_name;
+    }
+    if (user?.user_metadata?.full_name) {
+      return user.user_metadata.full_name.split(' ')[0];
+    }
+    return user?.email || '';
+  };
+
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4">
@@ -65,7 +76,7 @@ const Navigation = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="flex items-center space-x-2">
                     <User size={16} />
-                    <span>{user.user_metadata?.full_name || user.email}</span>
+                    <span>{getDisplayName()}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -128,7 +139,7 @@ const Navigation = () => {
             {user ? (
               <div className="pt-4 border-t mt-4">
                 <p className="text-sm text-gray-600 mb-2">
-                  {user.user_metadata?.full_name || user.email} ({userRole})
+                  {getDisplayName()} ({userRole})
                 </p>
                 {userRole === 'admin' ? (
                   <Button 
