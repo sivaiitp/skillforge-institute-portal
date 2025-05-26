@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -90,6 +89,7 @@ const StudentProfile = () => {
       const { error } = await supabase
         .from('profiles')
         .upsert({
+          id: user.id,
           full_name: formData.full_name,
           phone: formData.phone,
           address: formData.address,
@@ -104,7 +104,7 @@ const StudentProfile = () => {
           occupation: formData.occupation,
           company: formData.company,
           bio: formData.bio,
-        }, { onConflict: 'id' });
+        });
 
       if (error) throw error;
 
