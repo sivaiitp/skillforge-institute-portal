@@ -3,40 +3,41 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Users, Star } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const FeaturedCourses = () => {
-  const courses = [
-    {
-      title: "Full Stack Web Development",
-      description: "Master React, Node.js, and modern web technologies to build complete web applications.",
-      duration: "6 months",
-      students: "250+",
-      rating: "4.9",
-      price: "$499",
-      tags: ["React", "Node.js", "MongoDB"],
-      level: "Beginner to Advanced"
-    },
-    {
-      title: "Data Science & Machine Learning",
-      description: "Learn Python, ML algorithms, and data analysis to become a data scientist.",
-      duration: "8 months",
-      students: "180+",
-      rating: "4.8",
-      price: "$599",
-      tags: ["Python", "ML", "AI"],
-      level: "Intermediate"
-    },
-    {
-      title: "Mobile App Development",
-      description: "Build native iOS and Android apps using React Native and Flutter.",
-      duration: "5 months",
-      students: "120+",
-      rating: "4.7",
-      price: "$449",
-      tags: ["React Native", "Flutter", "Mobile"],
-      level: "Beginner"
+  const { data: courses, isLoading } = useQuery({
+    queryKey: ['featured-courses'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('courses')
+        .select('*')
+        .eq('is_featured', true)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
     }
-  ];
+  });
+
+  if (isLoading) {
+    return (
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+              Featured Training Programs
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Loading courses...
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-white">
@@ -52,14 +53,14 @@ const FeaturedCourses = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {courses.map((course, index) => (
-            <Card key={index} className="hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
+          {courses?.map((course) => (
+            <Card key={course.id} className="hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
               <CardHeader>
                 <div className="flex justify-between items-start mb-2">
                   <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                     {course.level}
                   </Badge>
-                  <span className="text-2xl font-bold text-blue-600">{course.price}</span>
+                  <span className="text-2xl font-bold text-blue-600">₹{course.price?.toLocaleString()}</span>
                 </div>
                 <CardTitle className="text-xl group-hover:text-blue-600 transition-colors">
                   {course.title}
@@ -71,11 +72,12 @@ const FeaturedCourses = () => {
               
               <CardContent>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {course.tags.map((tag, tagIndex) => (
-                    <Badge key={tagIndex} variant="outline" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
+                  <Badge variant="outline" className="text-xs">
+                    {course.category}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {course.certification}
+                  </Badge>
                 </div>
                 
                 <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
@@ -85,11 +87,11 @@ const FeaturedCourses = () => {
                   </div>
                   <div className="flex items-center gap-1">
                     <Users size={16} />
-                    {course.students}
+                    Available
                   </div>
                   <div className="flex items-center gap-1">
                     <Star size={16} className="text-yellow-500 fill-current" />
-                    {course.rating}
+                    4.8
                   </div>
                 </div>
                 
