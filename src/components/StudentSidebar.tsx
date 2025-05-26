@@ -24,7 +24,6 @@ import {
 } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "./AuthProvider"
-import { cn } from "@/lib/utils"
 
 const items = [
   {
@@ -82,19 +81,19 @@ export function StudentSidebar() {
   }
 
   return (
-    <Sidebar>
+    <Sidebar className="border-r">
       <SidebarContent>
         <SidebarGroup>
           {/* Logo/Brand */}
           <div 
-            className="flex items-center space-x-2 mb-4 p-3 rounded-lg hover:bg-sidebar-accent transition-colors cursor-pointer"
+            className="flex items-center space-x-3 mb-6 p-4 rounded-lg hover:bg-sidebar-accent transition-colors cursor-pointer"
             onClick={() => navigate('/')}
           >
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <GraduationCap className="w-4 h-4 text-white" />
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div className="flex-1">
-              <div className="font-semibold text-sidebar-foreground text-sm">RaceCodingInstitute</div>
+              <div className="font-semibold text-sidebar-foreground">RaceCodingInstitute</div>
               <div className="text-xs text-sidebar-foreground/70 flex items-center">
                 <span>Go to website</span>
                 <ExternalLink className="w-3 h-3 ml-1" />
@@ -103,18 +102,25 @@ export function StudentSidebar() {
           </div>
 
           {/* User Info */}
-          <div className="mb-4 px-2">
-            <div className="flex items-center gap-2 rounded-lg bg-blue-50 p-3 text-blue-900 border border-blue-200">
-              <User className="h-4 w-4" />
-              <div className="flex-1 truncate text-sm font-medium">
-                {user?.user_metadata?.first_name || 'Student'} {user?.user_metadata?.last_name || ''}
+          <div className="mb-6 px-2">
+            <div className="flex items-center gap-3 rounded-lg bg-blue-50 p-4 text-blue-900 border border-blue-200">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <User className="h-4 w-4 text-blue-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-sm truncate">
+                  {user?.user_metadata?.first_name || 'Student'} {user?.user_metadata?.last_name || ''}
+                </div>
+                <div className="text-xs text-blue-700/70 truncate">Student Portal</div>
               </div>
             </div>
           </div>
 
-          <SidebarGroupLabel>Student Menu</SidebarGroupLabel>
+          <SidebarGroupLabel className="px-4 mb-2 text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wide">
+            Student Menu
+          </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="px-2">
               {items.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.url;
@@ -124,12 +130,14 @@ export function StudentSidebar() {
                     <SidebarMenuButton 
                       onClick={() => navigate(item.url)}
                       isActive={isActive}
-                      className="w-full justify-start"
+                      className="w-full justify-start h-12 px-4 mb-1 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 data-[active=true]:bg-blue-50 data-[active=true]:text-blue-900 data-[active=true]:border-blue-200 data-[active=true]:shadow-sm group"
                     >
-                      <Icon className="w-4 h-4" />
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-sm truncate">{item.title}</div>
-                        <div className="text-xs text-sidebar-foreground/70 truncate">{item.description}</div>
+                      <Icon className="w-5 h-5 mr-3 group-data-[active=true]:text-blue-600" />
+                      <div className="flex-1 text-left">
+                        <div className="font-medium text-sm">{item.title}</div>
+                        <div className="text-xs text-sidebar-foreground/60 group-data-[active=true]:text-blue-700/70">
+                          {item.description}
+                        </div>
                       </div>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -140,17 +148,17 @@ export function StudentSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="p-2">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton 
               onClick={handleLogout}
-              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="w-full justify-start h-12 px-4 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-5 h-5 mr-3" />
               <div className="flex-1 text-left">
                 <div className="font-medium text-sm">Logout</div>
-                <div className="text-xs text-sidebar-foreground/70">Sign out of student portal</div>
+                <div className="text-xs text-red-500/70">Sign out of student portal</div>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
