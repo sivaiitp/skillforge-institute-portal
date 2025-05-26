@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -169,7 +170,7 @@ const StudentCourses = () => {
                           <div className="flex gap-2 pt-2">
                             <Button 
                               className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                              onClick={() => navigate(`/courses/${enrollment.courses?.id}`)}
+                              onClick={() => navigate(`/dashboard/study-materials?course=${enrollment.courses?.id}`)}
                             >
                               <Play className="w-4 h-4 mr-2" />
                               Continue Learning

@@ -7,7 +7,7 @@ import { FileText, Download, Video, FileImage, File, Search, BookOpen, FolderOpe
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { StudentSidebar } from "@/components/StudentSidebar";
 import { useStudyProgress } from "@/hooks/useStudyProgress";
@@ -15,6 +15,7 @@ import { useStudyProgress } from "@/hooks/useStudyProgress";
 const StudentStudyMaterials = () => {
   const { user, userRole } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [materials, setMaterials] = useState([]);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,6 +36,14 @@ const StudentStudyMaterials = () => {
     
     fetchEnrolledCourses();
   }, [user, userRole, navigate]);
+
+  useEffect(() => {
+    // Set selected course from URL parameter
+    const courseFromUrl = searchParams.get('course');
+    if (courseFromUrl) {
+      setSelectedCourse(courseFromUrl);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (enrolledCourses.length > 0) {
