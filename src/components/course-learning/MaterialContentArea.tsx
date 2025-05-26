@@ -37,6 +37,24 @@ export function MaterialContentArea({
     return url.endsWith('.md') || url.endsWith('.markdown') || material.mime_type?.includes('markdown');
   };
 
+  const isPDFFile = (material: Material) => {
+    if (!material.file_url) return false;
+    const url = material.file_url.toLowerCase();
+    return url.endsWith('.pdf') || material.mime_type?.includes('pdf');
+  };
+
+  const isImageFile = (material: Material) => {
+    if (!material.file_url) return false;
+    const url = material.file_url.toLowerCase();
+    return url.match(/\.(jpg|jpeg|png|gif|bmp|svg|webp)$/) || material.mime_type?.includes('image');
+  };
+
+  const isVideoFile = (material: Material) => {
+    if (!material.file_url) return false;
+    const url = material.file_url.toLowerCase();
+    return url.match(/\.(mp4|webm|ogg|avi|mov)$/) || material.mime_type?.includes('video');
+  };
+
   if (!selectedMaterial) {
     return (
       <Card className="text-center py-16 border-0 bg-white/80 backdrop-blur-sm shadow-xl">
@@ -53,6 +71,7 @@ export function MaterialContentArea({
     );
   }
 
+  // Render markdown files inline
   if (isMarkdownFile(selectedMaterial)) {
     return (
       <div className="space-y-6">
@@ -109,7 +128,138 @@ export function MaterialContentArea({
     );
   }
 
-  // Default material view for non-markdown files
+  // Render images inline
+  if (isImageFile(selectedMaterial)) {
+    return (
+      <div className="space-y-6">
+        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
+          <CardHeader>
+            <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
+            {selectedMaterial.description && (
+              <p className="text-gray-600">{selectedMaterial.description}</p>
+            )}
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span className="font-medium">Type:</span>
+                <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                  IMAGE
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {getMaterialProgress(selectedMaterial.id)?.completed ? (
+                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+                ) : (
+                  <Circle className="w-5 h-5 text-gray-400" />
+                )}
+              </div>
+            </div>
+            
+            <Button
+              onClick={() => onMaterialCompletion(selectedMaterial.id)}
+              disabled={progressLoading}
+              variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
+              className={`w-full ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+            >
+              {getMaterialProgress(selectedMaterial.id)?.completed ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Mark as Incomplete
+                </>
+              ) : (
+                <>
+                  <Circle className="w-4 h-4 mr-2" />
+                  Mark as Completed
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
+          <CardContent className="p-6">
+            <img 
+              src={selectedMaterial.file_url} 
+              alt={selectedMaterial.title}
+              className="w-full h-auto rounded-lg shadow-lg"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.svg';
+              }}
+            />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Render videos inline
+  if (isVideoFile(selectedMaterial)) {
+    return (
+      <div className="space-y-6">
+        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
+          <CardHeader>
+            <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
+            {selectedMaterial.description && (
+              <p className="text-gray-600">{selectedMaterial.description}</p>
+            )}
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span className="font-medium">Type:</span>
+                <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
+                  VIDEO
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {getMaterialProgress(selectedMaterial.id)?.completed ? (
+                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+                ) : (
+                  <Circle className="w-5 h-5 text-gray-400" />
+                )}
+              </div>
+            </div>
+            
+            <Button
+              onClick={() => onMaterialCompletion(selectedMaterial.id)}
+              disabled={progressLoading}
+              variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
+              className={`w-full ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+            >
+              {getMaterialProgress(selectedMaterial.id)?.completed ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Mark as Incomplete
+                </>
+              ) : (
+                <>
+                  <Circle className="w-4 h-4 mr-2" />
+                  Mark as Completed
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
+          <CardContent className="p-6">
+            <video 
+              controls 
+              className="w-full h-auto rounded-lg shadow-lg"
+              preload="metadata"
+            >
+              <source src={selectedMaterial.file_url} type={selectedMaterial.mime_type} />
+              Your browser does not support the video tag.
+            </video>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Default material view for PDFs and other files that need to be opened externally
   return (
     <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
       <CardHeader>
@@ -122,7 +272,7 @@ export function MaterialContentArea({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <span className="font-medium">Type:</span>
-            <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+            <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
               {selectedMaterial.mime_type?.split('/')[1]?.toUpperCase() || 'FILE'}
             </span>
           </div>
