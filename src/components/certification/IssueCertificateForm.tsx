@@ -4,9 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Award } from 'lucide-react';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Award, Check, ChevronsUpDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface Student {
   id: string;
@@ -28,6 +31,7 @@ interface IssueCertificateFormProps {
 const IssueCertificateForm = ({ students, courses, onCertificateIssued }: IssueCertificateFormProps) => {
   const [selectedStudent, setSelectedStudent] = useState('');
   const [selectedCourse, setSelectedCourse] = useState('');
+  const [open, setOpen] = useState(false);
 
   const generateCertificateNumber = () => {
     const year = new Date().getFullYear();
@@ -68,6 +72,8 @@ const IssueCertificateForm = ({ students, courses, onCertificateIssued }: IssueC
     onCertificateIssued();
   };
 
+  const selectedStudentData = students.find(student => student.id === selectedStudent);
+
   return (
     <Card>
       <CardHeader>
@@ -83,18 +89,53 @@ const IssueCertificateForm = ({ students, courses, onCertificateIssued }: IssueC
         <form onSubmit={handleIssueCertificate} className="space-y-4">
           <div>
             <Label htmlFor="student">Student</Label>
-            <Select value={selectedStudent} onValueChange={setSelectedStudent}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a student" />
-              </SelectTrigger>
-              <SelectContent>
-                {students.map((student) => (
-                  <SelectItem key={student.id} value={student.id}>
-                    {student.full_name} ({student.email})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className="w-full justify-between"
+                >
+                  {selectedStudentData ? 
+                    `${selectedStudentData.full_name} (${selectedStudentData.email})` : 
+                    "Search student by email..."
+                  }
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0">
+                <Command>
+                  <CommandInput placeholder="Search student by email..." />
+                  <CommandList>
+                    <CommandEmpty>No student found.</CommandEmpty>
+                    <CommandGroup>
+                      {students.map((student) => (
+                        <CommandItem
+                          key={student.id}
+                          value={`${student.email} ${student.full_name}`}
+                          onSelect={() => {
+                            setSelectedStudent(student.id);
+                            setOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedStudent === student.id ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          <div className="flex flex-col">
+                            <span className="font-medium">{student.full_name}</span>
+                            <span className="text-sm text-gray-500">{student.email}</span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div>
