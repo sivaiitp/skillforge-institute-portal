@@ -15,11 +15,11 @@ interface Certificate {
   issued_date: string;
   is_valid: boolean;
   profiles?: {
-    full_name: string;
-  };
+    full_name?: string;
+  } | null;
   courses?: {
-    title: string;
-  };
+    title?: string;
+  } | null;
 }
 
 interface VerificationResult {
@@ -71,7 +71,7 @@ const VerifyCertificateForm = ({ onCertificateUpdated }: VerifyCertificateFormPr
 
     setVerificationResult({
       valid: data.is_valid,
-      data: data,
+      data: data as Certificate,
       message: data.is_valid ? 'Certificate is valid' : 'Certificate has been revoked'
     });
   };
@@ -137,8 +137,8 @@ const VerifyCertificateForm = ({ onCertificateUpdated }: VerifyCertificateFormPr
             
             {verificationResult.data && (
               <div className="text-sm space-y-1">
-                <p><strong>Student:</strong> {verificationResult.data.profiles?.full_name}</p>
-                <p><strong>Course:</strong> {verificationResult.data.courses?.title}</p>
+                <p><strong>Student:</strong> {verificationResult.data.profiles?.full_name || 'N/A'}</p>
+                <p><strong>Course:</strong> {verificationResult.data.courses?.title || 'N/A'}</p>
                 <p><strong>Issued:</strong> {new Date(verificationResult.data.issued_date).toLocaleDateString()}</p>
                 <Button
                   variant="outline"

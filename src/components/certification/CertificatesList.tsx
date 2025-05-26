@@ -14,11 +14,11 @@ interface Certificate {
   issued_date: string;
   is_valid: boolean;
   profiles?: {
-    full_name: string;
-  };
+    full_name?: string;
+  } | null;
   courses?: {
-    title: string;
-  };
+    title?: string;
+  } | null;
 }
 
 interface CertificatesListProps {
