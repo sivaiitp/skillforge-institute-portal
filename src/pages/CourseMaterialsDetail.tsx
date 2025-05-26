@@ -8,7 +8,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
-import { AdminSidebar } from '@/components/AdminSidebar';
+import AdminSidebar from '@/components/AdminSidebar';
 import StudyMaterialsGrid from '@/components/study-materials/StudyMaterialsGrid';
 import StudyMaterialForm from '@/components/study-materials/StudyMaterialForm';
 

@@ -8,7 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
-import { AdminSidebar } from '@/components/AdminSidebar';
+import AdminSidebar from '@/components/AdminSidebar';
 import StudyMaterialsHeader from '@/components/study-materials/StudyMaterialsHeader';
 import StudyMaterialForm from '@/components/study-materials/StudyMaterialForm';
 
@@ -189,6 +189,12 @@ const StudyMaterialManagement = () => {
 
   if (!user) return null;
 
+  // Calculate stats for the header
+  const totalMaterials = courses.reduce((sum, course) => sum + (course.material_count || 0), 0);
+  const activeMaterials = totalMaterials; // Assuming all are active for now
+  const downloadableMaterials = totalMaterials; // Assuming all are downloadable for now
+  const coursesCount = courses.length;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <SidebarProvider>
@@ -210,7 +216,13 @@ const StudyMaterialManagement = () => {
             
             <div className="flex justify-center">
               <div className="p-8 space-y-8 max-w-7xl w-full">
-                <StudyMaterialsHeader onAddNew={() => setShowForm(true)} />
+                <StudyMaterialsHeader 
+                  materialsCount={totalMaterials}
+                  activeCount={activeMaterials}
+                  downloadableCount={downloadableMaterials}
+                  coursesCount={coursesCount}
+                  onAddMaterial={() => setShowForm(true)}
+                />
 
                 {loading ? (
                   <div className="text-center py-20">
