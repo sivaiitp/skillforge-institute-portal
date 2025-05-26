@@ -24,7 +24,7 @@ const Navigation = () => {
     { name: "Events", href: "/events" },
     { name: "Career Guidance", href: "/career" },
     { name: "Contact", href: "/contact" },
-    { name: "Verify Certificate", href: "/verify" },
+    { name: "Verify Certificate", href: "/verify-certificate" },
   ];
 
   const handleSignOut = async () => {
