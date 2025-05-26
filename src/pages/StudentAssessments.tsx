@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { StudentSidebar } from "@/components/StudentSidebar";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const StudentAssessments = () => {
   const { user, userRole } = useAuth();
@@ -89,153 +91,161 @@ const StudentAssessments = () => {
   if (!user) return null;
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <StudentSidebar />
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
-            <SidebarTrigger className="-ml-1" />
-            <h1 className="text-xl font-semibold">Assessments</h1>
-          </header>
-          
-          <div className="flex-1 p-6 space-y-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Assessments & Tests</h2>
-              <p className="text-gray-600">Take tests and track your performance</p>
-            </div>
+    <div className="min-h-screen flex flex-col">
+      <Navigation />
+      
+      <div className="flex-1 flex">
+        <SidebarProvider>
+          <div className="min-h-screen flex w-full">
+            <StudentSidebar />
+            <SidebarInset className="flex-1">
+              <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
+                <SidebarTrigger className="-ml-1" />
+                <h1 className="text-xl font-semibold">Assessments</h1>
+              </header>
+              
+              <div className="flex-1 p-6 space-y-6">
+                <div className="space-y-2">
+                  <h2 className="text-2xl font-bold">Assessments & Tests</h2>
+                  <p className="text-gray-600">Take tests and track your performance</p>
+                </div>
 
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p>Loading assessments...</p>
-              </div>
-            ) : (
-              <div className="space-y-8">
-                {/* Available Tests */}
-                <section>
-                  <h3 className="text-xl font-semibold mb-4">Available Tests</h3>
-                  {assessments.length === 0 ? (
-                    <Card className="text-center py-12">
-                      <CardContent>
-                        <ClipboardList className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="text-lg font-medium mb-2">No Tests Available</h3>
-                        <p className="text-gray-600">There are no active assessments at the moment.</p>
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {assessments.map((assessment) => {
-                        const status = getAssessmentStatus(assessment.id);
-                        const score = getAssessmentScore(assessment.id);
-                        
-                        return (
-                          <Card key={assessment.id} className="hover:shadow-lg transition-shadow">
-                            <CardHeader>
-                              <div className="flex justify-between items-start">
-                                <CardTitle className="text-lg">{assessment.title}</CardTitle>
-                                <Badge 
-                                  variant={
-                                    status === 'passed' ? 'default' : 
-                                    status === 'failed' ? 'destructive' : 'secondary'
-                                  }
-                                >
-                                  {status === 'not_taken' ? 'Available' : 
-                                   status === 'passed' ? 'Passed' : 'Failed'}
-                                </Badge>
-                              </div>
-                              <CardDescription>{assessment.description}</CardDescription>
-                            </CardHeader>
+                {loading ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p>Loading assessments...</p>
+                  </div>
+                ) : (
+                  <div className="space-y-8">
+                    {/* Available Tests */}
+                    <section>
+                      <h3 className="text-xl font-semibold mb-4">Available Tests</h3>
+                      {assessments.length === 0 ? (
+                        <Card className="text-center py-12">
+                          <CardContent>
+                            <ClipboardList className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                            <h3 className="text-lg font-medium mb-2">No Tests Available</h3>
+                            <p className="text-gray-600">There are no active assessments at the moment.</p>
+                          </CardContent>
+                        </Card>
+                      ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {assessments.map((assessment) => {
+                            const status = getAssessmentStatus(assessment.id);
+                            const score = getAssessmentScore(assessment.id);
                             
-                            <CardContent className="space-y-4">
-                              <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                  <span>Course:</span>
-                                  <span className="font-medium">{assessment.courses?.title}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Duration:</span>
-                                  <span>{assessment.duration_minutes} minutes</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Total Marks:</span>
-                                  <span>{assessment.total_marks}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Passing Marks:</span>
-                                  <span>{assessment.passing_marks}</span>
-                                </div>
-                                {score && (
-                                  <div className="flex justify-between">
-                                    <span>Your Score:</span>
-                                    <span className="font-medium">{score}</span>
+                            return (
+                              <Card key={assessment.id} className="hover:shadow-lg transition-shadow">
+                                <CardHeader>
+                                  <div className="flex justify-between items-start">
+                                    <CardTitle className="text-lg">{assessment.title}</CardTitle>
+                                    <Badge 
+                                      variant={
+                                        status === 'passed' ? 'default' : 
+                                        status === 'failed' ? 'destructive' : 'secondary'
+                                      }
+                                    >
+                                      {status === 'not_taken' ? 'Available' : 
+                                       status === 'passed' ? 'Passed' : 'Failed'}
+                                    </Badge>
                                   </div>
-                                )}
-                              </div>
-                              
-                              <Button 
-                                className="w-full"
-                                disabled={status === 'passed'}
-                              >
-                                {status === 'passed' ? 'Completed' : 
-                                 status === 'failed' ? 'Retake Test' : 'Start Test'}
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </div>
-                  )}
-                </section>
-
-                {/* Test Results */}
-                {results.length > 0 && (
-                  <section>
-                    <h3 className="text-xl font-semibold mb-4">Test Results & Performance</h3>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <TrendingUp className="h-5 w-5" />
-                          Performance History
-                        </CardTitle>
-                        <CardDescription>Your test results and progress over time</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          {results.map((result) => (
-                            <div key={result.id} className="flex items-center justify-between p-4 border rounded-lg">
-                              <div className="space-y-1">
-                                <h4 className="font-medium">{result.assessments?.title}</h4>
-                                <p className="text-sm text-gray-600">
-                                  {result.assessments?.courses?.title}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  Taken on: {new Date(result.taken_at).toLocaleDateString()}
-                                </p>
-                              </div>
-                              <div className="text-right space-y-1">
-                                <div className="font-medium">
-                                  {result.score}/{result.total_marks}
-                                </div>
-                                <div className="text-sm text-gray-600">
-                                  {Math.round((result.score / result.total_marks) * 100)}%
-                                </div>
-                                <Badge variant={result.passed ? "default" : "destructive"}>
-                                  {result.passed ? "Passed" : "Failed"}
-                                </Badge>
-                              </div>
-                            </div>
-                          ))}
+                                  <CardDescription>{assessment.description}</CardDescription>
+                                </CardHeader>
+                                
+                                <CardContent className="space-y-4">
+                                  <div className="space-y-2 text-sm">
+                                    <div className="flex justify-between">
+                                      <span>Course:</span>
+                                      <span className="font-medium">{assessment.courses?.title}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span>Duration:</span>
+                                      <span>{assessment.duration_minutes} minutes</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span>Total Marks:</span>
+                                      <span>{assessment.total_marks}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                      <span>Passing Marks:</span>
+                                      <span>{assessment.passing_marks}</span>
+                                    </div>
+                                    {score && (
+                                      <div className="flex justify-between">
+                                        <span>Your Score:</span>
+                                        <span className="font-medium">{score}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                  
+                                  <Button 
+                                    className="w-full"
+                                    disabled={status === 'passed'}
+                                  >
+                                    {status === 'passed' ? 'Completed' : 
+                                     status === 'failed' ? 'Retake Test' : 'Start Test'}
+                                  </Button>
+                                </CardContent>
+                              </Card>
+                            );
+                          })}
                         </div>
-                      </CardContent>
-                    </Card>
-                  </section>
+                      )}
+                    </section>
+
+                    {/* Test Results */}
+                    {results.length > 0 && (
+                      <section>
+                        <h3 className="text-xl font-semibold mb-4">Test Results & Performance</h3>
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <TrendingUp className="h-5 w-5" />
+                              Performance History
+                            </CardTitle>
+                            <CardDescription>Your test results and progress over time</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-4">
+                              {results.map((result) => (
+                                <div key={result.id} className="flex items-center justify-between p-4 border rounded-lg">
+                                  <div className="space-y-1">
+                                    <h4 className="font-medium">{result.assessments?.title}</h4>
+                                    <p className="text-sm text-gray-600">
+                                      {result.assessments?.courses?.title}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      Taken on: {new Date(result.taken_at).toLocaleDateString()}
+                                    </p>
+                                  </div>
+                                  <div className="text-right space-y-1">
+                                    <div className="font-medium">
+                                      {result.score}/{result.total_marks}
+                                    </div>
+                                    <div className="text-sm text-gray-600">
+                                      {Math.round((result.score / result.total_marks) * 100)}%
+                                    </div>
+                                    <Badge variant={result.passed ? "default" : "destructive"}>
+                                      {result.passed ? "Passed" : "Failed"}
+                                    </Badge>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </section>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
+            </SidebarInset>
           </div>
-        </SidebarInset>
+        </SidebarProvider>
       </div>
-    </SidebarProvider>
+      
+      <Footer />
+    </div>
   );
 };
 
