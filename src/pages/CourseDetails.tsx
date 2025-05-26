@@ -1,8 +1,10 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/components/AuthProvider';
+import { useEnrollment } from '@/hooks/useEnrollment';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import CourseHero from '@/components/CourseHero';
@@ -16,6 +18,9 @@ import { toast } from 'sonner';
 const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { enrollInCourse, checkEnrollmentStatus, loading: enrollmentLoading } = useEnrollment();
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
   console.log('Course ID from params:', id);
 
@@ -72,6 +77,18 @@ const CourseDetails = () => {
     enabled: !!id
   });
 
+  // Check enrollment status when course data is loaded
+  useEffect(() => {
+    const checkEnrollment = async () => {
+      if (course && user) {
+        const enrolled = await checkEnrollmentStatus(course.id);
+        setIsEnrolled(enrolled);
+      }
+    };
+    
+    checkEnrollment();
+  }, [course, user, checkEnrollmentStatus]);
+
   const { data: relatedCourses } = useQuery({
     queryKey: ['related-courses', course?.category],
     queryFn: async () => {
@@ -90,8 +107,24 @@ const CourseDetails = () => {
     enabled: !!course?.category
   });
 
-  const handleEnrollment = () => {
-    toast.success('Enrollment process initiated! Please contact us to complete your registration.');
+  const handleEnrollment = async () => {
+    if (!user) {
+      toast.error('Please log in to enroll in courses');
+      navigate('/auth');
+      return;
+    }
+
+    if (!course) return;
+
+    if (isEnrolled) {
+      navigate('/dashboard/courses');
+      return;
+    }
+
+    const success = await enrollInCourse(course.id);
+    if (success) {
+      setIsEnrolled(true);
+    }
   };
 
   const handleDownloadBrochure = () => {
@@ -146,6 +179,8 @@ const CourseDetails = () => {
         course={course}
         onEnroll={handleEnrollment}
         onDownloadBrochure={handleDownloadBrochure}
+        isEnrolled={isEnrolled}
+        enrollmentLoading={enrollmentLoading}
       />
 
       {/* Course Content */}
@@ -157,6 +192,8 @@ const CourseDetails = () => {
               course={course}
               onEnroll={handleEnrollment}
               onDownloadBrochure={handleDownloadBrochure}
+              isEnrolled={isEnrolled}
+              enrollmentLoading={enrollmentLoading}
             />
           </div>
         </div>
