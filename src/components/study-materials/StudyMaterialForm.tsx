@@ -80,19 +80,43 @@ const StudyMaterialForm = ({
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
+  const sanitizeForFilename = (text: string): string => {
+    return text
+      .replace(/[^a-zA-Z0-9\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '_') // Replace spaces with underscores
+      .toLowerCase()
+      .substring(0, 50); // Limit length
+  };
+
+  const getSelectedCourseName = (): string => {
+    const selectedCourse = courses.find(course => course.id === formData.course_id);
+    return selectedCourse ? selectedCourse.title : 'unknown_course';
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!formData.course_id) {
+      toast.error('Please select a course first before uploading a file');
+      return;
+    }
+
     setIsUploading(true);
     try {
-      // For markdown files, we'll save them to the public/content directory
+      // For markdown files, we'll save them to the public/content directory with course prefix
       if (file.type === 'text/markdown' || file.name.endsWith('.md')) {
         const content = await file.text();
         
         // Create a blob URL for immediate preview/use
         const blob = new Blob([content], { type: 'text/markdown' });
-        const fileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_'); // Sanitize filename
+        
+        // Get course name and sanitize it
+        const courseName = sanitizeForFilename(getSelectedCourseName());
+        const originalFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        
+        // Create filename with course prefix
+        const fileName = `${courseName}_${originalFileName}`;
         
         // Generate a relative path for the content directory
         const relativePath = `/content/${fileName}`;
@@ -109,10 +133,10 @@ const StudyMaterialForm = ({
         
         setUploadedFile(file);
         
-        // Store the content in localStorage temporarily (in production, you'd upload to server)
+        // Store the content in localStorage temporarily with the new filename
         localStorage.setItem(`markdown_content_${fileName}`, content);
         
-        toast.success('Markdown file uploaded successfully! Please save the material to complete the process.');
+        toast.success(`Markdown file uploaded successfully with course prefix! File will be saved as: ${fileName}`);
       } else {
         // For other file types, handle as before
         const fileUrl = URL.createObjectURL(file);
@@ -140,14 +164,18 @@ const StudyMaterialForm = ({
     
     // If it's a markdown file and we have content stored, create the actual file
     if (uploadedFile && formData.material_type === 'markdown') {
-      const content = localStorage.getItem(`markdown_content_${uploadedFile.name}`);
+      const courseName = sanitizeForFilename(getSelectedCourseName());
+      const originalFileName = uploadedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const fileName = `${courseName}_${originalFileName}`;
+      
+      const content = localStorage.getItem(`markdown_content_${fileName}`);
       if (content) {
         // In a real application, you would save this to your server/storage
         console.log('Saving markdown content to:', formData.file_url);
         console.log('Content:', content);
         
         // Clean up localStorage
-        localStorage.removeItem(`markdown_content_${uploadedFile.name}`);
+        localStorage.removeItem(`markdown_content_${fileName}`);
       }
     }
     
@@ -155,15 +183,27 @@ const StudyMaterialForm = ({
   };
 
   const resetFileUpload = () => {
-    setUploadedFile(null);
-    if (uploadedFile) {
-      localStorage.removeItem(`markdown_content_${uploadedFile.name}`);
+    if (uploadedFile && formData.material_type === 'markdown') {
+      const courseName = sanitizeForFilename(getSelectedCourseName());
+      const originalFileName = uploadedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const fileName = `${courseName}_${originalFileName}`;
+      localStorage.removeItem(`markdown_content_${fileName}`);
     }
+    setUploadedFile(null);
   };
 
   const handleClose = () => {
     resetFileUpload();
     onClose();
+  };
+
+  // Reset uploaded file when course changes
+  const handleCourseChange = (courseId: string) => {
+    if (uploadedFile) {
+      resetFileUpload();
+      toast.info('File upload reset. Please upload the file again after selecting the course.');
+    }
+    onFormDataChange({...formData, course_id: courseId});
   };
 
   return (
@@ -189,7 +229,7 @@ const StudyMaterialForm = ({
             </div>
             <div>
               <Label htmlFor="course" className="text-gray-700">Course *</Label>
-              <Select value={formData.course_id} onValueChange={(value) => onFormDataChange({...formData, course_id: value})}>
+              <Select value={formData.course_id} onValueChange={handleCourseChange}>
                 <SelectTrigger className="bg-white border-gray-300 text-gray-800 focus:border-emerald-500 focus:ring-emerald-500">
                   <SelectValue placeholder="Select a course" />
                 </SelectTrigger>
@@ -268,22 +308,36 @@ const StudyMaterialForm = ({
                   accept=".md,.pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.gif,.mp4,.avi,.mp3,.wav"
                   onChange={handleFileUpload}
                   className="hidden"
-                  disabled={isUploading}
+                  disabled={isUploading || !formData.course_id}
                 />
                 <label
                   htmlFor="file-upload"
-                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-emerald-400 hover:bg-emerald-50 transition-colors"
+                  className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                    !formData.course_id 
+                      ? 'border-gray-200 bg-gray-100 cursor-not-allowed' 
+                      : 'border-gray-300 hover:border-emerald-400 hover:bg-emerald-50'
+                  }`}
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     {isUploading ? (
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
                     ) : (
                       <>
-                        <Upload className="w-8 h-8 mb-2 text-gray-500" />
-                        <p className="mb-2 text-sm text-gray-500">
-                          <span className="font-semibold">Click to upload</span> or drag and drop
+                        <Upload className={`w-8 h-8 mb-2 ${!formData.course_id ? 'text-gray-400' : 'text-gray-500'}`} />
+                        <p className={`mb-2 text-sm ${!formData.course_id ? 'text-gray-400' : 'text-gray-500'}`}>
+                          <span className="font-semibold">
+                            {!formData.course_id ? 'Select a course first' : 'Click to upload'}
+                          </span>
+                          {formData.course_id && ' or drag and drop'}
                         </p>
-                        <p className="text-xs text-gray-500">Markdown, PDF, DOC, PPT, Images, Videos, Audio</p>
+                        <p className={`text-xs ${!formData.course_id ? 'text-gray-400' : 'text-gray-500'}`}>
+                          Markdown, PDF, DOC, PPT, Images, Videos, Audio
+                        </p>
+                        {formData.course_id && (
+                          <p className="text-xs text-emerald-600 mt-1">
+                            Files will be prefixed with: {sanitizeForFilename(getSelectedCourseName())}_
+                          </p>
+                        )}
                       </>
                     )}
                   </div>
@@ -295,6 +349,11 @@ const StudyMaterialForm = ({
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-800">{uploadedFile.name}</p>
                   <p className="text-xs text-gray-500">{(uploadedFile.size / 1024).toFixed(1)} KB</p>
+                  {formData.material_type === 'markdown' && (
+                    <p className="text-xs text-emerald-600">
+                      Will be saved as: {sanitizeForFilename(getSelectedCourseName())}_{uploadedFile.name.replace(/[^a-zA-Z0-9.-]/g, '_')}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
