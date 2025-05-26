@@ -3,12 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Award, Check, ChevronsUpDown, User, BookOpen, AlertCircle } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Award, Search, User, BookOpen, AlertCircle, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
 
 interface Student {
   id: string;
@@ -35,10 +33,11 @@ interface IssueCertificateFormProps {
 }
 
 const IssueCertificateForm = ({ students, courses, onCertificateIssued }: IssueCertificateFormProps) => {
-  const [selectedStudent, setSelectedStudent] = useState('');
+  const [searchEmail, setSearchEmail] = useState('');
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [selectedCourse, setSelectedCourse] = useState('');
-  const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
   const [loadingEnrollments, setLoadingEnrollments] = useState(false);
 
@@ -113,11 +112,46 @@ const IssueCertificateForm = ({ students, courses, onCertificateIssued }: IssueC
     }
   };
 
-  const handleStudentSelect = (studentId: string) => {
-    setSelectedStudent(studentId);
+  const handleSearchStudent = async () => {
+    if (!searchEmail.trim()) {
+      toast.error('Please enter an email address');
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const { data: student, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .eq('email', searchEmail.trim())
+        .eq('role', 'student')
+        .single();
+
+      if (error || !student) {
+        toast.error('Student not found with this email address');
+        setSelectedStudent(null);
+        setEnrolledCourses([]);
+        return;
+      }
+
+      setSelectedStudent(student);
+      await fetchStudentEnrollments(student.id);
+      toast.success(`Found student: ${student.full_name}`);
+    } catch (error) {
+      console.error('Error searching student:', error);
+      toast.error('Error searching for student');
+      setSelectedStudent(null);
+      setEnrolledCourses([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleClearStudent = () => {
+    setSelectedStudent(null);
+    setSearchEmail('');
     setSelectedCourse('');
-    setOpen(false);
-    fetchStudentEnrollments(studentId);
+    setEnrolledCourses([]);
   };
 
   const handleIssueCertificate = async (e: React.FormEvent) => {
@@ -141,7 +175,7 @@ const IssueCertificateForm = ({ students, courses, onCertificateIssued }: IssueC
     const { error } = await supabase
       .from('certificates')
       .insert({
-        user_id: selectedStudent,
+        user_id: selectedStudent.id,
         course_id: selectedCourse,
         certificate_number: certificateNumber,
         certificate_id: certificateNumber,
@@ -157,105 +191,105 @@ const IssueCertificateForm = ({ students, courses, onCertificateIssued }: IssueC
     }
 
     toast.success(`Certificate issued successfully! Number: ${certificateNumber}`);
-    setSelectedStudent('');
-    setSelectedCourse('');
-    setEnrolledCourses([]);
+    handleClearStudent();
     setIsLoading(false);
     onCertificateIssued();
   };
 
-  const selectedStudentData = students.find(student => student.id === selectedStudent);
   const availableCourses = enrolledCourses.filter(course => !course.has_certificate);
 
   return (
     <form onSubmit={handleIssueCertificate} className="space-y-6">
-      {/* Student Selection */}
-      <div className="space-y-2">
-        <Label htmlFor="student" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-          <User className="w-4 h-4" />
+      {/* Student Search Section */}
+      <div className="space-y-4">
+        <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+          <Search className="w-4 h-4" />
           Search Student by Email
         </Label>
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className="w-full justify-between h-11 border-gray-200 hover:border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-            >
-              {selectedStudentData ? (
-                <div className="flex items-center gap-2 text-left">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-blue-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{selectedStudentData.full_name}</p>
-                    <p className="text-sm text-gray-500 truncate">{selectedStudentData.email}</p>
-                  </div>
+        
+        <div className="flex gap-3">
+          <div className="flex-1">
+            <Input
+              type="email"
+              placeholder="Enter student email address..."
+              value={searchEmail}
+              onChange={(e) => setSearchEmail(e.target.value)}
+              className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSearchStudent();
+                }
+              }}
+            />
+          </div>
+          <Button
+            type="button"
+            onClick={handleSearchStudent}
+            disabled={isSearching || !searchEmail.trim()}
+            className="h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {isSearching ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Searching...
+              </>
+            ) : (
+              <>
+                <Search className="w-4 h-4 mr-2" />
+                Search
+              </>
+            )}
+          </Button>
+        </div>
+
+        {/* Selected Student Display */}
+        {selectedStudent && (
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-blue-600" />
                 </div>
-              ) : (
-                <span className="text-gray-500">Search student by email...</span>
-              )}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full p-0 z-50" style={{ width: 'var(--radix-popover-trigger-width)' }}>
-            <Command>
-              <CommandInput placeholder="Search student by email..." className="h-9" />
-              <CommandList className="max-h-64">
-                <CommandEmpty>No student found.</CommandEmpty>
-                <CommandGroup>
-                  {students.map((student) => (
-                    <CommandItem
-                      key={student.id}
-                      value={student.email}
-                      onSelect={() => handleStudentSelect(student.id)}
-                      className="p-3"
-                    >
-                      <Check
-                        className={cn(
-                          "mr-3 h-4 w-4",
-                          selectedStudent === student.id ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      <div className="flex items-center gap-3 flex-1">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                          <User className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">{student.full_name}</p>
-                          <p className="text-sm text-gray-500 truncate">{student.email}</p>
-                        </div>
-                      </div>
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
+                <div>
+                  <p className="font-medium text-gray-900">{selectedStudent.full_name}</p>
+                  <p className="text-sm text-gray-600">{selectedStudent.email}</p>
+                </div>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleClearStudent}
+                className="h-8 w-8 p-0 text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Course Selection - Only show if student is selected */}
       {selectedStudent && (
-        <div className="space-y-2">
-          <Label htmlFor="course" className="text-sm font-medium text-gray-700 flex items-center gap-2">
+        <div className="space-y-3">
+          <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Select Enrolled Course (No Certificate Yet)
           </Label>
           
           {loadingEnrollments ? (
-            <div className="flex items-center justify-center h-11 border border-gray-200 rounded-md">
+            <div className="flex items-center justify-center h-11 border border-gray-200 rounded-md bg-gray-50">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
               <span className="ml-2 text-sm text-gray-500">Loading enrollments...</span>
             </div>
           ) : availableCourses.length === 0 ? (
-            <div className="flex items-center gap-2 p-3 border border-amber-200 bg-amber-50 rounded-md">
-              <AlertCircle className="w-4 h-4 text-amber-600" />
+            <div className="flex items-center gap-2 p-4 border border-amber-200 bg-amber-50 rounded-lg">
+              <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
               <span className="text-sm text-amber-700">
                 {enrolledCourses.length === 0 
-                  ? "Student is not enrolled in any courses" 
-                  : "Student already has certificates for all enrolled courses"
+                  ? "This student is not enrolled in any courses" 
+                  : "This student already has certificates for all enrolled courses"
                 }
               </span>
             </div>
@@ -264,7 +298,7 @@ const IssueCertificateForm = ({ students, courses, onCertificateIssued }: IssueC
               <SelectTrigger className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500">
                 <SelectValue placeholder="Choose a course to certify" />
               </SelectTrigger>
-              <SelectContent className="z-50">
+              <SelectContent>
                 {availableCourses.map((course) => (
                   <SelectItem key={course.id} value={course.id} className="p-3">
                     <div className="flex items-center gap-3">
