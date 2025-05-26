@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -216,12 +217,12 @@ const StudyMaterialManagement = () => {
 
   if (userRole !== 'admin') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <AdminSidebar />
-        <div className="ml-64 p-8">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-8 text-center">
-            <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
-            <p className="text-gray-300">You don't have permission to access this page.</p>
+        <div className="ml-64 p-6">
+          <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+            <p className="text-gray-600">You don't have permission to access this page.</p>
           </div>
         </div>
       </div>
@@ -229,21 +230,21 @@ const StudyMaterialManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <AdminSidebar />
       
-      <div className="ml-64 p-8">
+      <div className="ml-64 p-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
+        <div className="mb-6">
+          <div className="bg-white rounded-xl shadow-sm border p-6">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg">
                   <Files className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-white mb-1">Study Materials Management</h1>
-                  <p className="text-gray-300">Manage course materials, PDFs, videos, and resources</p>
+                  <h1 className="text-3xl font-bold text-gray-800 mb-1">Study Materials Management</h1>
+                  <p className="text-gray-600">Manage course materials, PDFs, videos, and resources</p>
                 </div>
               </div>
               <Dialog open={showForm} onOpenChange={setShowForm}>
@@ -253,10 +254,10 @@ const StudyMaterialManagement = () => {
                     Add Study Material
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl bg-slate-800 border-white/20">
+                <DialogContent className="max-w-2xl bg-white border-gray-200">
                   <DialogHeader>
-                    <DialogTitle className="text-white">{editingMaterial ? 'Edit' : 'Add'} Study Material</DialogTitle>
-                    <DialogDescription className="text-gray-300">
+                    <DialogTitle className="text-gray-800">{editingMaterial ? 'Edit' : 'Add'} Study Material</DialogTitle>
+                    <DialogDescription className="text-gray-600">
                       {editingMaterial ? 'Update the study material details.' : 'Add a new study material for a course.'}
                     </DialogDescription>
                   </DialogHeader>
@@ -406,40 +407,40 @@ const StudyMaterialManagement = () => {
             
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-              <div className="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 rounded-lg p-4">
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-emerald-200 text-sm">Total Materials</p>
-                    <p className="text-2xl font-bold text-white">{materials.length}</p>
+                    <p className="text-emerald-700 text-sm font-medium">Total Materials</p>
+                    <p className="text-2xl font-bold text-gray-800">{materials.length}</p>
                   </div>
-                  <Files className="w-8 h-8 text-emerald-400" />
+                  <Files className="w-8 h-8 text-emerald-500" />
                 </div>
               </div>
-              <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-lg p-4">
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-200 text-sm">Active Materials</p>
-                    <p className="text-2xl font-bold text-white">{materials.filter(m => m.is_active).length}</p>
+                    <p className="text-blue-700 text-sm font-medium">Active Materials</p>
+                    <p className="text-2xl font-bold text-gray-800">{materials.filter(m => m.is_active).length}</p>
                   </div>
-                  <FileText className="w-8 h-8 text-blue-400" />
+                  <FileText className="w-8 h-8 text-blue-500" />
                 </div>
               </div>
-              <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg p-4">
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-purple-200 text-sm">Downloadable</p>
-                    <p className="text-2xl font-bold text-white">{materials.filter(m => m.is_downloadable).length}</p>
+                    <p className="text-purple-700 text-sm font-medium">Downloadable</p>
+                    <p className="text-2xl font-bold text-gray-800">{materials.filter(m => m.is_downloadable).length}</p>
                   </div>
-                  <Download className="w-8 h-8 text-purple-400" />
+                  <Download className="w-8 h-8 text-purple-500" />
                 </div>
               </div>
-              <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-lg p-4">
+              <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-orange-200 text-sm">Linked Courses</p>
-                    <p className="text-2xl font-bold text-white">{courses.length}</p>
+                    <p className="text-orange-700 text-sm font-medium">Linked Courses</p>
+                    <p className="text-2xl font-bold text-gray-800">{courses.length}</p>
                   </div>
-                  <BookOpen className="w-8 h-8 text-orange-400" />
+                  <BookOpen className="w-8 h-8 text-orange-500" />
                 </div>
               </div>
             </div>
@@ -455,7 +456,7 @@ const StudyMaterialManagement = () => {
               size="sm"
               className={selectedCourse === 'all' 
                 ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white' 
-                : 'border-white/20 text-white hover:bg-white/10'
+                : 'border-gray-300 text-gray-700 hover:bg-gray-100'
               }
             >
               All Courses
@@ -468,7 +469,7 @@ const StudyMaterialManagement = () => {
                 size="sm"
                 className={selectedCourse === course.id 
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white' 
-                  : 'border-white/20 text-white hover:bg-white/10'
+                  : 'border-gray-300 text-gray-700 hover:bg-gray-100'
                 }
               >
                 {course.title}
@@ -479,11 +480,11 @@ const StudyMaterialManagement = () => {
 
         {/* Materials List */}
         {materials.length === 0 ? (
-          <Card className="text-center py-12 bg-white/10 backdrop-blur-sm border-white/20">
+          <Card className="text-center py-12 bg-white shadow-sm border">
             <CardContent>
               <BookOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium mb-2 text-white">No Study Materials</h3>
-              <p className="text-gray-300 mb-4">
+              <h3 className="text-lg font-medium mb-2 text-gray-800">No Study Materials</h3>
+              <p className="text-gray-600 mb-4">
                 {selectedCourse === 'all' 
                   ? "No study materials have been created yet."
                   : "No study materials found for this course."
@@ -500,16 +501,16 @@ const StudyMaterialManagement = () => {
             {materials.map((material) => {
               const IconComponent = getMaterialIcon(material.material_type);
               return (
-                <Card key={material.id} className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 hover:shadow-lg transition-all duration-300">
+                <Card key={material.id} className="bg-white shadow-sm border hover:shadow-md transition-all duration-300">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2">
-                        <IconComponent className="w-5 h-5 text-emerald-400" />
-                        <Badge variant="outline" className="text-xs border-emerald-400/50 text-emerald-400 bg-emerald-500/10">
+                        <IconComponent className="w-5 h-5 text-emerald-500" />
+                        <Badge variant="outline" className="text-xs border-emerald-300 text-emerald-600 bg-emerald-50">
                           {material.material_type}
                         </Badge>
                         {!material.is_active && (
-                          <Badge variant="secondary" className="text-xs bg-gray-500/20 text-gray-400 border-gray-500/30">
+                          <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600 border-gray-300">
                             Inactive
                           </Badge>
                         )}
@@ -519,7 +520,7 @@ const StudyMaterialManagement = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleEdit(material)}
-                          className="text-white hover:bg-white/10"
+                          className="text-gray-600 hover:bg-gray-100"
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -527,32 +528,32 @@ const StudyMaterialManagement = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleDelete(material.id)}
-                          className="text-red-400 hover:bg-red-500/10"
+                          className="text-red-500 hover:bg-red-50"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
-                    <CardTitle className="text-lg text-white">{material.title}</CardTitle>
+                    <CardTitle className="text-lg text-gray-800">{material.title}</CardTitle>
                     <CardDescription>
-                      <span className="font-medium text-emerald-400">
+                      <span className="font-medium text-emerald-600">
                         {material.courses?.title}
                       </span>
                       {material.description && (
-                        <span className="block mt-1 text-gray-300">{material.description}</span>
+                        <span className="block mt-1 text-gray-600">{material.description}</span>
                       )}
                     </CardDescription>
                   </CardHeader>
                   
                   <CardContent className="space-y-2">
-                    <div className="flex items-center justify-between text-sm text-gray-300">
+                    <div className="flex items-center justify-between text-sm text-gray-600">
                       <span>Order: {material.sort_order}</span>
                       {material.duration && (
                         <span>Duration: {material.duration}</span>
                       )}
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className={material.is_downloadable ? 'text-green-400' : 'text-gray-400'}>
+                      <span className={material.is_downloadable ? 'text-green-600' : 'text-gray-500'}>
                         {material.is_downloadable ? 'Downloadable' : 'View Only'}
                       </span>
                       {material.file_url && (
@@ -560,7 +561,7 @@ const StudyMaterialManagement = () => {
                           href={material.file_url} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-emerald-400 hover:text-emerald-300 hover:underline transition-colors"
+                          className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
                         >
                           View File
                         </a>
