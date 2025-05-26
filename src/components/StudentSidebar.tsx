@@ -86,7 +86,7 @@ export function StudentSidebar() {
         <SidebarGroup>
           {/* Logo/Brand */}
           <div 
-            className="flex items-center space-x-3 mb-6 p-4 rounded-lg hover:bg-sidebar-accent transition-colors cursor-pointer"
+            className="flex items-center space-x-3 mb-3 p-3 rounded-lg hover:bg-sidebar-accent transition-colors cursor-pointer"
             onClick={() => navigate('/')}
           >
             <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
@@ -102,8 +102,8 @@ export function StudentSidebar() {
           </div>
 
           {/* User Info */}
-          <div className="mb-6 px-2">
-            <div className="flex items-center gap-3 rounded-lg bg-blue-50 p-4 text-blue-900 border border-blue-200">
+          <div className="mb-3 px-2">
+            <div className="flex items-center gap-3 rounded-lg bg-blue-50 p-3 text-blue-900 border border-blue-200">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                 <User className="h-4 w-4 text-blue-600" />
               </div>
@@ -116,7 +116,7 @@ export function StudentSidebar() {
             </div>
           </div>
 
-          <SidebarGroupLabel className="px-4 mb-2 text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wide">
+          <SidebarGroupLabel className="px-4 mb-1 text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wide">
             Student Menu
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -130,7 +130,7 @@ export function StudentSidebar() {
                     <SidebarMenuButton 
                       onClick={() => navigate(item.url)}
                       isActive={isActive}
-                      className="w-full justify-start h-12 px-4 mb-1 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 data-[active=true]:bg-blue-50 data-[active=true]:text-blue-900 data-[active=true]:border-blue-200 data-[active=true]:shadow-sm group"
+                      className="w-full justify-start h-10 px-4 mb-0.5 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 data-[active=true]:bg-blue-50 data-[active=true]:text-blue-900 data-[active=true]:border-blue-200 data-[active=true]:shadow-sm group"
                     >
                       <Icon className="w-5 h-5 mr-3 group-data-[active=true]:text-blue-600" />
                       <div className="flex-1 text-left">
@@ -153,7 +153,7 @@ export function StudentSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton 
               onClick={handleLogout}
-              className="w-full justify-start h-12 px-4 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200"
+              className="w-full justify-start h-10 px-4 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200"
             >
               <LogOut className="w-5 h-5 mr-3" />
               <div className="flex-1 text-left">
