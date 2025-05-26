@@ -11,6 +11,15 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AdminSidebar from '@/components/AdminSidebar';
 
+interface CourseEnrollmentData {
+  course: {
+    title: string;
+    price: number;
+  } | null;
+  count: number;
+  revenue: number;
+}
+
 const PaymentReports = () => {
   const { userRole } = useAuth();
   const [enrollments, setEnrollments] = useState([]);
@@ -75,8 +84,9 @@ const PaymentReports = () => {
     };
   };
 
-  const getTopCourses = () => {
-    const courseEnrollments = {};
+  const getTopCourses = (): CourseEnrollmentData[] => {
+    const courseEnrollments: Record<string, CourseEnrollmentData> = {};
+    
     enrollments.forEach(enrollment => {
       const courseId = enrollment.course_id;
       if (!courseEnrollments[courseId]) {
