@@ -6,101 +6,40 @@ import { toast } from 'sonner';
 import AdminSidebar from '@/components/AdminSidebar';
 import IssueCertificateForm from '@/components/certification/IssueCertificateForm';
 import VerifyCertificateForm from '@/components/certification/VerifyCertificateForm';
-import CertificatesList from '@/components/certification/CertificatesList';
 import { Award, Shield, CheckCircle, Users } from 'lucide-react';
-
-interface Certificate {
-  id: string;
-  certificate_number: string;
-  certificate_id: string;
-  issued_date: string;
-  is_valid: boolean;
-  user_id: string;
-  course_id: string;
-  profiles?: {
-    full_name?: string;
-  } | null;
-  courses?: {
-    title?: string;
-  } | null;
-}
 
 const CertificationManagement = () => {
   const { userRole } = useAuth();
-  const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [students, setStudents] = useState([]);
   const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [totalCertificates, setTotalCertificates] = useState(0);
+  const [validCertificates, setValidCertificates] = useState(0);
+  const [certifiedStudents, setCertifiedStudents] = useState(0);
 
   useEffect(() => {
     if (userRole === 'admin') {
-      fetchCertificates();
       fetchStudents();
       fetchCourses();
+      fetchCertificateStats();
     }
   }, [userRole]);
 
-  const fetchCertificates = async () => {
+  const fetchCertificateStats = async () => {
     try {
-      // First get all certificates
-      const { data: certificatesData, error: certificatesError } = await supabase
+      const { data: certificatesData, error } = await supabase
         .from('certificates')
-        .select('*')
-        .order('issued_date', { ascending: false });
+        .select('id, is_valid, user_id');
       
-      if (certificatesError) {
-        console.error('Error fetching certificates:', certificatesError);
-        toast.error('Error fetching certificates');
+      if (error) {
+        console.error('Error fetching certificate stats:', error);
         return;
       }
 
-      // Then fetch profiles and courses separately and combine
-      const certificatesWithDetails = await Promise.all(
-        (certificatesData || []).map(async (cert) => {
-          const promises = [];
-          
-          // Fetch profile if user_id exists
-          if (cert.user_id) {
-            promises.push(
-              supabase
-                .from('profiles')
-                .select('full_name, email')
-                .eq('id', cert.user_id)
-                .maybeSingle()
-            );
-          } else {
-            promises.push(Promise.resolve({ data: null }));
-          }
-
-          // Fetch course if course_id exists
-          if (cert.course_id) {
-            promises.push(
-              supabase
-                .from('courses')
-                .select('title, certification')
-                .eq('id', cert.course_id)
-                .maybeSingle()
-            );
-          } else {
-            promises.push(Promise.resolve({ data: null }));
-          }
-
-          const [profileResult, courseResult] = await Promise.all(promises);
-
-          return {
-            ...cert,
-            profiles: profileResult.data,
-            courses: courseResult.data
-          };
-        })
-      );
-
-      setCertificates(certificatesWithDetails);
+      setTotalCertificates(certificatesData?.length || 0);
+      setValidCertificates(certificatesData?.filter(c => c.is_valid).length || 0);
+      setCertifiedStudents(new Set(certificatesData?.map(c => c.user_id)).size || 0);
     } catch (error) {
-      console.error('Error fetching certificates:', error);
-      toast.error('Error fetching certificates');
-    } finally {
-      setLoading(false);
+      console.error('Error fetching certificate stats:', error);
     }
   };
 
@@ -144,6 +83,10 @@ const CertificationManagement = () => {
     }
   };
 
+  const handleCertificateIssued = () => {
+    fetchCertificateStats();
+  };
+
   if (userRole !== 'admin') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -182,7 +125,7 @@ const CertificationManagement = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-yellow-700 text-sm font-medium">Total Certificates</p>
-                    <p className="text-2xl font-bold text-gray-800">{certificates.length}</p>
+                    <p className="text-2xl font-bold text-gray-800">{totalCertificates}</p>
                   </div>
                   <Award className="w-8 h-8 text-yellow-500" />
                 </div>
@@ -191,7 +134,7 @@ const CertificationManagement = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-green-700 text-sm font-medium">Valid Certificates</p>
-                    <p className="text-2xl font-bold text-gray-800">{certificates.filter(c => c.is_valid).length}</p>
+                    <p className="text-2xl font-bold text-gray-800">{validCertificates}</p>
                   </div>
                   <CheckCircle className="w-8 h-8 text-green-500" />
                 </div>
@@ -200,7 +143,7 @@ const CertificationManagement = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-blue-700 text-sm font-medium">Certified Students</p>
-                    <p className="text-2xl font-bold text-gray-800">{new Set(certificates.map(c => c.user_id)).size}</p>
+                    <p className="text-2xl font-bold text-gray-800">{certifiedStudents}</p>
                   </div>
                   <Users className="w-8 h-8 text-blue-500" />
                 </div>
@@ -209,7 +152,7 @@ const CertificationManagement = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-all duration-300">
             <div className="flex items-center gap-2 mb-4">
               <Shield className="w-5 h-5 text-yellow-500" />
@@ -218,7 +161,7 @@ const CertificationManagement = () => {
             <IssueCertificateForm
               students={students}
               courses={courses}
-              onCertificateIssued={fetchCertificates}
+              onCertificateIssued={handleCertificateIssued}
             />
           </div>
           
@@ -228,16 +171,10 @@ const CertificationManagement = () => {
               <h2 className="text-xl font-semibold text-gray-800">Verify Certificate</h2>
             </div>
             <VerifyCertificateForm
-              onCertificateUpdated={fetchCertificates}
+              onCertificateUpdated={handleCertificateIssued}
             />
           </div>
         </div>
-
-        <CertificatesList
-          certificates={certificates}
-          loading={loading}
-          onCertificateUpdated={fetchCertificates}
-        />
       </div>
     </div>
   );

@@ -104,16 +104,16 @@ const IssueCertificateForm = ({ students, courses, onCertificateIssued }: IssueC
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
+              <PopoverContent className="w-[400px] p-0">
                 <Command>
-                  <CommandInput placeholder="Search student by email..." />
+                  <CommandInput placeholder="Search student by email..." className="h-9" />
                   <CommandList>
                     <CommandEmpty>No student found.</CommandEmpty>
                     <CommandGroup>
                       {students.map((student) => (
                         <CommandItem
                           key={student.id}
-                          value={`${student.email} ${student.full_name}`}
+                          value={student.email}
                           onSelect={() => {
                             setSelectedStudent(student.id);
                             setOpen(false);
