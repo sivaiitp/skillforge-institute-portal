@@ -76,7 +76,7 @@ export const useProfileData = () => {
       setProfile(data);
       
       if (data) {
-        setFormData({
+        const newFormData = {
           full_name: data.full_name || '',
           phone: data.phone || '',
           address: data.address || '',
@@ -91,7 +91,9 @@ export const useProfileData = () => {
           occupation: data.occupation || '',
           company: data.company || '',
           bio: data.bio || ''
-        });
+        };
+        setFormData(newFormData);
+        console.log('Updated form data:', newFormData);
       }
     } catch (error: any) {
       console.error('Error in fetchProfile:', error);
@@ -147,11 +149,30 @@ export const useProfileData = () => {
 
       console.log('Profile saved successfully:', data);
       toast.success('Profile updated successfully!');
+      
+      // Update the profile state with the saved data
       setProfile(data);
       setEditing(false);
       
-      // Refresh the profile data to ensure UI is in sync
-      await fetchProfile();
+      // Update form data to match the saved profile
+      const updatedFormData = {
+        full_name: data.full_name || '',
+        phone: data.phone || '',
+        address: data.address || '',
+        city: data.city || '',
+        state: data.state || '',
+        postal_code: data.postal_code || '',
+        country: data.country || '',
+        education_level: data.education_level || '',
+        institution: data.institution || '',
+        field_of_study: data.field_of_study || '',
+        graduation_year: data.graduation_year ? data.graduation_year.toString() : '',
+        occupation: data.occupation || '',
+        company: data.company || '',
+        bio: data.bio || ''
+      };
+      setFormData(updatedFormData);
+      
     } catch (error: any) {
       console.error('Error in handleSave:', error);
       toast.error('Error updating profile: ' + error.message);
@@ -164,7 +185,7 @@ export const useProfileData = () => {
     setEditing(false);
     // Reset form data to current profile values
     if (profile) {
-      setFormData({
+      const resetFormData = {
         full_name: profile.full_name || '',
         phone: profile.phone || '',
         address: profile.address || '',
@@ -179,7 +200,9 @@ export const useProfileData = () => {
         occupation: profile.occupation || '',
         company: profile.company || '',
         bio: profile.bio || ''
-      });
+      };
+      setFormData(resetFormData);
+      console.log('Form data reset to:', resetFormData);
     }
   };
 
