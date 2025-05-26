@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -126,122 +125,120 @@ const StudentStudyMaterials = () => {
   if (!user) return null;
 
   return (
-    <>
-      <div className="min-h-screen flex flex-col">
-        <Navigation />
-        
-        <div className="flex-1">
-          <SidebarProvider>
-            <div className="min-h-full flex w-full">
-              <StudentSidebar />
-              <SidebarInset className="flex-1">
-                <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
-                  <SidebarTrigger className="-ml-1" />
-                  <h1 className="text-xl font-semibold">Study Materials</h1>
-                </header>
-                
-                <div className="flex-1 p-6 space-y-6">
-                  <div className="space-y-2">
-                    <h2 className="text-2xl font-bold">Study Materials</h2>
-                    <p className="text-gray-600">Access course materials and resources</p>
-                  </div>
-
-                  {/* Course Filter */}
-                  <div className="flex items-center gap-4">
-                    <Search className="h-5 w-5 text-gray-400" />
-                    <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                      <SelectTrigger className="w-64">
-                        <SelectValue placeholder="Filter by course" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Courses</SelectItem>
-                        {enrolledCourses.map((course) => (
-                          <SelectItem key={course.id} value={course.id}>
-                            {course.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {loading ? (
-                    <div className="text-center py-12">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                      <p>Loading study materials...</p>
-                    </div>
-                  ) : materials.length === 0 ? (
-                    <Card className="text-center py-12">
-                      <CardContent>
-                        <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                        <h3 className="text-lg font-medium mb-2">No Study Materials</h3>
-                        <p className="text-gray-600 mb-4">
-                          {enrolledCourses.length === 0 
-                            ? "You need to enroll in courses to access study materials."
-                            : "No study materials available for your enrolled courses yet."
-                          }
-                        </p>
-                        {enrolledCourses.length === 0 && (
-                          <Button onClick={() => navigate('/courses')}>
-                            Browse Courses
-                          </Button>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {materials.map((material) => {
-                        const FileIcon = getFileIcon(material.file_type);
-                        
-                        return (
-                          <Card key={material.id} className="hover:shadow-lg transition-shadow">
-                            <CardHeader>
-                              <div className="flex items-start justify-between">
-                                <FileIcon className="h-8 w-8 text-blue-500" />
-                                <Badge className={getFileTypeColor(material.file_type)}>
-                                  {material.file_type?.split('/')[1]?.toUpperCase() || 'FILE'}
-                                </Badge>
-                              </div>
-                              <CardTitle className="text-lg">{material.title}</CardTitle>
-                              <CardDescription>{material.description}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                              <div className="space-y-2">
-                                <div className="text-sm text-gray-600">
-                                  Course: {material.courses?.title}
-                                </div>
-                                {material.file_size && (
-                                  <div className="text-sm text-gray-600">
-                                    Size: {(material.file_size / 1024 / 1024).toFixed(2)} MB
-                                  </div>
-                                )}
-                                <div className="text-sm text-gray-600">
-                                  Added: {new Date(material.created_at).toLocaleDateString()}
-                                </div>
-                              </div>
-                              
-                              <Button 
-                                className="w-full"
-                                onClick={() => handleDownload(material)}
-                                disabled={!material.file_url}
-                              >
-                                <Download className="w-4 h-4 mr-2" />
-                                {material.file_url ? 'Download' : 'Not Available'}
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </div>
-                  )}
+    <div className="min-h-screen flex flex-col">
+      <Navigation />
+      
+      <div className="flex-1">
+        <SidebarProvider>
+          <div className="flex w-full">
+            <SidebarInset className="flex-1">
+              <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
+                <SidebarTrigger className="-ml-1" />
+                <h1 className="text-xl font-semibold">Study Materials</h1>
+              </header>
+              
+              <div className="p-6 space-y-6">
+                <div className="space-y-2">
+                  <h2 className="text-2xl font-bold">Study Materials</h2>
+                  <p className="text-gray-600">Access course materials and resources</p>
                 </div>
-              </SidebarInset>
-            </div>
-          </SidebarProvider>
-        </div>
+
+                {/* Course Filter */}
+                <div className="flex items-center gap-4">
+                  <Search className="h-5 w-5 text-gray-400" />
+                  <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+                    <SelectTrigger className="w-64">
+                      <SelectValue placeholder="Filter by course" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Courses</SelectItem>
+                      {enrolledCourses.map((course) => (
+                        <SelectItem key={course.id} value={course.id}>
+                          {course.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {loading ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p>Loading study materials...</p>
+                  </div>
+                ) : materials.length === 0 ? (
+                  <Card className="text-center py-12">
+                    <CardContent>
+                      <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                      <h3 className="text-lg font-medium mb-2">No Study Materials</h3>
+                      <p className="text-gray-600 mb-4">
+                        {enrolledCourses.length === 0 
+                          ? "You need to enroll in courses to access study materials."
+                          : "No study materials available for your enrolled courses yet."
+                        }
+                      </p>
+                      {enrolledCourses.length === 0 && (
+                        <Button onClick={() => navigate('/courses')}>
+                          Browse Courses
+                        </Button>
+                      )}
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {materials.map((material) => {
+                      const FileIcon = getFileIcon(material.file_type);
+                      
+                      return (
+                        <Card key={material.id} className="hover:shadow-lg transition-shadow">
+                          <CardHeader>
+                            <div className="flex items-start justify-between">
+                              <FileIcon className="h-8 w-8 text-blue-500" />
+                              <Badge className={getFileTypeColor(material.file_type)}>
+                                {material.file_type?.split('/')[1]?.toUpperCase() || 'FILE'}
+                              </Badge>
+                            </div>
+                            <CardTitle className="text-lg">{material.title}</CardTitle>
+                            <CardDescription>{material.description}</CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                              <div className="text-sm text-gray-600">
+                                Course: {material.courses?.title}
+                              </div>
+                              {material.file_size && (
+                                <div className="text-sm text-gray-600">
+                                  Size: {(material.file_size / 1024 / 1024).toFixed(2)} MB
+                                </div>
+                              )}
+                              <div className="text-sm text-gray-600">
+                                Added: {new Date(material.created_at).toLocaleDateString()}
+                              </div>
+                            </div>
+                            
+                            <Button 
+                              className="w-full"
+                              onClick={() => handleDownload(material)}
+                              disabled={!material.file_url}
+                            >
+                              <Download className="w-4 h-4 mr-2" />
+                              {material.file_url ? 'Download' : 'Not Available'}
+                            </Button>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </SidebarInset>
+            <StudentSidebar />
+          </div>
+        </SidebarProvider>
       </div>
       
       <Footer />
-    </>
+    </div>
   );
 };
 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -108,17 +107,16 @@ const StudentPayments = () => {
     <div className="min-h-screen flex flex-col">
       <Navigation />
       
-      <div className="flex-1 flex">
+      <div className="flex-1">
         <SidebarProvider>
-          <div className="min-h-screen flex w-full">
-            <StudentSidebar />
+          <div className="flex w-full">
             <SidebarInset className="flex-1">
               <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
                 <SidebarTrigger className="-ml-1" />
                 <h1 className="text-xl font-semibold">Payment History</h1>
               </header>
               
-              <div className="flex-1 p-6 space-y-6">
+              <div className="p-6 space-y-6">
                 <div className="space-y-2">
                   <h2 className="text-2xl font-bold">Payment History</h2>
                   <p className="text-gray-600">Track all your course payments and transactions</p>
@@ -247,6 +245,7 @@ const StudentPayments = () => {
                 )}
               </div>
             </SidebarInset>
+            <StudentSidebar />
           </div>
         </SidebarProvider>
       </div>
