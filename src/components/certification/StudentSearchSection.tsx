@@ -15,8 +15,10 @@ interface StudentSearchSectionProps {
   searchEmail: string;
   setSearchEmail: (email: string) => void;
   selectedStudent: Student | null;
+  searchResults: Student[];
   isSearching: boolean;
   onSearchStudent: () => void;
+  onSelectStudent: (student: Student) => void;
   onClearStudent: () => void;
 }
 
@@ -24,8 +26,10 @@ const StudentSearchSection = ({
   searchEmail,
   setSearchEmail,
   selectedStudent,
+  searchResults,
   isSearching,
   onSearchStudent,
+  onSelectStudent,
   onClearStudent,
 }: StudentSearchSectionProps) => {
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -46,7 +50,7 @@ const StudentSearchSection = ({
         <div className="flex-1">
           <Input
             type="email"
-            placeholder="Enter student email address..."
+            placeholder="Enter part of student email address..."
             value={searchEmail}
             onChange={(e) => setSearchEmail(e.target.value)}
             className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
@@ -73,6 +77,35 @@ const StudentSearchSection = ({
         </Button>
       </div>
 
+      {/* Search Results */}
+      {searchResults.length > 0 && !selectedStudent && (
+        <div className="border border-gray-200 rounded-lg max-h-60 overflow-y-auto">
+          <div className="p-3 bg-gray-50 border-b border-gray-200">
+            <p className="text-sm font-medium text-gray-700">
+              Found {searchResults.length} student{searchResults.length > 1 ? 's' : ''}
+            </p>
+          </div>
+          {searchResults.map((student) => (
+            <div
+              key={student.id}
+              className="p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+              onClick={() => onSelectStudent(student)}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">{student.full_name}</p>
+                  <p className="text-sm text-gray-600">{student.email}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Selected Student */}
       {selectedStudent && (
         <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-center justify-between">
