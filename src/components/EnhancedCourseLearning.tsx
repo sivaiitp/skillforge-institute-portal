@@ -1,10 +1,13 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, FileText, Video } from 'lucide-react';
+import { ArrowLeft, FileText, Video, CheckCircle2, Circle } from 'lucide-react';
+import { useStudyProgress } from '@/hooks/useStudyProgress';
+import { useCourseLearningNavigation } from '@/hooks/useCourseLearningNavigation';
 import LearningPath from './LearningPath';
 import MarkdownRenderer from './MarkdownRenderer';
+import CourseLearningNavigation from './CourseLearningNavigation';
 
 interface EnhancedCourseLearningProps {
   course: any;
@@ -19,17 +22,53 @@ const EnhancedCourseLearning = ({
   assessments, 
   onBack 
 }: EnhancedCourseLearningProps) => {
-  const [selectedMaterial, setSelectedMaterial] = useState(null);
-  const [selectedAssessment, setSelectedAssessment] = useState(null);
+  const { getStudyProgress, toggleMaterialCompletion, loading: progressLoading } = useStudyProgress();
+  const [progressData, setProgressData] = useState([]);
 
-  const handleMaterialSelect = (material: any) => {
-    setSelectedMaterial(material);
-    setSelectedAssessment(null);
+  useEffect(() => {
+    const loadProgress = async () => {
+      const progress = await getStudyProgress(course.id);
+      setProgressData(progress);
+    };
+    
+    loadProgress();
+  }, [course.id]);
+
+  const {
+    currentMaterialIndex,
+    selectedMaterial,
+    selectedAssessment,
+    isCurrentMaterialCompleted,
+    hasNextMaterial,
+    hasPreviousMaterial,
+    goToNext,
+    goToPrevious,
+    handleMaterialSelect,
+    handleAssessmentSelect
+  } = useCourseLearningNavigation({
+    studyMaterials,
+    assessments,
+    progressData,
+    onMaterialSelect: () => {},
+    onAssessmentSelect: () => {}
+  });
+
+  const getMaterialProgress = (materialId: string) => {
+    return progressData.find(p => p.study_material_id === materialId);
   };
 
-  const handleAssessmentSelect = (assessment: any) => {
-    setSelectedAssessment(assessment);
-    setSelectedMaterial(null);
+  const handleMaterialCompletion = async () => {
+    if (!selectedMaterial) return;
+    
+    const currentProgress = getMaterialProgress(selectedMaterial.id);
+    const currentStatus = currentProgress?.completed || false;
+    
+    const success = await toggleMaterialCompletion(selectedMaterial.id, course.id, currentStatus);
+    if (success) {
+      // Refresh progress data
+      const updatedProgress = await getStudyProgress(course.id);
+      setProgressData(updatedProgress);
+    }
   };
 
   const getFileIcon = (materialType: string) => {
@@ -109,6 +148,39 @@ const EnhancedCourseLearning = ({
                       No content available for this material.
                     </div>
                   )}
+
+                  {/* Completion Button */}
+                  <div className="mt-6 pt-4 border-t border-gray-200">
+                    <Button
+                      onClick={handleMaterialCompletion}
+                      disabled={progressLoading}
+                      variant={isCurrentMaterialCompleted() ? "default" : "outline"}
+                      className={`w-full ${isCurrentMaterialCompleted() ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+                    >
+                      {isCurrentMaterialCompleted() ? (
+                        <>
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          Mark as Incomplete
+                        </>
+                      ) : (
+                        <>
+                          <Circle className="w-4 h-4 mr-2" />
+                          Mark as Completed
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Navigation */}
+                  <CourseLearningNavigation
+                    hasNext={hasNextMaterial()}
+                    hasPrevious={hasPreviousMaterial()}
+                    isCompleted={isCurrentMaterialCompleted()}
+                    onNext={goToNext}
+                    onPrevious={goToPrevious}
+                    currentIndex={currentMaterialIndex}
+                    totalMaterials={studyMaterials.length}
+                  />
                 </CardContent>
               </Card>
             </div>
