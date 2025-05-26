@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, User, LogOut, Shield, BookOpen } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,10 +30,14 @@ const Navigation = () => {
 
   const handleSignOut = async () => {
     try {
+      console.log('Attempting to sign out...');
       await signOut();
+      console.log('Sign out successful');
+      toast.success('Signed out successfully');
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
+      toast.error('Error signing out. Please try again.');
     }
   };
 
@@ -145,7 +150,10 @@ const Navigation = () => {
                   <Button 
                     variant="outline" 
                     className="w-full mb-2"
-                    onClick={() => navigate('/admin')}
+                    onClick={() => {
+                      navigate('/admin');
+                      setIsMenuOpen(false);
+                    }}
                   >
                     Admin Dashboard
                   </Button>
@@ -153,7 +161,10 @@ const Navigation = () => {
                   <Button 
                     variant="outline" 
                     className="w-full mb-2"
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => {
+                      navigate('/dashboard');
+                      setIsMenuOpen(false);
+                    }}
                   >
                     My Dashboard
                   </Button>
@@ -161,7 +172,10 @@ const Navigation = () => {
                 <Button 
                   variant="outline" 
                   className="w-full"
-                  onClick={handleSignOut}
+                  onClick={() => {
+                    handleSignOut();
+                    setIsMenuOpen(false);
+                  }}
                 >
                   Sign Out
                 </Button>
