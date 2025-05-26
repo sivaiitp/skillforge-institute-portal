@@ -17,12 +17,14 @@ interface Material {
   mime_type: string;
   file_url: string;
   description?: string;
+  sort_order: number;
 }
 
 interface Course {
   id: string;
   title: string;
   description: string;
+  duration?: string;
 }
 
 const StudentCourseLearning = () => {
@@ -77,7 +79,7 @@ const StudentCourseLearning = () => {
     try {
       const { data, error } = await supabase
         .from('courses')
-        .select('id, title, description')
+        .select('id, title, description, duration')
         .eq('id', courseId)
         .single();
 
@@ -95,7 +97,7 @@ const StudentCourseLearning = () => {
     try {
       const { data, error } = await supabase
         .from('study_materials')
-        .select('id, title, mime_type, file_url, description')
+        .select('id, title, mime_type, file_url, description, sort_order')
         .eq('course_id', courseId)
         .eq('is_active', true)
         .order('sort_order', { ascending: true });
@@ -142,13 +144,13 @@ const StudentCourseLearning = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <SidebarProvider>
         <div className="flex min-h-screen w-full">
-          {courseId && (
-            <CourseLearningMaterialsSidebar 
-              courseId={courseId}
-              selectedMaterialId={selectedMaterial?.id || null}
-              onSelectMaterial={handleMaterialSelect}
-            />
-          )}
+          <CourseLearningMaterialsSidebar 
+            materials={studyMaterials}
+            selectedMaterialId={selectedMaterial?.id || null}
+            onMaterialSelect={handleMaterialSelect}
+            progressData={progressData}
+            courseDuration={course?.duration}
+          />
           
           <SidebarInset className="flex-1">
             <CourseLearningHeader courseTitle={course?.title} />

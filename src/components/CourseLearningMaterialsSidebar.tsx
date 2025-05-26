@@ -31,10 +31,10 @@ interface CourseLearningMaterialsSidebarProps {
 }
 
 export function CourseLearningMaterialsSidebar({
-  materials,
+  materials = [],
   selectedMaterialId,
   onMaterialSelect,
-  progressData,
+  progressData = [],
   courseDuration
 }: CourseLearningMaterialsSidebarProps) {
   const getMaterialProgress = (materialId: string) => {
