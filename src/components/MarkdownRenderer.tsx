@@ -19,74 +19,34 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
         setLoading(true);
         setError(null);
         
-        console.log('=== MARKDOWN RENDERER DEBUG ===');
-        console.log('Original file path:', filePath);
+        console.log('Loading markdown from:', filePath);
         
-        // Try different path variations
-        const pathVariations = [
-          filePath,
-          filePath.startsWith('/') ? filePath : `/${filePath}`,
-          filePath.startsWith('/public/') ? filePath : `/public/${filePath}`,
-          filePath.replace('/public/', '/'),
-          filePath.includes('public/') ? filePath.split('public/')[1] : filePath
-        ];
+        const response = await fetch(filePath);
+        console.log('Response status:', response.status, 'OK:', response.ok);
         
-        console.log('Trying path variations:', pathVariations);
-        
-        let lastError = null;
-        let successfulPath = null;
-        
-        for (const path of pathVariations) {
-          try {
-            console.log(`Attempting to fetch: ${path}`);
-            const response = await fetch(path);
-            console.log(`Response for ${path}:`, {
-              status: response.status,
-              statusText: response.statusText,
-              ok: response.ok,
-              headers: Object.fromEntries(response.headers.entries())
-            });
-            
-            if (response.ok) {
-              const text = await response.text();
-              console.log(`Success! Got content from ${path}, length:`, text.length);
-              console.log('Content preview:', text.substring(0, 200));
-              
-              // Check if it's actually markdown content and not an error page
-              if (text.includes('<!DOCTYPE html>') && text.includes('<title>')) {
-                console.log('Got HTML error page instead of markdown');
-                lastError = new Error(`Got HTML error page from ${path}`);
-                continue;
-              }
-              
-              if (text.trim().length < 5) {
-                console.log('Content too short, might be empty');
-                lastError = new Error(`Content too short from ${path}`);
-                continue;
-              }
-              
-              setContent(text);
-              successfulPath = path;
-              break;
-            } else {
-              lastError = new Error(`HTTP ${response.status}: ${response.statusText} for ${path}`);
-              console.log('Failed:', lastError.message);
-            }
-          } catch (fetchError) {
-            lastError = fetchError;
-            console.log(`Fetch error for ${path}:`, fetchError);
-          }
+        if (!response.ok) {
+          throw new Error(`Failed to load file: ${response.status} ${response.statusText}`);
         }
         
-        if (!successfulPath) {
-          throw lastError || new Error('All path variations failed');
+        const text = await response.text();
+        console.log('Loaded content length:', text.length);
+        console.log('Content preview:', text.substring(0, 100));
+        
+        // Simple validation - just check if we have meaningful content
+        if (!text || text.trim().length < 5) {
+          throw new Error('File appears to be empty');
         }
         
-        console.log('Successfully loaded from:', successfulPath);
+        // Check if it's an HTML error page (404, etc.)
+        if (text.includes('<!DOCTYPE html>') && text.includes('404')) {
+          throw new Error('File not found - received 404 error page');
+        }
+        
+        setContent(text);
+        console.log('Successfully set markdown content');
         
       } catch (err) {
-        console.error('=== MARKDOWN LOADING FAILED ===');
-        console.error('Error:', err);
+        console.error('Error loading markdown:', err);
         setError(err instanceof Error ? err.message : 'Failed to load content');
       } finally {
         setLoading(false);
@@ -96,7 +56,6 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
     if (filePath) {
       loadMarkdown();
     } else {
-      console.log('No file path provided');
       setError('No file path provided');
       setLoading(false);
     }
@@ -176,9 +135,6 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
               <p className="text-sm text-red-500 mb-4">{error}</p>
               <p className="text-xs text-gray-600">
                 File path: <code className="bg-gray-100 px-2 py-1 rounded">{filePath}</code>
-              </p>
-              <p className="text-xs text-gray-500 mt-2">
-                Check the browser console for detailed debugging information.
               </p>
             </div>
           </div>
