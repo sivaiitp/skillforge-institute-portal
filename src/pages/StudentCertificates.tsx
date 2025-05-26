@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -73,11 +74,17 @@ const StudentCertificates = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Header Section */}
       <Navigation />
       
-      <div className="flex-1 relative">
+      {/* Main Content Section */}
+      <div className="flex-1">
         <SidebarProvider>
-          <div className="flex h-full w-full">
+          <div className="flex min-h-full">
+            {/* Sidebar */}
+            <StudentSidebar />
+            
+            {/* Content Area */}
             <SidebarInset className="flex-1">
               <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
                 <SidebarTrigger className="-ml-1" />
@@ -161,13 +168,11 @@ const StudentCertificates = () => {
                 )}
               </div>
             </SidebarInset>
-            <div className="relative">
-              <StudentSidebar />
-            </div>
           </div>
         </SidebarProvider>
       </div>
       
+      {/* Footer Section */}
       <Footer />
     </div>
   );
