@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -44,6 +43,7 @@ const CourseHero = ({ course, onEnroll, onDownloadBrochure, isEnrolled = false, 
             <p className="text-xl mb-8 leading-relaxed opacity-90">
               {course.description}
             </p>
+            
             <div className="flex flex-wrap gap-6 mb-8">
               <div className="flex items-center gap-2">
                 <Clock className="w-5 h-5" />
@@ -64,6 +64,7 @@ const CourseHero = ({ course, onEnroll, onDownloadBrochure, isEnrolled = false, 
                 </div>
               )}
             </div>
+            
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 size="lg" 
@@ -89,6 +90,7 @@ const CourseHero = ({ course, onEnroll, onDownloadBrochure, isEnrolled = false, 
                   `Enroll Now - ₹${course.price?.toLocaleString('en-IN') || '0'}`
                 )}
               </Button>
+              
               <Button 
                 size="lg" 
                 variant="outline" 
@@ -101,6 +103,7 @@ const CourseHero = ({ course, onEnroll, onDownloadBrochure, isEnrolled = false, 
               </Button>
             </div>
           </div>
+          
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-3xl blur-3xl opacity-20"></div>
             <img 

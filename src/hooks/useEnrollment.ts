@@ -68,9 +68,16 @@ export const useEnrollment = () => {
     }
   };
 
+  const goToCourse = (courseId: string) => {
+    // Navigate to the student dashboard courses page where they can access the course
+    window.location.href = `/dashboard/courses`;
+    toast.success('Redirecting to your courses...');
+  };
+
   return {
     enrollInCourse,
     checkEnrollmentStatus,
+    goToCourse,
     loading
   };
 };

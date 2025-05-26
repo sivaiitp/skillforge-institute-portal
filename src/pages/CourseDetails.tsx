@@ -19,7 +19,7 @@ const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { enrollInCourse, checkEnrollmentStatus, loading: enrollmentLoading } = useEnrollment();
+  const { enrollInCourse, checkEnrollmentStatus, goToCourse, loading: enrollmentLoading } = useEnrollment();
   const [isEnrolled, setIsEnrolled] = useState(false);
 
   console.log('Course ID from params:', id);
@@ -117,7 +117,7 @@ const CourseDetails = () => {
     if (!course) return;
 
     if (isEnrolled) {
-      navigate('/dashboard/courses');
+      goToCourse(course.id);
       return;
     }
 
