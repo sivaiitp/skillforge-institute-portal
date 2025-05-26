@@ -18,7 +18,7 @@ import { useAuth } from "./AuthProvider";
 interface Material {
   id: string;
   title: string;
-  file_type: string;
+  mime_type: string;
   file_url: string;
 }
 
@@ -59,7 +59,7 @@ export function CourseLearningMaterialsSidebar({
     try {
       const { data, error } = await supabase
         .from('study_materials')
-        .select('id, title, file_type, file_url')
+        .select('id, title, mime_type, file_url')
         .eq('course_id', courseId)
         .eq('is_active', true)
         .order('sort_order', { ascending: true });
@@ -71,10 +71,10 @@ export function CourseLearningMaterialsSidebar({
     }
   };
 
-  const getFileIcon = (fileType: string) => {
-    if (fileType?.includes('pdf')) return FileText;
-    if (fileType?.includes('video')) return Video;
-    if (fileType?.includes('image')) return FileImage;
+  const getFileIcon = (mimeType: string) => {
+    if (mimeType?.includes('pdf')) return FileText;
+    if (mimeType?.includes('video')) return Video;
+    if (mimeType?.includes('image')) return FileImage;
     return File;
   };
 
@@ -92,7 +92,7 @@ export function CourseLearningMaterialsSidebar({
           <SidebarGroupContent>
             <SidebarMenu className="px-2">
               {materials.map((material) => {
-                const FileIcon = getFileIcon(material.file_type);
+                const FileIcon = getFileIcon(material.mime_type);
                 const progress = getMaterialProgress(material.id);
                 const isCompleted = progress?.completed || false;
                 const isSelected = selectedMaterialId === material.id;
@@ -109,7 +109,7 @@ export function CourseLearningMaterialsSidebar({
                         <div className="flex-1 text-left min-w-0">
                           <div className="font-medium text-sm truncate">{material.title}</div>
                           <div className="text-xs text-sidebar-foreground/60 group-data-[active=true]:text-blue-700/70">
-                            {material.file_type?.split('/')[1]?.toUpperCase() || 'FILE'}
+                            {material.mime_type?.split('/')[1]?.toUpperCase() || 'FILE'}
                           </div>
                         </div>
                         {isCompleted ? (

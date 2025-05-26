@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -33,6 +34,7 @@ import StudentAssessments from "./pages/StudentAssessments";
 import StudentCertificates from "./pages/StudentCertificates";
 import StudentPayments from "./pages/StudentPayments";
 import StudentProfile from "./pages/StudentProfile";
+import StudentCourseLearning from "./pages/StudentCourseLearning";
 
 const queryClient = new QueryClient();
 
