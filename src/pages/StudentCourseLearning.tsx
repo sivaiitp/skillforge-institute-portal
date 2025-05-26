@@ -34,6 +34,7 @@ const StudentCourseLearning = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [studyMaterials, setStudyMaterials] = useState<Material[]>([]);
   const [progressData, setProgressData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toggleMaterialCompletion, getStudyProgress, loading: progressLoading } = useStudyProgress();
 
   const {
@@ -48,10 +49,10 @@ const StudentCourseLearning = () => {
     assessments: [], // No assessments for now
     progressData,
     onMaterialSelect: (material) => {
-      // This will be handled by the hook
+      console.log('Material selected:', material);
     },
     onAssessmentSelect: () => {
-      // This will be handled by the hook
+      console.log('Assessment selected');
     }
   });
 
@@ -67,11 +68,24 @@ const StudentCourseLearning = () => {
     }
     
     if (courseId) {
-      fetchCourse();
-      fetchStudyMaterials();
-      loadProgress();
+      initializeCourseData();
     }
   }, [user, userRole, courseId, navigate]);
+
+  const initializeCourseData = async () => {
+    setIsLoading(true);
+    try {
+      await Promise.all([
+        fetchCourse(),
+        fetchStudyMaterials(),
+        loadProgress()
+      ]);
+    } catch (error) {
+      console.error('Error initializing course data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const fetchCourse = async () => {
     if (!courseId) return;
@@ -138,7 +152,7 @@ const StudentCourseLearning = () => {
     }
   };
 
-  if (!user) return null;
+  if (!user || isLoading) return null;
 
   return (
     <SidebarProvider>
