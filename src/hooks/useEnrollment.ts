@@ -71,9 +71,9 @@ export const useEnrollment = () => {
   };
 
   const goToCourse = (courseId: string) => {
-    // Navigate to the student dashboard courses page where they can access the course
-    navigate('/dashboard/courses');
-    toast.success('Redirecting to your courses...');
+    // Navigate to the course learning page where students can access materials and track progress
+    navigate(`/course/${courseId}/learn`);
+    toast.success('Redirecting to course materials...');
   };
 
   return {

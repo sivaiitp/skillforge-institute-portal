@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,6 +13,7 @@ import Career from "./pages/Career";
 import Events from "./pages/Events";
 import CertificateVerification from "./pages/CertificateVerification";
 import NotFound from "./pages/NotFound";
+import CourseLearning from "./pages/CourseLearning";
 
 // Admin pages
 import AdminDashboard from "./pages/AdminDashboard";
@@ -48,6 +48,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/courses" element={<Courses />} />
               <Route path="/courses/:id" element={<CourseDetails />} />
+              <Route path="/course/:id/learn" element={<CourseLearning />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/career" element={<Career />} />

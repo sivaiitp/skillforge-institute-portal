@@ -3,13 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, Download, Video, FileImage, File, Search, BookOpen, FolderOpen } from "lucide-react";
+import { FileText, Download, Video, FileImage, File, Search, BookOpen, FolderOpen, CheckCircle2, Circle } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { StudentSidebar } from "@/components/StudentSidebar";
+import { useStudyProgress } from "@/hooks/useStudyProgress";
 
 const StudentStudyMaterials = () => {
   const { user, userRole } = useAuth();
@@ -18,6 +19,8 @@ const StudentStudyMaterials = () => {
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState("all");
+  const { toggleMaterialCompletion, getStudyProgress, loading: progressLoading } = useStudyProgress();
+  const [progressData, setProgressData] = useState([]);
 
   useEffect(() => {
     if (!user) {
@@ -38,6 +41,23 @@ const StudentStudyMaterials = () => {
       fetchStudyMaterials();
     }
   }, [enrolledCourses, selectedCourse]);
+
+  useEffect(() => {
+    const loadProgress = async () => {
+      if (enrolledCourses.length > 0) {
+        const allProgress = [];
+        for (const course of enrolledCourses) {
+          const courseProgress = await getStudyProgress(course.id);
+          allProgress.push(...courseProgress);
+        }
+        setProgressData(allProgress);
+      }
+    };
+    
+    if (materials.length > 0) {
+      loadProgress();
+    }
+  }, [materials, enrolledCourses]);
 
   const fetchEnrolledCourses = async () => {
     if (!user) return;
@@ -117,6 +137,26 @@ const StudentStudyMaterials = () => {
       toast.success(`Downloading ${material.title}`);
     } else {
       toast.error('File not available for download');
+    }
+  };
+
+  const getMaterialProgress = (materialId: string) => {
+    return progressData.find(p => p.study_material_id === materialId);
+  };
+
+  const handleMaterialCompletion = async (materialId: string, courseId: string) => {
+    const currentProgress = getMaterialProgress(materialId);
+    const currentStatus = currentProgress?.completed || false;
+    
+    const success = await toggleMaterialCompletion(materialId, courseId, currentStatus);
+    if (success) {
+      // Refresh progress data
+      const allProgress = [];
+      for (const course of enrolledCourses) {
+        const courseProgress = await getStudyProgress(course.id);
+        allProgress.push(...courseProgress);
+      }
+      setProgressData(allProgress);
     }
   };
 
@@ -203,6 +243,8 @@ const StudentStudyMaterials = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {materials.map((material) => {
                       const FileIcon = getFileIcon(material.file_type);
+                      const progress = getMaterialProgress(material.id);
+                      const isCompleted = progress?.completed || false;
                       
                       return (
                         <Card key={material.id} className="group overflow-hidden border-0 bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105">
@@ -210,9 +252,16 @@ const StudentStudyMaterials = () => {
                             <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-12 translate-x-12"></div>
                             <div className="relative z-10 flex items-start justify-between">
                               <FileIcon className="h-10 w-10 text-emerald-100" />
-                              <Badge className={`${getFileTypeColor(material.file_type)} border-0`}>
-                                {material.file_type?.split('/')[1]?.toUpperCase() || 'FILE'}
-                              </Badge>
+                              <div className="flex items-center gap-2">
+                                <Badge className={`${getFileTypeColor(material.file_type)} border-0`}>
+                                  {material.file_type?.split('/')[1]?.toUpperCase() || 'FILE'}
+                                </Badge>
+                                {isCompleted ? (
+                                  <CheckCircle2 className="w-5 h-5 text-green-200" />
+                                ) : (
+                                  <Circle className="w-5 h-5 text-white/50" />
+                                )}
+                              </div>
                             </div>
                             <div className="relative z-10 mt-4">
                               <CardTitle className="text-xl text-white mb-2 line-clamp-2">{material.title}</CardTitle>
@@ -249,14 +298,35 @@ const StudentStudyMaterials = () => {
                               </div>
                             </div>
                             
-                            <Button 
-                              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
-                              onClick={() => handleDownload(material)}
-                              disabled={!material.file_url}
-                            >
-                              <Download className="w-4 h-4 mr-2" />
-                              {material.file_url ? 'Download Material' : 'Not Available'}
-                            </Button>
+                            <div className="space-y-2">
+                              <Button 
+                                className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
+                                onClick={() => handleDownload(material)}
+                                disabled={!material.file_url}
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                {material.file_url ? 'Download Material' : 'Not Available'}
+                              </Button>
+                              
+                              <Button
+                                onClick={() => handleMaterialCompletion(material.id, material.course_id)}
+                                disabled={progressLoading}
+                                variant={isCompleted ? "default" : "outline"}
+                                className={`w-full ${isCompleted ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+                              >
+                                {isCompleted ? (
+                                  <>
+                                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                                    Mark as Incomplete
+                                  </>
+                                ) : (
+                                  <>
+                                    <Circle className="w-4 h-4 mr-2" />
+                                    Mark as Completed
+                                  </>
+                                )}
+                              </Button>
+                            </div>
                           </CardContent>
                         </Card>
                       );
