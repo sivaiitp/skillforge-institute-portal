@@ -1,12 +1,67 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Navigation from "@/components/Navigation";
+import Hero from "@/components/Hero";
+import FeaturedCourses from "@/components/FeaturedCourses";
+import Testimonials from "@/components/Testimonials";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <Navigation />
+      <Hero />
+      <FeaturedCourses />
+      <Testimonials />
+      
+      {/* Quick Stats Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className="animate-fade-in">
+              <h3 className="text-3xl font-bold text-blue-600">500+</h3>
+              <p className="text-gray-600">Students Trained</p>
+            </div>
+            <div className="animate-fade-in">
+              <h3 className="text-3xl font-bold text-blue-600">50+</h3>
+              <p className="text-gray-600">Courses Available</p>
+            </div>
+            <div className="animate-fade-in">
+              <h3 className="text-3xl font-bold text-blue-600">95%</h3>
+              <p className="text-gray-600">Placement Rate</p>
+            </div>
+            <div className="animate-fade-in">
+              <h3 className="text-3xl font-bold text-blue-600">10+</h3>
+              <p className="text-gray-600">Years Experience</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Start Your Journey?</h2>
+          <p className="text-xl mb-8 max-w-2xl mx-auto">
+            Join thousands of successful professionals who have transformed their careers with our training programs.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" variant="secondary" className="text-blue-600 hover:bg-gray-100">
+              Enroll Now
+            </Button>
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+              Contact Us
+            </Button>
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+              Take Assessment
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 };
