@@ -65,6 +65,7 @@ const StudyMaterialManagement = () => {
   const materialTypes = [
     { value: 'pdf', label: 'PDF Document', icon: FileText },
     { value: 'document', label: 'Document', icon: FileText },
+    { value: 'markdown', label: 'Markdown File', icon: FileText },
     { value: 'video', label: 'Video', icon: Video },
     { value: 'audio', label: 'Audio', icon: Music },
     { value: 'presentation', label: 'Presentation', icon: Presentation },
@@ -243,7 +244,13 @@ const StudyMaterialManagement = () => {
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-gray-800 mb-1">Study Materials Management</h1>
-                  <p className="text-gray-600">Manage course materials, PDFs, videos, and resources</p>
+                  <p className="text-gray-600">Manage course materials, PDFs, videos, markdown files, and resources</p>
+                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-sm text-blue-800">
+                      <strong>Tip:</strong> For markdown files, place them in the <code className="bg-blue-100 px-1 rounded">public/content/</code> directory 
+                      and use relative paths like <code className="bg-blue-100 px-1 rounded">/content/chapter1.md</code> in the File URL field.
+                    </p>
+                  </div>
                 </div>
               </div>
               <Dialog open={showForm} onOpenChange={setShowForm}>
