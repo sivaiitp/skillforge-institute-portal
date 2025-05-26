@@ -1,11 +1,13 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
 import { toast } from 'sonner';
 
 export const useEnrollment = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const enrollInCourse = async (courseId: string) => {
@@ -70,7 +72,7 @@ export const useEnrollment = () => {
 
   const goToCourse = (courseId: string) => {
     // Navigate to the student dashboard courses page where they can access the course
-    window.location.href = `/dashboard/courses`;
+    navigate('/dashboard/courses');
     toast.success('Redirecting to your courses...');
   };
 
