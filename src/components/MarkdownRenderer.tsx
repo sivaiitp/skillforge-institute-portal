@@ -45,6 +45,7 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
         }
         
         setContent(text);
+        console.log('Successfully loaded markdown content');
       } catch (err) {
         console.error('Error loading markdown:', err);
         setError(err instanceof Error ? err.message : 'Failed to load content');
@@ -60,7 +61,13 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
 
   // Simple markdown to HTML converter (basic implementation)
   const parseMarkdown = (markdown: string): string => {
-    return markdown
+    if (!markdown || markdown.trim().length === 0) {
+      return '<p class="text-gray-500">No content available</p>';
+    }
+
+    console.log('Parsing markdown, length:', markdown.length);
+    
+    const parsed = markdown
       // Code blocks (must come before inline code)
       .replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4 border"><code class="text-sm">$1</code></pre>')
       // Headers
@@ -85,11 +92,14 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
         if (paragraph.includes('<h') || paragraph.includes('<pre') || paragraph.includes('<li')) {
           return paragraph;
         }
-        return `<p class="mb-4 leading-relaxed">${paragraph.replace(/\n/g, '<br>')}</p>`;
+        return `<p class="mb-4 leading-relaxed text-gray-700">${paragraph.replace(/\n/g, '<br>')}</p>`;
       })
       .join('\n')
       // Clean up empty paragraphs
-      .replace(/<p class="mb-4 leading-relaxed"><\/p>/g, '');
+      .replace(/<p class="mb-4 leading-relaxed text-gray-700"><\/p>/g, '');
+
+    console.log('Parsed HTML preview:', parsed.substring(0, 300));
+    return parsed;
   };
 
   if (loading) {
@@ -132,12 +142,14 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
     );
   }
 
+  const parsedHTML = parseMarkdown(content);
+
   return (
     <Card className={className}>
-      <CardContent className="p-6">
+      <CardContent className="p-8">
         <div 
-          className="prose prose-sm max-w-none"
-          dangerouslySetInnerHTML={{ __html: parseMarkdown(content) }}
+          className="prose prose-lg max-w-none"
+          dangerouslySetInnerHTML={{ __html: parsedHTML }}
         />
       </CardContent>
     </Card>

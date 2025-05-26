@@ -141,39 +141,37 @@ const StudentCourseLearning = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <SidebarProvider>
-        <div className="flex min-h-screen w-full">
-          <CourseLearningMaterialsSidebar 
-            materials={studyMaterials}
-            selectedMaterialId={selectedMaterial?.id || null}
-            onMaterialSelect={handleMaterialSelect}
-            progressData={progressData}
-            courseDuration={course?.duration}
-          />
+    <SidebarProvider>
+      <div className="min-h-screen w-full flex bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <CourseLearningMaterialsSidebar 
+          materials={studyMaterials}
+          selectedMaterialId={selectedMaterial?.id || null}
+          onMaterialSelect={handleMaterialSelect}
+          progressData={progressData}
+          courseDuration={course?.duration}
+        />
+        
+        <SidebarInset className="flex-1 flex flex-col">
+          <CourseLearningHeader courseTitle={course?.title} />
           
-          <SidebarInset className="flex-1">
-            <CourseLearningHeader courseTitle={course?.title} />
-            
-            <div className="flex justify-center">
-              <div className="p-8 space-y-8 max-w-4xl w-full">
-                <MaterialContentArea
-                  selectedMaterial={selectedMaterial}
-                  progressData={progressData}
-                  progressLoading={progressLoading}
-                  onDownload={handleDownload}
-                  onMaterialCompletion={handleMaterialCompletion}
-                  onNext={goToNext}
-                  onPrevious={goToPrevious}
-                  hasNext={hasNextMaterial()}
-                  hasPrevious={hasPreviousMaterial()}
-                />
-              </div>
+          <div className="flex-1 p-8">
+            <div className="max-w-4xl mx-auto">
+              <MaterialContentArea
+                selectedMaterial={selectedMaterial}
+                progressData={progressData}
+                progressLoading={progressLoading}
+                onDownload={handleDownload}
+                onMaterialCompletion={handleMaterialCompletion}
+                onNext={goToNext}
+                onPrevious={goToPrevious}
+                hasNext={hasNextMaterial()}
+                hasPrevious={hasPreviousMaterial()}
+              />
             </div>
-          </SidebarInset>
-        </div>
-      </SidebarProvider>
-    </div>
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 
