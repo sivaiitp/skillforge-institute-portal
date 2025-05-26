@@ -1,6 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Quote } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Testimonials = () => {
   const testimonials = [
@@ -77,18 +78,18 @@ const Testimonials = () => {
         <div className="text-center mt-12">
           <p className="text-gray-600 mb-4">Ready to join our success stories?</p>
           <div className="flex justify-center gap-4">
-            <a 
-              href="/courses"
+            <Link 
+              to="/courses"
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-lg transition-all duration-300 inline-block"
             >
               Start Your Journey
-            </a>
-            <a 
-              href="/contact"
+            </Link>
+            <Link 
+              to="/contact"
               className="border-2 border-gray-300 hover:border-blue-600 text-gray-700 hover:text-blue-600 px-8 py-3 rounded-lg transition-all duration-300 inline-block"
             >
               Get Free Consultation
-            </a>
+            </Link>
           </div>
         </div>
       </div>
