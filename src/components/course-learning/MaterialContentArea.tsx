@@ -89,15 +89,6 @@ export function MaterialContentArea({
   if (isMarkdownFile(selectedMaterial)) {
     return (
       <div className="space-y-6">
-        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
-            {selectedMaterial.description && (
-              <p className="text-gray-600">{selectedMaterial.description}</p>
-            )}
-          </CardHeader>
-        </Card>
-        
         <MarkdownRenderer 
           filePath={selectedMaterial.file_url} 
           className="border-0 bg-white/80 backdrop-blur-sm shadow-xl"
@@ -158,13 +149,7 @@ export function MaterialContentArea({
         <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
           <CardHeader>
             <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
-            {selectedMaterial.description && (
-              <p className="text-gray-600">{selectedMaterial.description}</p>
-            )}
           </CardHeader>
-        </Card>
-
-        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
           <CardContent className="p-6">
             <img 
               src={selectedMaterial.file_url} 
@@ -233,13 +218,7 @@ export function MaterialContentArea({
         <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
           <CardHeader>
             <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
-            {selectedMaterial.description && (
-              <p className="text-gray-600">{selectedMaterial.description}</p>
-            )}
           </CardHeader>
-        </Card>
-
-        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
           <CardContent className="p-6">
             <video 
               controls 
@@ -306,9 +285,6 @@ export function MaterialContentArea({
       <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
         <CardHeader>
           <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
-          {selectedMaterial.description && (
-            <p className="text-gray-600">{selectedMaterial.description}</p>
-          )}
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
