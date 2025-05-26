@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { CourseLearningMaterialsSidebar } from "@/components/CourseLearningMaterialsSidebar";
 import { useStudyProgress } from "@/hooks/useStudyProgress";
+import { useCourseLearningNavigation } from "@/hooks/useCourseLearningNavigation";
 import { MaterialContentArea } from "@/components/course-learning/MaterialContentArea";
 import { CourseLearningHeader } from "@/components/course-learning/CourseLearningHeader";
 
@@ -29,9 +30,28 @@ const StudentCourseLearning = () => {
   const { user, userRole } = useAuth();
   const navigate = useNavigate();
   const [course, setCourse] = useState<Course | null>(null);
-  const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null);
+  const [studyMaterials, setStudyMaterials] = useState<Material[]>([]);
   const [progressData, setProgressData] = useState([]);
   const { toggleMaterialCompletion, getStudyProgress, loading: progressLoading } = useStudyProgress();
+
+  const {
+    selectedMaterial,
+    hasNextMaterial,
+    hasPreviousMaterial,
+    goToNext,
+    goToPrevious,
+    handleMaterialSelect
+  } = useCourseLearningNavigation({
+    studyMaterials,
+    assessments: [], // No assessments for now
+    progressData,
+    onMaterialSelect: (material) => {
+      // This will be handled by the hook
+    },
+    onAssessmentSelect: () => {
+      // This will be handled by the hook
+    }
+  });
 
   useEffect(() => {
     if (!user) {
@@ -46,6 +66,7 @@ const StudentCourseLearning = () => {
     
     if (courseId) {
       fetchCourse();
+      fetchStudyMaterials();
       loadProgress();
     }
   }, [user, userRole, courseId, navigate]);
@@ -68,15 +89,30 @@ const StudentCourseLearning = () => {
     }
   };
 
+  const fetchStudyMaterials = async () => {
+    if (!courseId) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('study_materials')
+        .select('id, title, mime_type, file_url, description')
+        .eq('course_id', courseId)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+
+      if (error) throw error;
+      setStudyMaterials(data || []);
+    } catch (error) {
+      toast.error('Error fetching study materials');
+      console.error('Error:', error);
+    }
+  };
+
   const loadProgress = async () => {
     if (courseId) {
       const courseProgress = await getStudyProgress(courseId);
       setProgressData(courseProgress);
     }
-  };
-
-  const handleMaterialSelect = (material: Material) => {
-    setSelectedMaterial(material);
   };
 
   const handleDownload = (material: Material) => {
@@ -125,6 +161,10 @@ const StudentCourseLearning = () => {
                   progressLoading={progressLoading}
                   onDownload={handleDownload}
                   onMaterialCompletion={handleMaterialCompletion}
+                  onNext={goToNext}
+                  onPrevious={goToPrevious}
+                  hasNext={hasNextMaterial()}
+                  hasPrevious={hasPreviousMaterial()}
                 />
               </div>
             </div>

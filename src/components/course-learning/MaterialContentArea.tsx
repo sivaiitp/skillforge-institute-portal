@@ -18,6 +18,10 @@ interface MaterialContentAreaProps {
   progressLoading: boolean;
   onDownload: (material: Material) => void;
   onMaterialCompletion: (materialId: string) => void;
+  onNext?: () => void;
+  onPrevious?: () => void;
+  hasNext?: boolean;
+  hasPrevious?: boolean;
 }
 
 export function MaterialContentArea({
@@ -25,7 +29,11 @@ export function MaterialContentArea({
   progressData,
   progressLoading,
   onDownload,
-  onMaterialCompletion
+  onMaterialCompletion,
+  onNext,
+  onPrevious,
+  hasNext = false,
+  hasPrevious = false
 }: MaterialContentAreaProps) {
   const getMaterialProgress = (materialId: string) => {
     return progressData.find(p => p.study_material_id === materialId);
@@ -53,6 +61,12 @@ export function MaterialContentArea({
     if (!material.file_url) return false;
     const url = material.file_url.toLowerCase();
     return url.match(/\.(mp4|webm|ogg|avi|mov)$/) || material.mime_type?.includes('video');
+  };
+
+  const isCurrentMaterialCompleted = () => {
+    if (!selectedMaterial) return false;
+    const progress = getMaterialProgress(selectedMaterial.id);
+    return progress?.completed || false;
   };
 
   if (!selectedMaterial) {
@@ -89,13 +103,15 @@ export function MaterialContentArea({
           className="border-0 bg-white/80 backdrop-blur-sm shadow-xl"
         />
 
-        {/* Bottom buttons */}
+        {/* Bottom navigation buttons */}
         <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
           <CardContent className="p-6">
             <div className="flex gap-3">
               <Button
                 variant="outline"
                 className="flex-1"
+                onClick={onPrevious}
+                disabled={!hasPrevious}
               >
                 <ChevronLeft className="w-4 h-4 mr-2" />
                 Previous
@@ -122,6 +138,8 @@ export function MaterialContentArea({
 
               <Button
                 className="flex-1"
+                onClick={onNext}
+                disabled={!hasNext || !isCurrentMaterialCompleted()}
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-2" />
@@ -160,13 +178,15 @@ export function MaterialContentArea({
           </CardContent>
         </Card>
 
-        {/* Bottom buttons */}
+        {/* Bottom navigation buttons */}
         <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
           <CardContent className="p-6">
             <div className="flex gap-3">
               <Button
                 variant="outline"
                 className="flex-1"
+                onClick={onPrevious}
+                disabled={!hasPrevious}
               >
                 <ChevronLeft className="w-4 h-4 mr-2" />
                 Previous
@@ -193,6 +213,8 @@ export function MaterialContentArea({
 
               <Button
                 className="flex-1"
+                onClick={onNext}
+                disabled={!hasNext || !isCurrentMaterialCompleted()}
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-2" />
@@ -230,13 +252,15 @@ export function MaterialContentArea({
           </CardContent>
         </Card>
 
-        {/* Bottom buttons */}
+        {/* Bottom navigation buttons */}
         <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
           <CardContent className="p-6">
             <div className="flex gap-3">
               <Button
                 variant="outline"
                 className="flex-1"
+                onClick={onPrevious}
+                disabled={!hasPrevious}
               >
                 <ChevronLeft className="w-4 h-4 mr-2" />
                 Previous
@@ -263,6 +287,8 @@ export function MaterialContentArea({
 
               <Button
                 className="flex-1"
+                onClick={onNext}
+                disabled={!hasNext || !isCurrentMaterialCompleted()}
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-2" />
@@ -303,13 +329,15 @@ export function MaterialContentArea({
         </CardContent>
       </Card>
 
-      {/* Bottom buttons */}
+      {/* Bottom navigation buttons */}
       <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
         <CardContent className="p-6">
           <div className="flex gap-3">
             <Button
               variant="outline"
               className="flex-1"
+              onClick={onPrevious}
+              disabled={!hasPrevious}
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Previous
@@ -336,6 +364,8 @@ export function MaterialContentArea({
 
             <Button
               className="flex-1"
+              onClick={onNext}
+              disabled={!hasNext || !isCurrentMaterialCompleted()}
             >
               Next
               <ChevronRight className="w-4 h-4 ml-2" />
