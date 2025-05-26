@@ -61,7 +61,7 @@ const CertificateVerification = () => {
             Certificate Verification
           </h1>
           <p className="text-xl max-w-2xl mx-auto">
-            Verify the authenticity of certificates issued by SkillTech Institute.
+            Verify the authenticity of certificates issued by RaceCodingInstitute.
           </p>
         </div>
       </section>

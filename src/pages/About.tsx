@@ -43,7 +43,7 @@ const About = () => {
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">About SkillTech Institute</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">About RaceCodingInstitute</h1>
           <p className="text-xl max-w-3xl mx-auto leading-relaxed">
             Transforming careers through world-class technology education and industry-focused training programs.
           </p>

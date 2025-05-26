@@ -11,9 +11,9 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">S</span>
+                <span className="text-white font-bold">R</span>
               </div>
-              <span className="text-xl font-bold">SkillTech Institute</span>
+              <span className="text-xl font-bold">RaceCodingInstitute</span>
             </div>
             <p className="text-gray-400 mb-4">
               Empowering careers through cutting-edge technology training and industry-focused programs.
@@ -73,7 +73,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 SkillTech Institute. All rights reserved.</p>
+          <p>&copy; 2024 RaceCodingInstitute. All rights reserved.</p>
         </div>
       </div>
     </footer>
