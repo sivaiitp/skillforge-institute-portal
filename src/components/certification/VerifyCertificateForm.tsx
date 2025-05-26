@@ -71,7 +71,7 @@ const VerifyCertificateForm = ({ onCertificateUpdated }: VerifyCertificateFormPr
 
     setVerificationResult({
       valid: data.is_valid,
-      data: data as Certificate,
+      data: data,
       message: data.is_valid ? 'Certificate is valid' : 'Certificate has been revoked'
     });
   };
