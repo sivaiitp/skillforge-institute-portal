@@ -115,9 +115,9 @@ const StudentDashboard = () => {
     <div className="min-h-screen flex flex-col">
       <Navigation />
       
-      <div className="flex-1">
+      <div className="flex-1 relative">
         <SidebarProvider>
-          <div className="flex w-full">
+          <div className="flex h-full w-full">
             <SidebarInset className="flex-1">
               <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
                 <SidebarTrigger className="-ml-1" />
@@ -261,7 +261,9 @@ const StudentDashboard = () => {
                 )}
               </div>
             </SidebarInset>
-            <StudentSidebar />
+            <div className="relative">
+              <StudentSidebar />
+            </div>
           </div>
         </SidebarProvider>
       </div>
