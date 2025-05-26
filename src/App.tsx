@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -70,6 +69,7 @@ function App() {
               {/* Student routes */}
               <Route path="/dashboard" element={<StudentDashboard />} />
               <Route path="/dashboard/courses" element={<StudentCourses />} />
+              <Route path="/dashboard/course/:courseId/learn" element={<StudentCourseLearning />} />
               <Route path="/dashboard/study-materials" element={<StudentStudyMaterials />} />
               <Route path="/dashboard/assessments" element={<StudentAssessments />} />
               <Route path="/dashboard/certificates" element={<StudentCertificates />} />
