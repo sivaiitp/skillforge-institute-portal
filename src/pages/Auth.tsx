@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -28,11 +27,18 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        await signIn(email, password);
+        const userRole = await signIn(email, password);
         toast({
           title: "Welcome back!",
           description: "You have successfully signed in.",
         });
+        
+        // Redirect based on role
+        if (userRole === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         const fullName = `${firstName} ${lastName}`.trim();
         await signUp(email, password, fullName);
@@ -40,8 +46,8 @@ const Auth = () => {
           title: "Account created!",
           description: "Please check your email to verify your account.",
         });
+        navigate('/');
       }
-      navigate('/');
     } catch (error: any) {
       toast({
         title: "Error",
