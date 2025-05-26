@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -264,24 +263,24 @@ const StudyMaterialManagement = () => {
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="title" className="text-gray-200">Title *</Label>
+                        <Label htmlFor="title" className="text-gray-700">Title *</Label>
                         <Input
                           id="title"
                           value={formData.title}
                           onChange={(e) => setFormData({...formData, title: e.target.value})}
                           required
-                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-emerald-400/50"
+                          className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="course" className="text-gray-200">Course *</Label>
+                        <Label htmlFor="course" className="text-gray-700">Course *</Label>
                         <Select value={formData.course_id} onValueChange={(value) => setFormData({...formData, course_id: value})}>
-                          <SelectTrigger className="bg-white/10 border-white/20 text-white focus:bg-white/15 focus:border-emerald-400/50">
+                          <SelectTrigger className="bg-white border-gray-300 text-gray-800 focus:border-emerald-500 focus:ring-emerald-500">
                             <SelectValue placeholder="Select a course" />
                           </SelectTrigger>
-                          <SelectContent className="bg-slate-800 border-white/20">
+                          <SelectContent className="bg-white border-gray-200">
                             {courses.map((course) => (
-                              <SelectItem key={course.id} value={course.id} className="text-white hover:bg-white/10">
+                              <SelectItem key={course.id} value={course.id} className="text-gray-800 hover:bg-gray-50">
                                 {course.title}
                               </SelectItem>
                             ))}
@@ -291,26 +290,26 @@ const StudyMaterialManagement = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="description" className="text-gray-200">Description</Label>
+                      <Label htmlFor="description" className="text-gray-700">Description</Label>
                       <Textarea
                         id="description"
                         value={formData.description}
                         onChange={(e) => setFormData({...formData, description: e.target.value})}
                         rows={3}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-emerald-400/50"
+                        className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
                       />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="material_type" className="text-gray-200">Material Type</Label>
+                        <Label htmlFor="material_type" className="text-gray-700">Material Type</Label>
                         <Select value={formData.material_type} onValueChange={(value) => setFormData({...formData, material_type: value})}>
-                          <SelectTrigger className="bg-white/10 border-white/20 text-white focus:bg-white/15 focus:border-emerald-400/50">
+                          <SelectTrigger className="bg-white border-gray-300 text-gray-800 focus:border-emerald-500 focus:ring-emerald-500">
                             <SelectValue />
                           </SelectTrigger>
-                          <SelectContent className="bg-slate-800 border-white/20">
+                          <SelectContent className="bg-white border-gray-200">
                             {materialTypes.map((type) => (
-                              <SelectItem key={type.value} value={type.value} className="text-white hover:bg-white/10">
+                              <SelectItem key={type.value} value={type.value} className="text-gray-800 hover:bg-gray-50">
                                 {type.label}
                               </SelectItem>
                             ))}
@@ -318,57 +317,57 @@ const StudyMaterialManagement = () => {
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="sort_order" className="text-gray-200">Sort Order</Label>
+                        <Label htmlFor="sort_order" className="text-gray-700">Sort Order</Label>
                         <Input
                           id="sort_order"
                           type="number"
                           value={formData.sort_order}
                           onChange={(e) => setFormData({...formData, sort_order: parseInt(e.target.value) || 0})}
-                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-emerald-400/50"
+                          className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="file_url" className="text-gray-200">File URL</Label>
+                      <Label htmlFor="file_url" className="text-gray-700">File URL</Label>
                       <Input
                         id="file_url"
                         value={formData.file_url}
                         onChange={(e) => setFormData({...formData, file_url: e.target.value})}
                         placeholder="https://example.com/file.pdf"
-                        className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-emerald-400/50"
+                        className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
                       />
                     </div>
 
                     <div className="grid grid-cols-3 gap-4">
                       <div>
-                        <Label htmlFor="duration" className="text-gray-200">Duration</Label>
+                        <Label htmlFor="duration" className="text-gray-700">Duration</Label>
                         <Input
                           id="duration"
                           value={formData.duration}
                           onChange={(e) => setFormData({...formData, duration: e.target.value})}
                           placeholder="e.g., 45 minutes"
-                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-emerald-400/50"
+                          className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="mime_type" className="text-gray-200">MIME Type</Label>
+                        <Label htmlFor="mime_type" className="text-gray-700">MIME Type</Label>
                         <Input
                           id="mime_type"
                           value={formData.mime_type}
                           onChange={(e) => setFormData({...formData, mime_type: e.target.value})}
                           placeholder="e.g., application/pdf"
-                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-emerald-400/50"
+                          className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
                         />
                       </div>
                       <div>
-                        <Label htmlFor="file_extension" className="text-gray-200">File Extension</Label>
+                        <Label htmlFor="file_extension" className="text-gray-700">File Extension</Label>
                         <Input
                           id="file_extension"
                           value={formData.file_extension}
                           onChange={(e) => setFormData({...formData, file_extension: e.target.value})}
                           placeholder="e.g., pdf"
-                          className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:bg-white/15 focus:border-emerald-400/50"
+                          className="bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-emerald-500 focus:ring-emerald-500"
                         />
                       </div>
                     </div>
@@ -380,7 +379,7 @@ const StudyMaterialManagement = () => {
                           checked={formData.is_downloadable}
                           onCheckedChange={(checked) => setFormData({...formData, is_downloadable: checked})}
                         />
-                        <Label htmlFor="is_downloadable" className="text-gray-200">Downloadable</Label>
+                        <Label htmlFor="is_downloadable" className="text-gray-700">Downloadable</Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Switch
@@ -388,12 +387,12 @@ const StudyMaterialManagement = () => {
                           checked={formData.is_active}
                           onCheckedChange={(checked) => setFormData({...formData, is_active: checked})}
                         />
-                        <Label htmlFor="is_active" className="text-gray-200">Active</Label>
+                        <Label htmlFor="is_active" className="text-gray-700">Active</Label>
                       </div>
                     </div>
 
                     <DialogFooter>
-                      <Button type="button" variant="outline" onClick={resetForm} className="border-white/20 text-white hover:bg-white/10">
+                      <Button type="button" variant="outline" onClick={resetForm} className="border-gray-300 text-gray-700 hover:bg-gray-50">
                         Cancel
                       </Button>
                       <Button type="submit" className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white">
