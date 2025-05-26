@@ -11,18 +11,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import AdminSidebar from "@/components/AdminSidebar";
 import { useNavigate } from "react-router-dom";
+import { Users, BookOpen, FileText, Award, TrendingUp } from "lucide-react";
 
 const AdminDashboard = () => {
   const { user, userRole } = useAuth();
   const navigate = useNavigate();
-  const [students, setStudents] = useState([]);
-  const [courses, setCourses] = useState([]);
-  const [certificates, setCertificates] = useState([]);
-  const [selectedStudent, setSelectedStudent] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState("");
-  const [grade, setGrade] = useState("");
-  const [completionDate, setCompletionDate] = useState("");
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    totalCourses: 0,
+    totalCertificates: 0,
+    totalEnrollments: 0
+  });
+  const [recentActivities, setRecentActivities] = useState([]);
 
   useEffect(() => {
     if (userRole !== 'admin') {
@@ -30,93 +32,44 @@ const AdminDashboard = () => {
       return;
     }
     
-    fetchStudents();
-    fetchCourses();
-    fetchCertificates();
+    fetchDashboardStats();
+    fetchRecentActivities();
   }, [userRole, navigate]);
 
-  const fetchStudents = async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, full_name, email')
-      .order('full_name');
-    
-    if (error) {
-      toast.error('Error fetching students');
-      return;
+  const fetchDashboardStats = async () => {
+    try {
+      const [studentsRes, coursesRes, certificatesRes, enrollmentsRes] = await Promise.all([
+        supabase.from('profiles').select('id').eq('role', 'student'),
+        supabase.from('courses').select('id'),
+        supabase.from('certificates').select('id'),
+        supabase.from('enrollments').select('id')
+      ]);
+
+      setStats({
+        totalStudents: studentsRes.data?.length || 0,
+        totalCourses: coursesRes.data?.length || 0,
+        totalCertificates: certificatesRes.data?.length || 0,
+        totalEnrollments: enrollmentsRes.data?.length || 0
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
     }
-    setStudents(data || []);
   };
 
-  const fetchCourses = async () => {
-    const { data, error } = await supabase
-      .from('courses')
-      .select('id, title, certification')
-      .order('title');
-    
-    if (error) {
-      toast.error('Error fetching courses');
-      return;
-    }
-    setCourses(data || []);
-  };
-
-  const fetchCertificates = async () => {
+  const fetchRecentActivities = async () => {
     const { data, error } = await supabase
       .from('certificates')
       .select(`
         *,
-        courses (title, certification),
-        profiles (full_name, email)
+        courses (title),
+        profiles (full_name)
       `)
-      .order('issued_date', { ascending: false });
+      .order('issued_date', { ascending: false })
+      .limit(5);
     
-    if (error) {
-      toast.error('Error fetching certificates');
-      return;
+    if (!error) {
+      setRecentActivities(data || []);
     }
-    setCertificates(data || []);
-  };
-
-  const generateCertificateNumber = () => {
-    const year = new Date().getFullYear();
-    const timestamp = Date.now();
-    return `CERT-${year}-${timestamp.toString().slice(-6)}`;
-  };
-
-  const handleIssueCertificate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!selectedStudent || !selectedCourse || !grade || !completionDate) {
-      toast.error('Please fill all fields');
-      return;
-    }
-
-    const certificateNumber = generateCertificateNumber();
-    
-    const { error } = await supabase
-      .from('certificates')
-      .insert({
-        user_id: selectedStudent,
-        course_id: selectedCourse,
-        certificate_number: certificateNumber,
-        grade,
-        completion_date: completionDate,
-        issued_date: new Date().toISOString(),
-        is_valid: true
-      });
-
-    if (error) {
-      toast.error('Error issuing certificate');
-      return;
-    }
-
-    toast.success('Certificate issued successfully!');
-    setSelectedStudent("");
-    setSelectedCourse("");
-    setGrade("");
-    setCompletionDate("");
-    fetchCertificates();
   };
 
   if (userRole !== 'admin') {
@@ -126,119 +79,152 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Navigation />
+      <AdminSidebar />
       
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Issue Certificate Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Issue Certificate</CardTitle>
-                <CardDescription>
-                  Issue a new certificate to a student
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleIssueCertificate} className="space-y-4">
-                  <div>
-                    <Label htmlFor="student">Student</Label>
-                    <Select value={selectedStudent} onValueChange={setSelectedStudent}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a student" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {students.map((student) => (
-                          <SelectItem key={student.id} value={student.id}>
-                            {student.full_name} ({student.email})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+      <div className="ml-64 pt-20">
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
+              <p className="text-gray-600">Welcome back, {user?.user_metadata?.first_name || 'Admin'}</p>
+            </div>
+            
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/students')}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Students</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.totalStudents}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Registered students
+                  </p>
+                </CardContent>
+              </Card>
 
-                  <div>
-                    <Label htmlFor="course">Course</Label>
-                    <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a course" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {courses.map((course) => (
-                          <SelectItem key={course.id} value={course.id}>
-                            {course.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/courses')}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
+                  <BookOpen className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.totalCourses}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Available courses
+                  </p>
+                </CardContent>
+              </Card>
 
-                  <div>
-                    <Label htmlFor="grade">Grade</Label>
-                    <Select value={grade} onValueChange={setGrade}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select grade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="A+">A+</SelectItem>
-                        <SelectItem value="A">A</SelectItem>
-                        <SelectItem value="B+">B+</SelectItem>
-                        <SelectItem value="B">B</SelectItem>
-                        <SelectItem value="C">C</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/certificates')}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Certificates Issued</CardTitle>
+                  <Award className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.totalCertificates}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Certificates awarded
+                  </p>
+                </CardContent>
+              </Card>
 
-                  <div>
-                    <Label htmlFor="completionDate">Completion Date</Label>
-                    <Input
-                      id="completionDate"
-                      type="date"
-                      value={completionDate}
-                      onChange={(e) => setCompletionDate(e.target.value)}
-                      required
-                    />
-                  </div>
+              <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => navigate('/admin/reports')}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Total Enrollments</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stats.totalEnrollments}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Course enrollments
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
 
-                  <Button type="submit" className="w-full">
+            {/* Quick Actions */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Quick Actions</CardTitle>
+                  <CardDescription>
+                    Common administrative tasks
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button 
+                    onClick={() => navigate('/admin/courses')} 
+                    className="w-full justify-start"
+                    variant="outline"
+                  >
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Add New Course
+                  </Button>
+                  <Button 
+                    onClick={() => navigate('/admin/certificates')} 
+                    className="w-full justify-start"
+                    variant="outline"
+                  >
+                    <Award className="w-4 h-4 mr-2" />
                     Issue Certificate
                   </Button>
-                </form>
-              </CardContent>
-            </Card>
+                  <Button 
+                    onClick={() => navigate('/admin/assessments')} 
+                    className="w-full justify-start"
+                    variant="outline"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Create Assessment
+                  </Button>
+                  <Button 
+                    onClick={() => navigate('/admin/students')} 
+                    className="w-full justify-start"
+                    variant="outline"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Manage Students
+                  </Button>
+                </CardContent>
+              </Card>
 
-            {/* Certificates List */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Issued Certificates</CardTitle>
-                <CardDescription>
-                  List of all issued certificates
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {certificates.map((cert) => (
-                    <div key={cert.id} className="p-4 border rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-semibold">{cert.profiles?.full_name}</h4>
-                        <Badge className="bg-green-100 text-green-800">
-                          {cert.grade}
-                        </Badge>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Activities</CardTitle>
+                  <CardDescription>
+                    Latest certificates issued
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {recentActivities.map((activity) => (
+                      <div key={activity.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div>
+                          <h4 className="font-medium">{activity.profiles?.full_name}</h4>
+                          <p className="text-sm text-gray-600">{activity.courses?.title}</p>
+                          <p className="text-xs text-gray-500 font-mono">{activity.certificate_number}</p>
+                        </div>
+                        <div className="text-right">
+                          <Badge className="bg-green-100 text-green-800">
+                            Certified
+                          </Badge>
+                          <p className="text-xs text-gray-500">
+                            {new Date(activity.issued_date).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-600">{cert.courses?.title}</p>
-                      <p className="text-xs text-gray-500 font-mono">{cert.certificate_number}</p>
-                      <p className="text-xs text-gray-500">
-                        Issued: {new Date(cert.issued_date).toLocaleDateString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    ))}
+                    {recentActivities.length === 0 && (
+                      <p className="text-center text-gray-500 py-4">No recent activities</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <Footer />
     </div>

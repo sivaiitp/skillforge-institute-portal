@@ -15,6 +15,11 @@ import Auth from "./pages/Auth";
 import CertificateVerification from "./pages/CertificateVerification";
 import AdminDashboard from "./pages/AdminDashboard";
 import StudentDashboard from "./pages/StudentDashboard";
+import StudentManagement from "./pages/StudentManagement";
+import CourseManagement from "./pages/CourseManagement";
+import AssessmentManagement from "./pages/AssessmentManagement";
+import CertificationManagement from "./pages/CertificationManagement";
+import PaymentReports from "./pages/PaymentReports";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +41,11 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/verify" element={<CertificateVerification />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/students" element={<StudentManagement />} />
+            <Route path="/admin/courses" element={<CourseManagement />} />
+            <Route path="/admin/assessments" element={<AssessmentManagement />} />
+            <Route path="/admin/certificates" element={<CertificationManagement />} />
+            <Route path="/admin/reports" element={<PaymentReports />} />
             <Route path="/dashboard" element={<StudentDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
