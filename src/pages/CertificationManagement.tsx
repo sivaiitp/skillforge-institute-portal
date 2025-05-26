@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import AdminSidebar from '@/components/AdminSidebar';
 import IssueCertificateForm from '@/components/certification/IssueCertificateForm';
-import VerifyCertificateForm from '@/components/certification/VerifyCertificateForm';
+import StudentCertificatesSearch from '@/components/certification/StudentCertificatesSearch';
 import { Award, Shield, CheckCircle, Users } from 'lucide-react';
 
 const CertificationManagement = () => {
@@ -115,7 +114,7 @@ const CertificationManagement = () => {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-800 mb-1">Certification Management</h1>
-                <p className="text-gray-600">Issue and validate digital certificates</p>
+                <p className="text-gray-600">Issue certificates and search student certificates</p>
               </div>
             </div>
             
@@ -168,11 +167,9 @@ const CertificationManagement = () => {
           <div className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-all duration-300">
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle className="w-5 h-5 text-green-500" />
-              <h2 className="text-xl font-semibold text-gray-800">Verify Certificate</h2>
+              <h2 className="text-xl font-semibold text-gray-800">Search Student Certificates</h2>
             </div>
-            <VerifyCertificateForm
-              onCertificateUpdated={handleCertificateIssued}
-            />
+            <StudentCertificatesSearch />
           </div>
         </div>
       </div>
