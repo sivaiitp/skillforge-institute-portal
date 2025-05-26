@@ -9,8 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { Search, Mail, Phone, Calendar } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
 import AdminSidebar from '@/components/AdminSidebar';
 
 const StudentManagement = () => {
@@ -73,105 +71,98 @@ const StudentManagement = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navigation />
       <AdminSidebar />
       
-      <div className="ml-64 pt-20">
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold mb-2">Student Management</h1>
-              <p className="text-gray-600">View and manage student details</p>
-            </div>
+      <div className="ml-64 p-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Student Management</h1>
+          <p className="text-gray-600">View and manage student details</p>
+        </div>
 
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Search className="w-5 h-5" />
-                  Search Students
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Input
-                  placeholder="Search by name or email..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="max-w-md"
-                />
-              </CardContent>
-            </Card>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Search className="w-5 h-5" />
+              Search Students
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Input
+              placeholder="Search by name or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-md"
+            />
+          </CardContent>
+        </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>All Students ({filteredStudents.length})</CardTitle>
-                <CardDescription>
-                  Manage student accounts and view their progress
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {loading ? (
-                  <div>Loading...</div>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Phone</TableHead>
-                        <TableHead>Joined</TableHead>
-                        <TableHead>Enrollments</TableHead>
-                        <TableHead>Actions</TableHead>
+        <Card>
+          <CardHeader>
+            <CardTitle>All Students ({filteredStudents.length})</CardTitle>
+            <CardDescription>
+              Manage student accounts and view their progress
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div>Loading...</div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Phone</TableHead>
+                    <TableHead>Joined</TableHead>
+                    <TableHead>Enrollments</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredStudents.map((student) => {
+                    const studentEnrollments = getStudentEnrollments(student.id);
+                    return (
+                      <TableRow key={student.id}>
+                        <TableCell className="font-medium">
+                          {student.full_name || 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Mail className="w-4 h-4 text-gray-400" />
+                            {student.email}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Phone className="w-4 h-4 text-gray-400" />
+                            {student.phone || 'N/A'}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4 text-gray-400" />
+                            {new Date(student.created_at).toLocaleDateString()}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
+                            {studentEnrollments.length} courses
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="outline" size="sm">
+                            View Details
+                          </Button>
+                        </TableCell>
                       </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredStudents.map((student) => {
-                        const studentEnrollments = getStudentEnrollments(student.id);
-                        return (
-                          <TableRow key={student.id}>
-                            <TableCell className="font-medium">
-                              {student.full_name || 'N/A'}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
-                                <Mail className="w-4 h-4 text-gray-400" />
-                                {student.email}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
-                                <Phone className="w-4 h-4 text-gray-400" />
-                                {student.phone || 'N/A'}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
-                                <Calendar className="w-4 h-4 text-gray-400" />
-                                {new Date(student.created_at).toLocaleDateString()}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge variant="outline">
-                                {studentEnrollments.length} courses
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Button variant="outline" size="sm">
-                                View Details
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </section>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
       </div>
-
-      <Footer />
     </div>
   );
 };
