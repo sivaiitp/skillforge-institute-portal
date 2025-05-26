@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, School, BookOpen, Calendar } from "lucide-react";
 import { ProfileFormData } from "@/hooks/useProfileData";
 
 interface EducationCardProps {
@@ -15,19 +15,26 @@ interface EducationCardProps {
 
 export const EducationCard = ({ editing, formData, setFormData, profile }: EducationCardProps) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <GraduationCap className="w-5 h-5" />
-          Education
+    <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300">
+      <CardHeader className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-blue-100">
+        <CardTitle className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
+            <GraduationCap className="w-5 h-5 text-white" />
+          </div>
+          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Education Background
+          </span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <Label htmlFor="education_level">Education Level</Label>
+      <CardContent className="p-6 space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="education_level" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <GraduationCap className="w-4 h-4 text-blue-500" />
+            Education Level
+          </Label>
           {editing ? (
             <Select value={formData.education_level} onValueChange={(value) => setFormData(prev => ({...prev, education_level: value}))}>
-              <SelectTrigger>
+              <SelectTrigger className="border-blue-200 focus:border-blue-400 focus:ring-blue-400">
                 <SelectValue placeholder="Select education level" />
               </SelectTrigger>
               <SelectContent>
@@ -40,44 +47,70 @@ export const EducationCard = ({ editing, formData, setFormData, profile }: Educa
               </SelectContent>
             </Select>
           ) : (
-            <p className="mt-1 text-sm">{profile?.education_level || 'Not specified'}</p>
+            <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-800">{profile?.education_level || 'Not specified'}</p>
+            </div>
           )}
         </div>
-        <div>
-          <Label htmlFor="institution">Institution</Label>
+        
+        <div className="space-y-2">
+          <Label htmlFor="institution" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <School className="w-4 h-4 text-purple-500" />
+            Institution
+          </Label>
           {editing ? (
             <Input
               id="institution"
               value={formData.institution}
               onChange={(e) => setFormData(prev => ({...prev, institution: e.target.value}))}
+              className="border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+              placeholder="Enter your institution name"
             />
           ) : (
-            <p className="mt-1 text-sm">{profile?.institution || 'Not specified'}</p>
+            <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-800">{profile?.institution || 'Not specified'}</p>
+            </div>
           )}
         </div>
-        <div>
-          <Label htmlFor="field_of_study">Field of Study</Label>
+        
+        <div className="space-y-2">
+          <Label htmlFor="field_of_study" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <BookOpen className="w-4 h-4 text-blue-500" />
+            Field of Study
+          </Label>
           {editing ? (
             <Input
               id="field_of_study"
               value={formData.field_of_study}
               onChange={(e) => setFormData(prev => ({...prev, field_of_study: e.target.value}))}
+              className="border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+              placeholder="Enter your field of study"
             />
           ) : (
-            <p className="mt-1 text-sm">{profile?.field_of_study || 'Not specified'}</p>
+            <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-800">{profile?.field_of_study || 'Not specified'}</p>
+            </div>
           )}
         </div>
-        <div>
-          <Label htmlFor="graduation_year">Graduation Year</Label>
+        
+        <div className="space-y-2">
+          <Label htmlFor="graduation_year" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <Calendar className="w-4 h-4 text-purple-500" />
+            Graduation Year
+          </Label>
           {editing ? (
             <Input
               id="graduation_year"
               type="number"
               value={formData.graduation_year}
               onChange={(e) => setFormData(prev => ({...prev, graduation_year: e.target.value}))}
+              className="border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+              placeholder="Enter graduation year"
             />
           ) : (
-            <p className="mt-1 text-sm">{profile?.graduation_year || 'Not specified'}</p>
+            <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-sm text-gray-800">{profile?.graduation_year || 'Not specified'}</p>
+            </div>
           )}
         </div>
       </CardContent>

@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, Download, Video, FileImage, File, Search } from "lucide-react";
+import { FileText, Download, Video, FileImage, File, Search, BookOpen, FolderOpen } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -124,106 +124,140 @@ const StudentStudyMaterials = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
       <SidebarProvider>
-        <div className="flex min-h-screen">
-          {/* Sidebar */}
+        <div className="flex min-h-screen w-full">
           <StudentSidebar />
           
-          {/* Content Area */}
           <SidebarInset className="flex-1">
-            <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
+            <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
               <SidebarTrigger className="-ml-1" />
-              <h1 className="text-xl font-semibold">Study Materials</h1>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg">
+                  <BookOpen className="h-5 w-5 text-white" />
+                </div>
+                <h1 className="text-xl font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  Study Materials
+                </h1>
+              </div>
             </header>
             
             <div className="flex justify-center">
-              <div className="p-6 space-y-6 max-w-7xl w-full">
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold">Study Materials</h2>
-                  <p className="text-gray-600">Access course materials and resources</p>
+              <div className="p-8 space-y-8 max-w-7xl w-full">
+                <div className="text-center space-y-4">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                    Study Materials
+                  </h2>
+                  <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Access your course materials and resources for enhanced learning
+                  </p>
                 </div>
 
                 {/* Course Filter */}
-                <div className="flex items-center gap-4">
-                  <Search className="h-5 w-5 text-gray-400" />
-                  <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                    <SelectTrigger className="w-64">
-                      <SelectValue placeholder="Filter by course" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Courses</SelectItem>
-                      {enrolledCourses.map((course) => (
-                        <SelectItem key={course.id} value={course.id}>
-                          {course.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="flex items-center justify-center gap-4">
+                  <div className="flex items-center gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-emerald-100">
+                    <Search className="h-5 w-5 text-emerald-500" />
+                    <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+                      <SelectTrigger className="w-64 border-emerald-200 focus:border-emerald-400">
+                        <SelectValue placeholder="Filter by course" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Courses</SelectItem>
+                        {enrolledCourses.map((course) => (
+                          <SelectItem key={course.id} value={course.id}>
+                            {course.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 {loading ? (
-                  <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p>Loading study materials...</p>
+                  <div className="text-center py-20">
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-emerald-500 mx-auto mb-6"></div>
+                    <p className="text-lg text-gray-600">Loading study materials...</p>
                   </div>
                 ) : materials.length === 0 ? (
-                  <Card className="text-center py-12">
+                  <Card className="text-center py-16 border-0 bg-white/80 backdrop-blur-sm shadow-xl">
                     <CardContent>
-                      <FileText className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                      <h3 className="text-lg font-medium mb-2">No Study Materials</h3>
-                      <p className="text-gray-600 mb-4">
+                      <div className="p-8 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-full w-32 h-32 mx-auto mb-6 flex items-center justify-center">
+                        <FolderOpen className="h-16 w-16 text-gray-400" />
+                      </div>
+                      <h3 className="text-2xl font-semibold mb-4 text-gray-800">No Study Materials</h3>
+                      <p className="text-gray-600 mb-8 text-lg">
                         {enrolledCourses.length === 0 
                           ? "You need to enroll in courses to access study materials."
                           : "No study materials available for your enrolled courses yet."
                         }
                       </p>
                       {enrolledCourses.length === 0 && (
-                        <Button onClick={() => navigate('/courses')}>
+                        <Button 
+                          onClick={() => navigate('/courses')}
+                          className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white px-8 py-3 text-lg"
+                        >
                           Browse Courses
                         </Button>
                       )}
                     </CardContent>
                   </Card>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {materials.map((material) => {
                       const FileIcon = getFileIcon(material.file_type);
                       
                       return (
-                        <Card key={material.id} className="hover:shadow-lg transition-shadow">
-                          <CardHeader>
-                            <div className="flex items-start justify-between">
-                              <FileIcon className="h-8 w-8 text-blue-500" />
-                              <Badge className={getFileTypeColor(material.file_type)}>
+                        <Card key={material.id} className="group overflow-hidden border-0 bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                          <div className="relative bg-gradient-to-br from-emerald-400 to-teal-500 p-6 text-white">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-12 translate-x-12"></div>
+                            <div className="relative z-10 flex items-start justify-between">
+                              <FileIcon className="h-10 w-10 text-emerald-100" />
+                              <Badge className={`${getFileTypeColor(material.file_type)} border-0`}>
                                 {material.file_type?.split('/')[1]?.toUpperCase() || 'FILE'}
                               </Badge>
                             </div>
-                            <CardTitle className="text-lg">{material.title}</CardTitle>
-                            <CardDescription>{material.description}</CardDescription>
-                          </CardHeader>
-                          <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                              <div className="text-sm text-gray-600">
-                                Course: {material.courses?.title}
+                            <div className="relative z-10 mt-4">
+                              <CardTitle className="text-xl text-white mb-2 line-clamp-2">{material.title}</CardTitle>
+                              <CardDescription className="text-emerald-100 line-clamp-2">
+                                {material.description}
+                              </CardDescription>
+                            </div>
+                          </div>
+                          
+                          <CardContent className="p-6 space-y-4">
+                            <div className="space-y-3">
+                              <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                <BookOpen className="w-4 h-4 mr-3 text-emerald-500" />
+                                <div>
+                                  <div className="font-medium text-gray-800">Course</div>
+                                  <div className="line-clamp-1">{material.courses?.title}</div>
+                                </div>
                               </div>
                               {material.file_size && (
-                                <div className="text-sm text-gray-600">
-                                  Size: {(material.file_size / 1024 / 1024).toFixed(2)} MB
+                                <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                  <File className="w-4 h-4 mr-3 text-teal-500" />
+                                  <div>
+                                    <div className="font-medium text-gray-800">Size</div>
+                                    <div>{(material.file_size / 1024 / 1024).toFixed(2)} MB</div>
+                                  </div>
                                 </div>
                               )}
-                              <div className="text-sm text-gray-600">
-                                Added: {new Date(material.created_at).toLocaleDateString()}
+                              <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+                                <FileText className="w-4 h-4 mr-3 text-emerald-500" />
+                                <div>
+                                  <div className="font-medium text-gray-800">Added</div>
+                                  <div>{new Date(material.created_at).toLocaleDateString()}</div>
+                                </div>
                               </div>
                             </div>
                             
                             <Button 
-                              className="w-full"
+                              className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
                               onClick={() => handleDownload(material)}
                               disabled={!material.file_url}
                             >
                               <Download className="w-4 h-4 mr-2" />
-                              {material.file_url ? 'Download' : 'Not Available'}
+                              {material.file_url ? 'Download Material' : 'Not Available'}
                             </Button>
                           </CardContent>
                         </Card>
