@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,8 +11,6 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { StudentSidebar } from "@/components/StudentSidebar";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 
 const StudentPayments = () => {
   const { user, userRole } = useAuth();
@@ -104,25 +103,21 @@ const StudentPayments = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header Section - Independent */}
-      <Navigation />
-      
-      {/* Main Content Section - Independent */}
-      <div className="flex-1">
-        <SidebarProvider>
-          <div className="flex min-h-full">
-            {/* Sidebar */}
-            <StudentSidebar />
+    <div className="min-h-screen">
+      <SidebarProvider>
+        <div className="flex min-h-screen">
+          {/* Sidebar */}
+          <StudentSidebar />
+          
+          {/* Content Area */}
+          <SidebarInset className="flex-1">
+            <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
+              <SidebarTrigger className="-ml-1" />
+              <h1 className="text-xl font-semibold">Payment History</h1>
+            </header>
             
-            {/* Content Area */}
-            <SidebarInset className="flex-1">
-              <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
-                <SidebarTrigger className="-ml-1" />
-                <h1 className="text-xl font-semibold">Payment History</h1>
-              </header>
-              
-              <div className="p-6 space-y-6">
+            <div className="flex justify-center">
+              <div className="p-6 space-y-6 max-w-7xl w-full">
                 <div className="space-y-2">
                   <h2 className="text-2xl font-bold">Payment History</h2>
                   <p className="text-gray-600">Track all your course payments and transactions</p>
@@ -250,13 +245,10 @@ const StudentPayments = () => {
                   </Card>
                 )}
               </div>
-            </SidebarInset>
-          </div>
-        </SidebarProvider>
-      </div>
-      
-      {/* Footer Section - Independent */}
-      <Footer />
+            </div>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
     </div>
   );
 };
