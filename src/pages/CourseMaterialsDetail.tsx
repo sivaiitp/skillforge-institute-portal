@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -248,74 +247,72 @@ const CourseMaterialsDetail = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <SidebarProvider>
-        <div className="flex min-h-screen w-full">
-          <AdminSidebar />
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-blue-50 to-indigo-100">
+        <AdminSidebar />
+        
+        <SidebarInset className="flex-1">
+          <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
+            <SidebarTrigger className="-ml-1" />
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/admin/study-materials')}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Courses
+            </Button>
+          </header>
           
-          <SidebarInset className="flex-1">
-            <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
-              <SidebarTrigger className="-ml-1" />
-              <Button
-                variant="ghost"
-                onClick={() => navigate('/admin/study-materials')}
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Courses
-              </Button>
-            </header>
-            
-            <div className="flex justify-center">
-              <div className="p-8 space-y-8 max-w-7xl w-full">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                      {courseTitle} - Study Materials
-                    </h1>
-                    <p className="text-gray-600 mt-2">
-                      Manage study materials for this course
-                    </p>
-                  </div>
-                  <Button
-                    onClick={() => setShowForm(true)}
-                    className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Material
-                  </Button>
+          <div className="flex-1 flex justify-center">
+            <div className="p-8 space-y-8 max-w-7xl w-full">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    {courseTitle} - Study Materials
+                  </h1>
+                  <p className="text-gray-600 mt-2">
+                    Manage study materials for this course
+                  </p>
                 </div>
-
-                {loading ? (
-                  <div className="text-center py-20">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-6"></div>
-                    <p className="text-lg text-gray-600">Loading study materials...</p>
-                  </div>
-                ) : (
-                  <StudyMaterialsGrid
-                    materials={materials}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    onAddFirst={handleAddFirst}
-                    selectedCourse={courseId || ''}
-                  />
-                )}
-
-                <StudyMaterialForm
-                  isOpen={showForm}
-                  onClose={resetForm}
-                  onSubmit={handleSubmit}
-                  formData={formData}
-                  onFormDataChange={setFormData}
-                  courses={courses}
-                  editingMaterial={editingMaterial}
-                />
+                <Button
+                  onClick={() => setShowForm(true)}
+                  className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Material
+                </Button>
               </div>
+
+              {loading ? (
+                <div className="text-center py-20">
+                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-6"></div>
+                  <p className="text-lg text-gray-600">Loading study materials...</p>
+                </div>
+              ) : (
+                <StudyMaterialsGrid
+                  materials={materials}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onAddFirst={handleAddFirst}
+                  selectedCourse={courseId || ''}
+                />
+              )}
+
+              <StudyMaterialForm
+                isOpen={showForm}
+                onClose={resetForm}
+                onSubmit={handleSubmit}
+                formData={formData}
+                onFormDataChange={setFormData}
+                courses={courses}
+                editingMaterial={editingMaterial}
+              />
             </div>
-          </SidebarInset>
-        </div>
-      </SidebarProvider>
-    </div>
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 
