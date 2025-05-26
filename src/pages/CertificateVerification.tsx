@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Search, Award, Calendar, User, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -217,13 +216,6 @@ const CertificateVerification = () => {
                           <p className="text-lg font-mono bg-gray-100 p-2 rounded mt-1">
                             {certificate.certificate_number || certificate.certificate_id}
                           </p>
-                        </div>
-                        
-                        <div className="flex justify-center">
-                          <Badge className="bg-green-100 text-green-800 px-4 py-2 text-lg">
-                            <CheckCircle className="w-5 h-5 mr-2" />
-                            Valid Certificate
-                          </Badge>
                         </div>
                       </div>
                     </div>
