@@ -21,29 +21,39 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
         
         console.log('Loading markdown from:', filePath);
         
-        const response = await fetch(filePath);
-        console.log('Response status:', response.status, 'OK:', response.ok);
+        // Try multiple URL patterns to ensure we can load the file
+        const urlsToTry = [
+          filePath,
+          filePath.startsWith('/') ? filePath : `/${filePath}`,
+          filePath.startsWith('/public/') ? filePath.substring(7) : filePath,
+          filePath.includes('public/') ? filePath.split('public/')[1] : filePath
+        ];
+
+        let lastError = null;
         
-        if (!response.ok) {
-          throw new Error(`Failed to load file: ${response.status} ${response.statusText}`);
+        for (const url of urlsToTry) {
+          try {
+            console.log('Trying URL:', url);
+            const response = await fetch(url);
+            
+            if (response.ok) {
+              const text = await response.text();
+              console.log('Successfully loaded content, length:', text.length);
+              
+              // Basic validation
+              if (text && text.trim().length > 0) {
+                setContent(text);
+                return;
+              }
+            }
+            lastError = new Error(`HTTP ${response.status}: ${response.statusText}`);
+          } catch (fetchError) {
+            lastError = fetchError;
+            console.log('Fetch failed for URL:', url, fetchError);
+          }
         }
         
-        const text = await response.text();
-        console.log('Loaded content length:', text.length);
-        console.log('Content preview:', text.substring(0, 100));
-        
-        // Simple validation - just check if we have meaningful content
-        if (!text || text.trim().length < 5) {
-          throw new Error('File appears to be empty');
-        }
-        
-        // Check if it's an HTML error page (404, etc.)
-        if (text.includes('<!DOCTYPE html>') && text.includes('404')) {
-          throw new Error('File not found - received 404 error page');
-        }
-        
-        setContent(text);
-        console.log('Successfully set markdown content');
+        throw lastError || new Error('All URL attempts failed');
         
       } catch (err) {
         console.error('Error loading markdown:', err);
@@ -66,9 +76,7 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
       return '<p class="text-gray-500">No content available</p>';
     }
 
-    console.log('Parsing markdown, length:', markdown.length);
-    
-    const parsed = markdown
+    return markdown
       // Code blocks (must come before inline code)
       .replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto my-4 border font-mono text-sm"><code>$1</code></pre>')
       // Headers
@@ -96,9 +104,6 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
       .join('\n')
       // Clean up empty paragraphs
       .replace(/<p class="mb-4 leading-relaxed text-gray-700"><\/p>/g, '');
-
-    console.log('Markdown parsed successfully');
-    return parsed;
   };
 
   if (loading) {
@@ -136,6 +141,16 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
               <p className="text-xs text-gray-600">
                 File path: <code className="bg-gray-100 px-2 py-1 rounded">{filePath}</code>
               </p>
+              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                <p className="text-sm text-yellow-800">
+                  <strong>Troubleshooting tips:</strong>
+                </p>
+                <ul className="text-xs text-yellow-700 mt-1 list-disc list-inside">
+                  <li>Ensure the file exists in the public folder</li>
+                  <li>Check if the file path is correct</li>
+                  <li>Verify the file has content</li>
+                </ul>
+              </div>
             </div>
           </div>
         </CardContent>

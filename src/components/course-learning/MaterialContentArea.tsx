@@ -1,8 +1,9 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { BookOpen, Download, CheckCircle2, Circle, ChevronLeft, ChevronRight } from "lucide-react";
-import MarkdownRenderer from "@/components/MarkdownRenderer";
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { CheckCircle2, Circle, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
+import { MaterialContentRenderer } from './MaterialContentRenderer';
 
 interface Material {
   id: string;
@@ -10,6 +11,8 @@ interface Material {
   mime_type: string;
   file_url: string;
   description?: string;
+  material_type: string;
+  sort_order: number;
 }
 
 interface MaterialContentAreaProps {
@@ -18,13 +21,13 @@ interface MaterialContentAreaProps {
   progressLoading: boolean;
   onDownload: (material: Material) => void;
   onMaterialCompletion: (materialId: string) => void;
-  onNext?: () => void;
-  onPrevious?: () => void;
-  hasNext?: boolean;
-  hasPrevious?: boolean;
+  onNext: () => void;
+  onPrevious: () => void;
+  hasNext: boolean;
+  hasPrevious: boolean;
 }
 
-export function MaterialContentArea({
+export const MaterialContentArea = ({
   selectedMaterial,
   progressData,
   progressLoading,
@@ -32,323 +35,103 @@ export function MaterialContentArea({
   onMaterialCompletion,
   onNext,
   onPrevious,
-  hasNext = false,
-  hasPrevious = false
-}: MaterialContentAreaProps) {
+  hasNext,
+  hasPrevious
+}: MaterialContentAreaProps) => {
+  
   const getMaterialProgress = (materialId: string) => {
     return progressData.find(p => p.study_material_id === materialId);
   };
 
-  const isMarkdownFile = (material: Material) => {
-    if (!material.file_url) return false;
-    const url = material.file_url.toLowerCase();
-    return url.endsWith('.md') || url.endsWith('.markdown') || material.mime_type?.includes('markdown');
-  };
-
-  const isPDFFile = (material: Material) => {
-    if (!material.file_url) return false;
-    const url = material.file_url.toLowerCase();
-    return url.endsWith('.pdf') || material.mime_type?.includes('pdf');
-  };
-
-  const isImageFile = (material: Material) => {
-    if (!material.file_url) return false;
-    const url = material.file_url.toLowerCase();
-    return url.match(/\.(jpg|jpeg|png|gif|bmp|svg|webp)$/) || material.mime_type?.includes('image');
-  };
-
-  const isVideoFile = (material: Material) => {
-    if (!material.file_url) return false;
-    const url = material.file_url.toLowerCase();
-    return url.match(/\.(mp4|webm|ogg|avi|mov)$/) || material.mime_type?.includes('video');
-  };
-
-  const isCurrentMaterialCompleted = () => {
-    if (!selectedMaterial) return false;
-    const progress = getMaterialProgress(selectedMaterial.id);
-    return progress?.completed || false;
-  };
+  const isCompleted = selectedMaterial ? 
+    getMaterialProgress(selectedMaterial.id)?.completed || false : false;
 
   if (!selectedMaterial) {
     return (
       <Card className="text-center py-16 border-0 bg-white/80 backdrop-blur-sm shadow-xl">
         <CardContent>
-          <div className="p-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-full w-32 h-32 mx-auto mb-6 flex items-center justify-center">
-            <BookOpen className="h-16 w-16 text-gray-400" />
+          <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full w-32 h-32 mx-auto mb-6 flex items-center justify-center">
+            <FileText className="h-16 w-16 text-gray-400" />
           </div>
-          <h3 className="text-2xl font-semibold mb-4 text-gray-800">Select a Material</h3>
-          <p className="text-gray-600 text-lg">
-            Choose a study material from the sidebar to begin learning
+          <h3 className="text-2xl font-semibold mb-4 text-gray-800">Welcome to Course Learning</h3>
+          <p className="text-gray-600 mb-8 text-lg">
+            Select a material from the sidebar to begin your studies.
           </p>
         </CardContent>
       </Card>
     );
   }
 
-  // Render markdown files inline
-  if (isMarkdownFile(selectedMaterial)) {
-    return (
-      <div className="space-y-6">
-        <MarkdownRenderer 
-          filePath={selectedMaterial.file_url} 
-          className="border-0 bg-white/80 backdrop-blur-sm shadow-xl"
-        />
-
-        {/* Bottom navigation buttons */}
-        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
-          <CardContent className="p-6">
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={onPrevious}
-                disabled={!hasPrevious}
-              >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Previous
-              </Button>
-              
-              <Button
-                onClick={() => onMaterialCompletion(selectedMaterial.id)}
-                disabled={progressLoading}
-                variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
-                className={`flex-1 ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
-              >
-                {getMaterialProgress(selectedMaterial.id)?.completed ? (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Mark as Incomplete
-                  </>
-                ) : (
-                  <>
-                    <Circle className="w-4 h-4 mr-2" />
-                    Mark as Complete
-                  </>
-                )}
-              </Button>
-
-              <Button
-                className="flex-1"
-                onClick={onNext}
-                disabled={!hasNext || !isCurrentMaterialCompleted()}
-              >
-                Next
-                <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Render images inline
-  if (isImageFile(selectedMaterial)) {
-    return (
-      <div className="space-y-6">
-        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <img 
-              src={selectedMaterial.file_url} 
-              alt={selectedMaterial.title}
-              className="w-full h-auto rounded-lg shadow-lg"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = '/placeholder.svg';
-              }}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Bottom navigation buttons */}
-        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
-          <CardContent className="p-6">
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={onPrevious}
-                disabled={!hasPrevious}
-              >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Previous
-              </Button>
-              
-              <Button
-                onClick={() => onMaterialCompletion(selectedMaterial.id)}
-                disabled={progressLoading}
-                variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
-                className={`flex-1 ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
-              >
-                {getMaterialProgress(selectedMaterial.id)?.completed ? (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Mark as Incomplete
-                  </>
-                ) : (
-                  <>
-                    <Circle className="w-4 h-4 mr-2" />
-                    Mark as Complete
-                  </>
-                )}
-              </Button>
-
-              <Button
-                className="flex-1"
-                onClick={onNext}
-                disabled={!hasNext || !isCurrentMaterialCompleted()}
-              >
-                Next
-                <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Render videos inline
-  if (isVideoFile(selectedMaterial)) {
-    return (
-      <div className="space-y-6">
-        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <video 
-              controls 
-              className="w-full h-auto rounded-lg shadow-lg"
-              preload="metadata"
-            >
-              <source src={selectedMaterial.file_url} type={selectedMaterial.mime_type} />
-              Your browser does not support the video tag.
-            </video>
-          </CardContent>
-        </Card>
-
-        {/* Bottom navigation buttons */}
-        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
-          <CardContent className="p-6">
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={onPrevious}
-                disabled={!hasPrevious}
-              >
-                <ChevronLeft className="w-4 h-4 mr-2" />
-                Previous
-              </Button>
-              
-              <Button
-                onClick={() => onMaterialCompletion(selectedMaterial.id)}
-                disabled={progressLoading}
-                variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
-                className={`flex-1 ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
-              >
-                {getMaterialProgress(selectedMaterial.id)?.completed ? (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Mark as Incomplete
-                  </>
-                ) : (
-                  <>
-                    <Circle className="w-4 h-4 mr-2" />
-                    Mark as Complete
-                  </>
-                )}
-              </Button>
-
-              <Button
-                className="flex-1"
-                onClick={onNext}
-                disabled={!hasNext || !isCurrentMaterialCompleted()}
-              >
-                Next
-                <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Default material view for PDFs and other files that need to be opened externally
   return (
     <div className="space-y-6">
       <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
-        <CardHeader>
-          <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
+        <CardHeader className="border-b border-gray-100">
+          <CardTitle className="flex items-center gap-3 text-xl">
+            <FileText className="w-6 h-6 text-blue-600" />
+            {selectedMaterial.title}
+          </CardTitle>
+          {selectedMaterial.description && (
+            <p className="text-gray-600 mt-2">{selectedMaterial.description}</p>
+          )}
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-            <span className="font-medium">Type:</span>
-            <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
-              {selectedMaterial.mime_type?.split('/')[1]?.toUpperCase() || 'FILE'}
-            </span>
-          </div>
-          
-          <Button 
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-            onClick={() => onDownload(selectedMaterial)}
-            disabled={!selectedMaterial.file_url}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            {selectedMaterial.file_url ? 'Open Material' : 'Not Available'}
-          </Button>
-        </CardContent>
-      </Card>
+        
+        <CardContent className="p-8">
+          <MaterialContentRenderer 
+            material={selectedMaterial}
+            onDownload={onDownload}
+          />
 
-      {/* Bottom navigation buttons */}
-      <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
-        <CardContent className="p-6">
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={onPrevious}
-              disabled={!hasPrevious}
-            >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Previous
-            </Button>
-            
+          {/* Completion Button */}
+          <div className="mt-8 pt-6 border-t border-gray-200">
             <Button
               onClick={() => onMaterialCompletion(selectedMaterial.id)}
               disabled={progressLoading}
-              variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
-              className={`flex-1 ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+              variant={isCompleted ? "default" : "outline"}
+              className={`w-full ${isCompleted ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+              size="lg"
             >
-              {getMaterialProgress(selectedMaterial.id)?.completed ? (
+              {isCompleted ? (
                 <>
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  <CheckCircle2 className="w-5 h-5 mr-2" />
                   Mark as Incomplete
                 </>
               ) : (
                 <>
-                  <Circle className="w-4 h-4 mr-2" />
-                  Mark as Complete
+                  <Circle className="w-5 h-5 mr-2" />
+                  Mark as Completed
                 </>
               )}
             </Button>
+          </div>
 
+          {/* Navigation */}
+          <div className="mt-6 flex justify-between items-center">
             <Button
-              className="flex-1"
+              onClick={onPrevious}
+              disabled={!hasPrevious}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Previous
+            </Button>
+            
+            <div className="text-sm text-gray-500">
+              Navigation between materials
+            </div>
+            
+            <Button
               onClick={onNext}
-              disabled={!hasNext || !isCurrentMaterialCompleted()}
+              disabled={!hasNext}
+              variant="outline"
+              className="flex items-center gap-2"
             >
               Next
-              <ChevronRight className="w-4 h-4 ml-2" />
+              <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         </CardContent>
       </Card>
     </div>
   );
-}
+};
