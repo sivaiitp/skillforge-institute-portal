@@ -7,9 +7,11 @@ import Hero from "@/components/Hero";
 import FeaturedCourses from "@/components/FeaturedCourses";
 import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Navigation />
@@ -49,14 +51,29 @@ const Index = () => {
             Join thousands of successful professionals who have transformed their careers with our training programs.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-blue-600 hover:bg-gray-100" asChild>
-              <Link to="/courses">Enroll Now</Link>
+            <Button 
+              size="lg" 
+              variant="secondary" 
+              className="text-blue-600 hover:bg-gray-100"
+              onClick={() => navigate('/courses')}
+            >
+              Enroll Now
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600" asChild>
-              <Link to="/contact">Contact Us</Link>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600"
+              onClick={() => navigate('/contact')}
+            >
+              Contact Us
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600" asChild>
-              <Link to="/career">Take Assessment</Link>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600"
+              onClick={() => navigate('/career')}
+            >
+              Take Assessment
             </Button>
           </div>
         </div>

@@ -1,9 +1,11 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Users, Award } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative py-20 overflow-hidden">
       <div className="container mx-auto px-4">
@@ -25,22 +27,18 @@ const Hero = () => {
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg"
-                asChild
+                onClick={() => navigate('/courses')}
               >
-                <Link to="/courses">
-                  Explore Courses
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
+                Explore Courses
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
                 className="px-8 py-4 text-lg border-2 hover:bg-gray-50"
-                asChild
+                onClick={() => navigate('/contact')}
               >
-                <Link to="/contact">
-                  Get Free Consultation
-                </Link>
+                Get Free Consultation
               </Button>
             </div>
 
