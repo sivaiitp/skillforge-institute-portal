@@ -409,6 +409,68 @@ export type Database = {
         }
         Relationships: []
       }
+      study_materials: {
+        Row: {
+          course_id: string
+          created_at: string
+          description: string | null
+          duration: string | null
+          file_extension: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          is_active: boolean | null
+          is_downloadable: boolean | null
+          material_type: string
+          mime_type: string | null
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          file_extension?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_downloadable?: boolean | null
+          material_type: string
+          mime_type?: string | null
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          file_extension?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_downloadable?: boolean | null
+          material_type?: string
+          mime_type?: string | null
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_materials_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
