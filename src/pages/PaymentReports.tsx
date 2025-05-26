@@ -106,12 +106,12 @@ const PaymentReports = () => {
 
   if (userRole !== 'admin') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <AdminSidebar />
-        <div className="ml-64 p-8">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-8 text-center">
-            <h2 className="text-2xl font-bold text-white mb-2">Access Denied</h2>
-            <p className="text-gray-300">You don't have permission to access this page.</p>
+        <div className="ml-64 p-6">
+          <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
+            <p className="text-gray-600">You don't have permission to access this page.</p>
           </div>
         </div>
       </div>
@@ -120,12 +120,12 @@ const PaymentReports = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <AdminSidebar />
-        <div className="ml-64 p-8">
+        <div className="ml-64 p-6">
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-400 mx-auto mb-4"></div>
-            <p className="text-white">Loading payment reports...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading payment reports...</p>
           </div>
         </div>
       </div>
@@ -136,100 +136,100 @@ const PaymentReports = () => {
   const topCourses = getTopCourses();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <AdminSidebar />
       
-      <div className="ml-64 p-8">
+      <div className="ml-64 p-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6">
+        <div className="mb-6">
+          <div className="bg-white rounded-xl shadow-sm border p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg">
                 <CreditCard className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white mb-1">Payment & Reports</h1>
-                <p className="text-gray-300">Financial reports and business analytics</p>
+                <h1 className="text-3xl font-bold text-gray-800 mb-1">Payment & Reports</h1>
+                <p className="text-gray-600">Financial reports and business analytics</p>
               </div>
             </div>
             
             {/* Quick Summary */}
-            <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-lg p-4">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-200 text-sm">Monthly Revenue (Estimated)</p>
-                  <p className="text-2xl font-bold text-white">₹{(stats.totalRevenue * 0.15).toLocaleString('en-IN')}</p>
+                  <p className="text-green-700 text-sm font-medium">Monthly Revenue (Estimated)</p>
+                  <p className="text-2xl font-bold text-gray-800">₹{(stats.totalRevenue * 0.15).toLocaleString('en-IN')}</p>
                 </div>
-                <TrendingUp className="w-8 h-8 text-green-400" />
+                <TrendingUp className="w-8 h-8 text-green-500" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <Card className="bg-white shadow-sm border hover:shadow-md transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-200">Total Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-green-400" />
+              <CardTitle className="text-sm font-medium text-gray-600">Total Revenue</CardTitle>
+              <DollarSign className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">₹{stats.totalRevenue.toLocaleString('en-IN')}</div>
-              <p className="text-xs text-green-400 mt-1">
+              <div className="text-2xl font-bold text-gray-800">₹{stats.totalRevenue.toLocaleString('en-IN')}</div>
+              <p className="text-xs text-green-600 mt-1">
                 From {stats.totalEnrollments} enrollments
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300">
+          <Card className="bg-white shadow-sm border hover:shadow-md transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-200">Total Students</CardTitle>
-              <Users className="h-4 w-4 text-blue-400" />
+              <CardTitle className="text-sm font-medium text-gray-600">Total Students</CardTitle>
+              <Users className="h-4 w-4 text-blue-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{stats.totalStudents}</div>
-              <p className="text-xs text-blue-400 mt-1">
+              <div className="text-2xl font-bold text-gray-800">{stats.totalStudents}</div>
+              <p className="text-xs text-blue-600 mt-1">
                 {stats.activeEnrollments} active enrollments
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300">
+          <Card className="bg-white shadow-sm border hover:shadow-md transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-200">Active Courses</CardTitle>
-              <BookOpen className="h-4 w-4 text-purple-400" />
+              <CardTitle className="text-sm font-medium text-gray-600">Active Courses</CardTitle>
+              <BookOpen className="h-4 w-4 text-purple-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{stats.activeCourses}</div>
-              <p className="text-xs text-purple-400 mt-1">
+              <div className="text-2xl font-bold text-gray-800">{stats.activeCourses}</div>
+              <p className="text-xs text-purple-600 mt-1">
                 Out of {stats.totalCourses} total courses
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300">
+          <Card className="bg-white shadow-sm border hover:shadow-md transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-200">Certificates Issued</CardTitle>
-              <Award className="h-4 w-4 text-orange-400" />
+              <CardTitle className="text-sm font-medium text-gray-600">Certificates Issued</CardTitle>
+              <Award className="h-4 w-4 text-orange-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{stats.totalCertificates}</div>
-              <p className="text-xs text-orange-400 mt-1">
+              <div className="text-2xl font-bold text-gray-800">{stats.totalCertificates}</div>
+              <p className="text-xs text-orange-600 mt-1">
                 {stats.completedEnrollments} completed courses
               </p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Top Courses */}
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300">
+          <Card className="bg-white shadow-sm border hover:shadow-md transition-all duration-300">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-white">
-                <BarChart3 className="w-5 h-5 text-yellow-400" />
+              <CardTitle className="flex items-center gap-2 text-gray-800">
+                <BarChart3 className="w-5 h-5 text-yellow-500" />
                 Top Performing Courses
               </CardTitle>
-              <CardDescription className="text-gray-300">
+              <CardDescription className="text-gray-600">
                 Courses with highest enrollment and revenue
               </CardDescription>
             </CardHeader>
@@ -237,14 +237,14 @@ const PaymentReports = () => {
               <div className="space-y-4">
                 {topCourses.length > 0 ? (
                   topCourses.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors">
+                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors">
                       <div className="flex-1">
-                        <h4 className="font-medium text-white">{item.course?.title || 'Unknown Course'}</h4>
-                        <p className="text-sm text-gray-300">{item.count} enrollments</p>
+                        <h4 className="font-medium text-gray-800">{item.course?.title || 'Unknown Course'}</h4>
+                        <p className="text-sm text-gray-600">{item.count} enrollments</p>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-green-400">₹{item.revenue.toLocaleString('en-IN')}</div>
-                        <Badge variant="outline" className="border-green-400/50 text-green-400 bg-green-500/10">
+                        <div className="font-semibold text-green-600">₹{item.revenue.toLocaleString('en-IN')}</div>
+                        <Badge variant="outline" className="border-green-500 text-green-600 bg-green-50">
                           ₹{(item.course?.price || 0).toLocaleString('en-IN')} each
                         </Badge>
                       </div>
@@ -253,7 +253,7 @@ const PaymentReports = () => {
                 ) : (
                   <div className="text-center py-4">
                     <Target className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-400">No course data available</p>
+                    <p className="text-gray-500">No course data available</p>
                   </div>
                 )}
               </div>
@@ -261,10 +261,10 @@ const PaymentReports = () => {
           </Card>
 
           {/* Recent Enrollments */}
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/15 transition-all duration-300">
+          <Card className="bg-white shadow-sm border hover:shadow-md transition-all duration-300">
             <CardHeader>
-              <CardTitle className="text-white">Recent Enrollments</CardTitle>
-              <CardDescription className="text-gray-300">
+              <CardTitle className="text-gray-800">Recent Enrollments</CardTitle>
+              <CardDescription className="text-gray-600">
                 Latest course enrollments and payments
               </CardDescription>
             </CardHeader>
@@ -273,22 +273,22 @@ const PaymentReports = () => {
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="border-white/20 hover:bg-white/5">
-                        <TableHead className="text-gray-200">Course</TableHead>
-                        <TableHead className="text-gray-200">Amount</TableHead>
-                        <TableHead className="text-gray-200">Date</TableHead>
+                      <TableRow className="border-gray-200 hover:bg-gray-50">
+                        <TableHead className="text-gray-700">Course</TableHead>
+                        <TableHead className="text-gray-700">Amount</TableHead>
+                        <TableHead className="text-gray-700">Date</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {enrollments.slice(0, 10).map((enrollment) => (
-                        <TableRow key={enrollment.id} className="border-white/20 hover:bg-white/5 transition-colors">
-                          <TableCell className="text-white">
+                        <TableRow key={enrollment.id} className="border-gray-200 hover:bg-gray-50 transition-colors">
+                          <TableCell className="text-gray-800">
                             {enrollment.courses?.title || 'N/A'}
                           </TableCell>
-                          <TableCell className="text-green-400 font-medium">
+                          <TableCell className="text-green-600 font-medium">
                             ₹{(enrollment.courses?.price || 0).toLocaleString('en-IN')}
                           </TableCell>
-                          <TableCell className="text-gray-300">
+                          <TableCell className="text-gray-600">
                             {new Date(enrollment.enrollment_date).toLocaleDateString()}
                           </TableCell>
                         </TableRow>
@@ -299,7 +299,7 @@ const PaymentReports = () => {
               ) : (
                 <div className="text-center py-8">
                   <CreditCard className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-400">No enrollment data available</p>
+                  <p className="text-gray-500">No enrollment data available</p>
                 </div>
               )}
             </CardContent>
