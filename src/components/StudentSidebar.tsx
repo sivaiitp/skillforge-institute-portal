@@ -13,7 +13,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
-import { Home, BookOpen, Award, User, FileText, CreditCard, ClipboardList, LogOut } from "lucide-react"
+import { Home, BookOpen, Award, User, FileText, CreditCard, ClipboardList, LogOut, ExternalLink } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "./AuthProvider"
 
@@ -72,6 +72,17 @@ export function StudentSidebar() {
           <SidebarGroupLabel>Student Portal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a href="/" onClick={(e) => {
+                    e.preventDefault()
+                    navigate('/')
+                  }}>
+                    <ExternalLink />
+                    <span>Go to Main Site</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
