@@ -13,6 +13,8 @@ interface Certificate {
   certificate_id: string;
   issued_date: string;
   is_valid: boolean;
+  user_id: string;
+  course_id: string;
   profiles?: {
     full_name?: string;
   } | null;

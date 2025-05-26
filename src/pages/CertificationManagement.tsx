@@ -8,9 +8,25 @@ import IssueCertificateForm from '@/components/certification/IssueCertificateFor
 import VerifyCertificateForm from '@/components/certification/VerifyCertificateForm';
 import CertificatesList from '@/components/certification/CertificatesList';
 
+interface Certificate {
+  id: string;
+  certificate_number: string;
+  certificate_id: string;
+  issued_date: string;
+  is_valid: boolean;
+  user_id: string;
+  course_id: string;
+  profiles?: {
+    full_name?: string;
+  } | null;
+  courses?: {
+    title?: string;
+  } | null;
+}
+
 const CertificationManagement = () => {
   const { userRole } = useAuth();
-  const [certificates, setCertificates] = useState([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [students, setStudents] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,21 +41,60 @@ const CertificationManagement = () => {
 
   const fetchCertificates = async () => {
     try {
-      const { data, error } = await supabase
+      // First get all certificates
+      const { data: certificatesData, error: certificatesError } = await supabase
         .from('certificates')
-        .select(`
-          *,
-          courses (title, certification),
-          profiles (full_name, email)
-        `)
+        .select('*')
         .order('issued_date', { ascending: false });
       
-      if (error) {
-        console.error('Error fetching certificates:', error);
+      if (certificatesError) {
+        console.error('Error fetching certificates:', certificatesError);
         toast.error('Error fetching certificates');
         return;
       }
-      setCertificates(data || []);
+
+      // Then fetch profiles and courses separately and combine
+      const certificatesWithDetails = await Promise.all(
+        (certificatesData || []).map(async (cert) => {
+          const promises = [];
+          
+          // Fetch profile if user_id exists
+          if (cert.user_id) {
+            promises.push(
+              supabase
+                .from('profiles')
+                .select('full_name, email')
+                .eq('id', cert.user_id)
+                .maybeSingle()
+            );
+          } else {
+            promises.push(Promise.resolve({ data: null }));
+          }
+
+          // Fetch course if course_id exists
+          if (cert.course_id) {
+            promises.push(
+              supabase
+                .from('courses')
+                .select('title, certification')
+                .eq('id', cert.course_id)
+                .maybeSingle()
+            );
+          } else {
+            promises.push(Promise.resolve({ data: null }));
+          }
+
+          const [profileResult, courseResult] = await Promise.all(promises);
+
+          return {
+            ...cert,
+            profiles: profileResult.data,
+            courses: courseResult.data
+          };
+        })
+      );
+
+      setCertificates(certificatesWithDetails);
     } catch (error) {
       console.error('Error fetching certificates:', error);
       toast.error('Error fetching certificates');

@@ -14,6 +14,8 @@ interface Certificate {
   certificate_id: string;
   issued_date: string;
   is_valid: boolean;
+  user_id: string;
+  course_id: string;
   profiles?: {
     full_name?: string;
   } | null;
@@ -46,33 +48,59 @@ const VerifyCertificateForm = ({ onCertificateUpdated }: VerifyCertificateFormPr
 
     console.log('Verifying certificate:', verificationNumber);
 
-    const { data, error } = await supabase
+    // First get the certificate
+    const { data: certificateData, error: certificateError } = await supabase
       .from('certificates')
-      .select(`
-        *,
-        courses (title, certification),
-        profiles (full_name, email)
-      `)
+      .select('*')
       .or(`certificate_number.eq.${verificationNumber},certificate_id.eq.${verificationNumber}`)
       .maybeSingle();
 
-    console.log('Verification result:', { data, error });
+    console.log('Certificate query result:', { certificateData, certificateError });
 
-    if (error) {
-      console.error('Error verifying certificate:', error);
+    if (certificateError) {
+      console.error('Error verifying certificate:', certificateError);
       setVerificationResult({ valid: false, message: 'Error verifying certificate' });
       return;
     }
 
-    if (!data) {
+    if (!certificateData) {
       setVerificationResult({ valid: false, message: 'Certificate not found' });
       return;
     }
 
+    // Get profile data separately if user_id exists
+    let profileData = null;
+    if (certificateData.user_id) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, email')
+        .eq('id', certificateData.user_id)
+        .maybeSingle();
+      profileData = profile;
+    }
+
+    // Get course data separately if course_id exists
+    let courseData = null;
+    if (certificateData.course_id) {
+      const { data: course } = await supabase
+        .from('courses')
+        .select('title, certification')
+        .eq('id', certificateData.course_id)
+        .maybeSingle();
+      courseData = course;
+    }
+
+    // Combine the data
+    const combinedData: Certificate = {
+      ...certificateData,
+      profiles: profileData,
+      courses: courseData
+    };
+
     setVerificationResult({
-      valid: data.is_valid,
-      data: data,
-      message: data.is_valid ? 'Certificate is valid' : 'Certificate has been revoked'
+      valid: certificateData.is_valid,
+      data: combinedData,
+      message: certificateData.is_valid ? 'Certificate is valid' : 'Certificate has been revoked'
     });
   };
 
