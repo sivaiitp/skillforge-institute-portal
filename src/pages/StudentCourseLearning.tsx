@@ -142,7 +142,7 @@ const StudentCourseLearning = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full flex bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen w-full flex">
         <CourseLearningMaterialsSidebar 
           materials={studyMaterials}
           selectedMaterialId={selectedMaterial?.id || null}
@@ -151,10 +151,10 @@ const StudentCourseLearning = () => {
           courseDuration={course?.duration}
         />
         
-        <SidebarInset className="flex-1 flex flex-col">
+        <SidebarInset className="flex-1 flex flex-col min-w-0">
           <CourseLearningHeader courseTitle={course?.title} />
           
-          <div className="flex-1 p-8">
+          <main className="flex-1 p-6 overflow-auto">
             <div className="max-w-4xl mx-auto">
               <MaterialContentArea
                 selectedMaterial={selectedMaterial}
@@ -168,7 +168,7 @@ const StudentCourseLearning = () => {
                 hasPrevious={hasPreviousMaterial()}
               />
             </div>
-          </div>
+          </main>
         </SidebarInset>
       </div>
     </SidebarProvider>

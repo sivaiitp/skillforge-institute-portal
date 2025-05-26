@@ -15,7 +15,6 @@ import {
   BookOpen, 
   Award, 
   User, 
-  FileText, 
   CreditCard, 
   ClipboardList, 
   LogOut, 
@@ -37,12 +36,6 @@ const items = [
     url: "/dashboard/courses",
     icon: BookOpen,
     description: "View enrolled courses"
-  },
-  {
-    title: "Study Materials",
-    url: "/dashboard/study-materials",
-    icon: FileText,
-    description: "Access course materials"
   },
   {
     title: "Assessments",

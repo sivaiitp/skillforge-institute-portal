@@ -41,20 +41,15 @@ export function CourseLearningMaterialsSidebar({
     return progressData.find(p => p.study_material_id === materialId);
   };
 
-  const getShortTitle = (title: string) => {
-    // Remove common prefixes and file extensions
-    let shortTitle = title
+  const getCleanTitle = (title: string) => {
+    // Remove common prefixes, numbers, and file extensions
+    let cleanTitle = title
       .replace(/^\d+[\._\-\s]*/, '') // Remove leading numbers and separators
       .replace(/^(chapter|lesson|module|part|section)[\s\-_]*\d*[\s\-_]*/i, '') // Remove chapter/lesson prefixes
       .replace(/\.(md|pdf|docx?|txt|html?)$/i, '') // Remove file extensions
       .trim();
     
-    // Limit length and add ellipsis if needed
-    if (shortTitle.length > 25) {
-      shortTitle = shortTitle.substring(0, 22) + '...';
-    }
-    
-    return shortTitle || title; // Fallback to original title if processing results in empty string
+    return cleanTitle || title; // Fallback to original title if processing results in empty string
   };
 
   const getFileTypeIcon = (mimeType: string, fileUrl: string) => {
@@ -94,11 +89,14 @@ export function CourseLearningMaterialsSidebar({
             
             <SidebarGroupContent className="px-2 py-2">
               <SidebarMenu className="space-y-1">
-                {materials.map((material, index) => {
+                {materials.map((material) => {
                   const IconComponent = getFileTypeIcon(material.mime_type, material.file_url);
                   const isSelected = selectedMaterialId === material.id;
                   const isCompleted = getMaterialProgress(material.id)?.completed;
-                  const shortTitle = getShortTitle(material.title);
+                  const cleanTitle = getCleanTitle(material.title);
+                  const shortDescription = material.description && material.description.length > 60 
+                    ? material.description.substring(0, 60) + '...'
+                    : material.description;
                   
                   return (
                     <SidebarMenuItem key={material.id}>
@@ -108,7 +106,7 @@ export function CourseLearningMaterialsSidebar({
                             onClick={() => onMaterialSelect(material.id)}
                             isActive={isSelected}
                             className={`
-                              w-full justify-start h-auto p-3 rounded-lg transition-all duration-200 
+                              w-full justify-start h-auto p-4 rounded-lg transition-all duration-200 
                               hover:bg-blue-50 hover:shadow-sm group
                               ${isSelected 
                                 ? 'bg-blue-100 border border-blue-200 shadow-sm' 
@@ -117,36 +115,38 @@ export function CourseLearningMaterialsSidebar({
                             `}
                           >
                             <div className="flex items-start gap-3 w-full">
-                              <div className="flex-shrink-0 mt-0.5">
-                                <IconComponent className={`h-4 w-4 ${isSelected ? 'text-blue-600' : 'text-gray-500'}`} />
+                              <div className="flex-shrink-0 mt-1">
+                                <IconComponent className={`h-5 w-5 ${isSelected ? 'text-blue-600' : 'text-gray-500'}`} />
                               </div>
                               
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between gap-2">
-                                  <span className={`text-xs font-medium ${isSelected ? 'text-blue-700' : 'text-gray-500'}`}>
-                                    {index + 1}
-                                  </span>
+                                <div className="flex items-center justify-between gap-2 mb-2">
+                                  <div className={`text-base font-medium leading-tight ${isSelected ? 'text-blue-900' : 'text-gray-800'}`}>
+                                    {cleanTitle}
+                                  </div>
                                   <div className="flex-shrink-0">
                                     {isCompleted ? (
-                                      <CheckCircle2 className="h-3 w-3 text-green-600" />
+                                      <CheckCircle2 className="h-4 w-4 text-green-600" />
                                     ) : (
-                                      <Circle className="h-3 w-3 text-gray-400" />
+                                      <Circle className="h-4 w-4 text-gray-400" />
                                     )}
                                   </div>
                                 </div>
                                 
-                                <div className={`text-sm font-medium mt-1 ${isSelected ? 'text-blue-900' : 'text-gray-800'}`}>
-                                  {shortTitle}
-                                </div>
+                                {shortDescription && (
+                                  <div className={`text-sm leading-relaxed ${isSelected ? 'text-blue-700' : 'text-gray-600'}`}>
+                                    {shortDescription}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </SidebarMenuButton>
                         </TooltipTrigger>
-                        <TooltipContent side="right" className="max-w-xs">
-                          <div className="space-y-1">
-                            <div className="font-medium">{material.title}</div>
+                        <TooltipContent side="right" className="max-w-sm">
+                          <div className="space-y-2">
+                            <div className="font-medium">{cleanTitle}</div>
                             {material.description && (
-                              <div className="text-xs text-gray-600">{material.description}</div>
+                              <div className="text-sm text-gray-600">{material.description}</div>
                             )}
                           </div>
                         </TooltipContent>
