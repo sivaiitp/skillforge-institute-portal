@@ -30,6 +30,7 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
         
         const text = await response.text();
         console.log('Loaded content length:', text.length);
+        console.log('First 200 characters:', text.substring(0, 200));
         
         if (text.includes('<!DOCTYPE html>') && text.includes('<title>') && text.includes('404')) {
           throw new Error('File not found - received 404 error page');
@@ -63,11 +64,11 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
     
     const parsed = markdown
       // Code blocks (must come before inline code)
-      .replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-900 text-green-400 p-6 rounded-lg overflow-x-auto mb-6 border font-mono text-sm"><code>$1</code></pre>')
+      .replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto my-4 border font-mono text-sm"><code>$1</code></pre>')
       // Headers
-      .replace(/^### (.*$)/gim, '<h3 class="text-xl font-semibold mb-4 mt-8 text-gray-800 border-l-4 border-blue-500 pl-4">$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mb-6 mt-10 text-gray-800 border-b-2 border-gray-200 pb-2">$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mb-8 mt-6 text-gray-900 border-b-4 border-blue-600 pb-4">$1</h1>')
+      .replace(/^### (.*$)/gim, '<h3 class="text-xl font-semibold mb-3 mt-6 text-gray-800 border-l-4 border-blue-500 pl-4">$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold mb-4 mt-8 text-gray-800 border-b-2 border-gray-200 pb-2">$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold mb-6 mt-4 text-gray-900 border-b-4 border-blue-600 pb-3">$1</h1>')
       // Bold and italic
       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="italic text-gray-700">$1</em>')
@@ -84,11 +85,11 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
         if (paragraph.includes('<h') || paragraph.includes('<pre') || paragraph.includes('<li')) {
           return paragraph;
         }
-        return `<p class="mb-6 leading-relaxed text-gray-700 text-lg">${paragraph.replace(/\n/g, '<br>')}</p>`;
+        return `<p class="mb-4 leading-relaxed text-gray-700">${paragraph.replace(/\n/g, '<br>')}</p>`;
       })
       .join('\n')
       // Clean up empty paragraphs
-      .replace(/<p class="mb-6 leading-relaxed text-gray-700 text-lg"><\/p>/g, '');
+      .replace(/<p class="mb-4 leading-relaxed text-gray-700"><\/p>/g, '');
 
     console.log('Markdown parsed successfully');
     return parsed;
@@ -136,11 +137,24 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
     );
   }
 
+  if (!content || content.trim().length === 0) {
+    return (
+      <Card className={`${className} border-0 shadow-lg`}>
+        <CardContent className="p-8">
+          <div className="text-center text-gray-500">
+            <FileText className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+            <p>No content available</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const parsedHTML = parseMarkdown(content);
 
   return (
     <Card className={`${className} border-0 shadow-lg`}>
-      <CardContent className="p-10">
+      <CardContent className="p-8">
         <div 
           className="prose prose-lg max-w-none"
           dangerouslySetInnerHTML={{ __html: parsedHTML }}

@@ -156,7 +156,7 @@ const StudentCourseLearning = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen w-full flex">
+      <div className="min-h-screen w-full flex bg-gray-50">
         <CourseLearningMaterialsSidebar 
           materials={studyMaterials}
           selectedMaterialId={selectedMaterial?.id || null}
@@ -166,11 +166,11 @@ const StudentCourseLearning = () => {
         />
         
         <SidebarInset className="flex-1 min-w-0">
-          <div className="flex flex-col h-screen">
+          <div className="flex flex-col min-h-screen">
             <CourseLearningHeader courseTitle={course?.title} />
             
-            <main className="flex-1 p-6 overflow-auto bg-gray-50">
-              <div className="max-w-4xl mx-auto">
+            <main className="flex-1 overflow-auto">
+              <div className="container mx-auto p-6 max-w-5xl">
                 <MaterialContentArea
                   selectedMaterial={selectedMaterial}
                   progressData={progressData}
