@@ -34,9 +34,14 @@ const MarkdownRenderer = ({ filePath, className = '' }: MarkdownRendererProps) =
         console.log('Loaded content length:', text.length);
         console.log('Content preview:', text.substring(0, 200));
         
-        // Check if we got HTML instead of markdown (which means file doesn't exist)
-        if (text.includes('<!DOCTYPE html>') && text.includes('<title>')) {
-          throw new Error('File not found - got HTML page instead of markdown content');
+        // Check if we got an HTML error page (more specific check)
+        if (text.includes('<!DOCTYPE html>') && text.includes('<title>') && text.includes('404') && text.length < 2000) {
+          throw new Error('File not found - received 404 error page');
+        }
+        
+        // Additional check for empty or very short content that might be an error
+        if (text.trim().length < 10) {
+          throw new Error('File appears to be empty or invalid');
         }
         
         setContent(text);
