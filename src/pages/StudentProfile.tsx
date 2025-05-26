@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,7 +71,7 @@ const StudentProfile = () => {
         education_level: data?.education_level || '',
         institution: data?.institution || '',
         field_of_study: data?.field_of_study || '',
-        graduation_year: data?.graduation_year || '',
+        graduation_year: data?.graduation_year ? data.graduation_year.toString() : '',
         occupation: data?.occupation || '',
         company: data?.company || '',
         bio: data?.bio || ''
@@ -89,7 +90,6 @@ const StudentProfile = () => {
       const { error } = await supabase
         .from('profiles')
         .upsert({
-          id: user.id,
           full_name: formData.full_name,
           phone: formData.phone,
           address: formData.address,
@@ -100,7 +100,7 @@ const StudentProfile = () => {
           education_level: formData.education_level,
           institution: formData.institution,
           field_of_study: formData.field_of_study,
-          graduation_year: formData.graduation_year,
+          graduation_year: formData.graduation_year ? parseInt(formData.graduation_year) : null,
           occupation: formData.occupation,
           company: formData.company,
           bio: formData.bio,
@@ -132,7 +132,7 @@ const StudentProfile = () => {
       education_level: profile?.education_level || '',
       institution: profile?.institution || '',
       field_of_study: profile?.field_of_study || '',
-      graduation_year: profile?.graduation_year || '',
+      graduation_year: profile?.graduation_year ? profile.graduation_year.toString() : '',
       occupation: profile?.occupation || '',
       company: profile?.company || '',
       bio: profile?.bio || ''
