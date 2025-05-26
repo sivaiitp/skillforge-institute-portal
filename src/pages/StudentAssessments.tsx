@@ -89,24 +89,33 @@ const StudentAssessments = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
       <SidebarProvider>
-        <div className="flex min-h-screen">
-          {/* Sidebar */}
+        <div className="flex min-h-screen w-full">
           <StudentSidebar />
           
-          {/* Content Area */}
-          <SidebarInset className="flex-1">
-            <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
+          <SidebarInset className="flex-1 ml-64">
+            <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
               <SidebarTrigger className="-ml-1" />
-              <h1 className="text-xl font-semibold">Assessments</h1>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg">
+                  <ClipboardList className="h-5 w-5 text-white" />
+                </div>
+                <h1 className="text-xl font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  Assessments
+                </h1>
+              </div>
             </header>
             
             <div className="flex justify-center">
-              <div className="p-6 space-y-6 max-w-7xl w-full">
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold">Assessments & Tests</h2>
-                  <p className="text-gray-600">Take tests and track your performance</p>
+              <div className="p-8 space-y-8 max-w-7xl w-full">
+                <div className="text-center space-y-4">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    Assessments & Tests
+                  </h2>
+                  <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Take tests and track your performance
+                  </p>
                 </div>
 
                 {loading ? (
