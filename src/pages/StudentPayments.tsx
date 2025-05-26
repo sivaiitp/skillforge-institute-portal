@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { StudentSidebar } from "@/components/StudentSidebar";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 const StudentPayments = () => {
   const { user, userRole } = useAuth();
@@ -103,146 +105,154 @@ const StudentPayments = () => {
   if (!user) return null;
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <StudentSidebar />
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
-            <SidebarTrigger className="-ml-1" />
-            <h1 className="text-xl font-semibold">Payment History</h1>
-          </header>
-          
-          <div className="flex-1 p-6 space-y-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Payment History</h2>
-              <p className="text-gray-600">Track all your course payments and transactions</p>
-            </div>
+    <div className="min-h-screen flex flex-col">
+      <Navigation />
+      
+      <div className="flex-1 flex">
+        <SidebarProvider>
+          <div className="min-h-screen flex w-full">
+            <StudentSidebar />
+            <SidebarInset className="flex-1">
+              <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
+                <SidebarTrigger className="-ml-1" />
+                <h1 className="text-xl font-semibold">Payment History</h1>
+              </header>
+              
+              <div className="flex-1 p-6 space-y-6">
+                <div className="space-y-2">
+                  <h2 className="text-2xl font-bold">Payment History</h2>
+                  <p className="text-gray-600">Track all your course payments and transactions</p>
+                </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
-                  <Wallet className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">${stats.totalSpent.toFixed(2)}</div>
-                  <p className="text-xs text-muted-foreground">Across all courses</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Payments</CardTitle>
-                  <CreditCard className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.totalPayments}</div>
-                  <p className="text-xs text-muted-foreground">Transactions made</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Last Payment</CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {stats.lastPayment ? new Date(stats.lastPayment.payment_date).toLocaleDateString() : 'N/A'}
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
+                      <Wallet className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">${stats.totalSpent.toFixed(2)}</div>
+                      <p className="text-xs text-muted-foreground">Across all courses</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Payments</CardTitle>
+                      <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{stats.totalPayments}</div>
+                      <p className="text-xs text-muted-foreground">Transactions made</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Last Payment</CardTitle>
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">
+                        {stats.lastPayment ? new Date(stats.lastPayment.payment_date).toLocaleDateString() : 'N/A'}
+                      </div>
+                      <p className="text-xs text-muted-foreground">Most recent transaction</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {loading ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p>Loading payment history...</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">Most recent transaction</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {loading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p>Loading payment history...</p>
+                ) : payments.length === 0 ? (
+                  <Card className="text-center py-12">
+                    <CardContent>
+                      <Wallet className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                      <h3 className="text-lg font-medium mb-2">No Payments Yet</h3>
+                      <p className="text-gray-600 mb-4">You haven't made any payments yet.</p>
+                      <Button onClick={() => navigate('/courses')}>
+                        Browse Courses
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Payment Transactions</CardTitle>
+                      <CardDescription>Complete history of your payments</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Date</TableHead>
+                            <TableHead>Course</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Method</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Transaction ID</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {payments.map((payment) => (
+                            <TableRow key={payment.id}>
+                              <TableCell>
+                                {new Date(payment.payment_date).toLocaleDateString()}
+                              </TableCell>
+                              <TableCell>
+                                <div>
+                                  <div className="font-medium">{payment.courses?.title || payment.description}</div>
+                                  {payment.courses?.category && (
+                                    <div className="text-sm text-gray-500">{payment.courses.category}</div>
+                                  )}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <span className="font-medium">
+                                  ${parseFloat(payment.amount.toString()).toFixed(2)} {payment.currency}
+                                </span>
+                              </TableCell>
+                              <TableCell>
+                                {payment.payment_method || 'N/A'}
+                              </TableCell>
+                              <TableCell>
+                                {getStatusBadge(payment.status)}
+                              </TableCell>
+                              <TableCell>
+                                <span className="font-mono text-sm">
+                                  {payment.transaction_id || 'N/A'}
+                                </span>
+                              </TableCell>
+                              <TableCell>
+                                {payment.status === 'completed' && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleDownloadReceipt(payment)}
+                                  >
+                                    <Download className="w-4 h-4" />
+                                  </Button>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
-            ) : payments.length === 0 ? (
-              <Card className="text-center py-12">
-                <CardContent>
-                  <Wallet className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No Payments Yet</h3>
-                  <p className="text-gray-600 mb-4">You haven't made any payments yet.</p>
-                  <Button onClick={() => navigate('/courses')}>
-                    Browse Courses
-                  </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Payment Transactions</CardTitle>
-                  <CardDescription>Complete history of your payments</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Course</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Method</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Transaction ID</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {payments.map((payment) => (
-                        <TableRow key={payment.id}>
-                          <TableCell>
-                            {new Date(payment.payment_date).toLocaleDateString()}
-                          </TableCell>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium">{payment.courses?.title || payment.description}</div>
-                              {payment.courses?.category && (
-                                <div className="text-sm text-gray-500">{payment.courses.category}</div>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <span className="font-medium">
-                              ${parseFloat(payment.amount.toString()).toFixed(2)} {payment.currency}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            {payment.payment_method || 'N/A'}
-                          </TableCell>
-                          <TableCell>
-                            {getStatusBadge(payment.status)}
-                          </TableCell>
-                          <TableCell>
-                            <span className="font-mono text-sm">
-                              {payment.transaction_id || 'N/A'}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            {payment.status === 'completed' && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDownloadReceipt(payment)}
-                              >
-                                <Download className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            )}
+            </SidebarInset>
           </div>
-        </SidebarInset>
+        </SidebarProvider>
       </div>
-    </SidebarProvider>
+      
+      <Footer />
+    </div>
   );
 };
 
