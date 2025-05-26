@@ -85,7 +85,7 @@ const Navigation = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard/profile')}>
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile ({userRole})</span>
                   </DropdownMenuItem>
@@ -146,6 +146,16 @@ const Navigation = () => {
                 <p className="text-sm text-gray-600 mb-2">
                   {getDisplayName()} ({userRole})
                 </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full mb-2"
+                  onClick={() => {
+                    navigate('/dashboard/profile');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Profile
+                </Button>
                 {userRole === 'admin' ? (
                   <Button 
                     variant="outline" 
