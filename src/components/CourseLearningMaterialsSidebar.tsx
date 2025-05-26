@@ -1,5 +1,6 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { FileText, CheckCircle2, Circle, Clock } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -10,15 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { FileText, Video, FileImage, File, CheckCircle2, Circle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useStudyProgress } from "@/hooks/useStudyProgress";
-import { useAuth } from "./AuthProvider";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Material {
   id: string;
@@ -26,165 +19,146 @@ interface Material {
   mime_type: string;
   file_url: string;
   description?: string;
+  sort_order: number;
 }
 
 interface CourseLearningMaterialsSidebarProps {
-  courseId: string;
+  materials: Material[];
   selectedMaterialId: string | null;
-  onSelectMaterial: (material: Material) => void;
+  onMaterialSelect: (materialId: string) => void;
+  progressData: any[];
+  courseDuration?: string;
 }
 
-export function CourseLearningMaterialsSidebar({ 
-  courseId, 
-  selectedMaterialId, 
-  onSelectMaterial 
+export function CourseLearningMaterialsSidebar({
+  materials,
+  selectedMaterialId,
+  onMaterialSelect,
+  progressData,
+  courseDuration
 }: CourseLearningMaterialsSidebarProps) {
-  const { user } = useAuth();
-  const [materials, setMaterials] = useState<Material[]>([]);
-  const [progressData, setProgressData] = useState([]);
-  const { getStudyProgress } = useStudyProgress();
-
-  useEffect(() => {
-    fetchMaterials();
-  }, [courseId]);
-
-  useEffect(() => {
-    const loadProgress = async () => {
-      if (courseId && materials.length > 0) {
-        const courseProgress = await getStudyProgress(courseId);
-        setProgressData(courseProgress);
-      }
-    };
-    
-    if (materials.length > 0) {
-      loadProgress();
-    }
-  }, [materials, courseId]);
-
-  const fetchMaterials = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('study_materials')
-        .select('id, title, mime_type, file_url, description')
-        .eq('course_id', courseId)
-        .eq('is_active', true)
-        .order('sort_order', { ascending: true });
-
-      if (error) throw error;
-      setMaterials(data || []);
-    } catch (error) {
-      console.error('Error fetching materials:', error);
-    }
-  };
-
-  const getFileIcon = (mimeType: string) => {
-    if (mimeType?.includes('pdf')) return FileText;
-    if (mimeType?.includes('video')) return Video;
-    if (mimeType?.includes('image')) return FileImage;
-    return File;
-  };
-
   const getMaterialProgress = (materialId: string) => {
     return progressData.find(p => p.study_material_id === materialId);
   };
 
   const getShortTitle = (title: string) => {
-    // Remove common prefixes and suffixes
+    // Remove common prefixes and file extensions
     let shortTitle = title
-      .replace(/^(full_stack_web_development_|web_development_|course_|lesson_|chapter_)/i, '')
-      .replace(/\.(md|pdf|mp4|jpg|jpeg|png|gif)$/i, '')
-      .replace(/_/g, ' ')
-      .replace(/^\d+_?/, '') // Remove leading numbers
+      .replace(/^\d+[\._\-\s]*/, '') // Remove leading numbers and separators
+      .replace(/^(chapter|lesson|module|part|section)[\s\-_]*\d*[\s\-_]*/i, '') // Remove chapter/lesson prefixes
+      .replace(/\.(md|pdf|docx?|txt|html?)$/i, '') // Remove file extensions
       .trim();
     
-    // Capitalize first letter of each word
-    shortTitle = shortTitle.replace(/\b\w/g, l => l.toUpperCase());
-    
-    // If still too long, truncate
+    // Limit length and add ellipsis if needed
     if (shortTitle.length > 25) {
       shortTitle = shortTitle.substring(0, 22) + '...';
     }
     
-    return shortTitle || 'Material';
+    return shortTitle || title; // Fallback to original title if processing results in empty string
   };
 
-  const getHoverContent = (material: Material) => {
-    return material.description || material.title;
+  const getFileTypeIcon = (mimeType: string, fileUrl: string) => {
+    if (!mimeType && !fileUrl) return FileText;
+    
+    const url = fileUrl?.toLowerCase() || '';
+    const type = mimeType?.toLowerCase() || '';
+    
+    if (url.endsWith('.md') || url.endsWith('.markdown') || type.includes('markdown')) {
+      return FileText;
+    }
+    
+    return FileText; // Default icon
   };
+
+  const completedCount = materials.filter(material => 
+    getMaterialProgress(material.id)?.completed
+  ).length;
 
   return (
-    <Sidebar className="border-r">
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="px-4 mb-1 text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wide">
-            Course Materials
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="px-2">
-              {materials.map((material) => {
-                const FileIcon = getFileIcon(material.mime_type);
-                const progress = getMaterialProgress(material.id);
-                const isCompleted = progress?.completed || false;
-                const isSelected = selectedMaterialId === material.id;
-                const shortTitle = getShortTitle(material.title);
-                const hoverContent = getHoverContent(material);
-                
-                return (
-                  <SidebarMenuItem key={material.id}>
-                    <HoverCard>
-                      <HoverCardTrigger asChild>
-                        <SidebarMenuButton 
-                          onClick={() => onSelectMaterial(material)}
-                          isActive={isSelected}
-                          className="w-full justify-start h-auto px-4 py-3 mb-0.5 rounded-lg hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-all duration-200 data-[active=true]:bg-blue-50 data-[active=true]:text-blue-900 data-[active=true]:border-blue-200 data-[active=true]:shadow-sm group"
-                        >
-                          <div className="flex items-center gap-3 w-full">
-                            <FileIcon className="w-5 h-5 group-data-[active=true]:text-blue-600 flex-shrink-0" />
-                            <div className="flex-1 text-left min-w-0">
-                              <div className="font-medium text-sm truncate">{shortTitle}</div>
-                              <div className="text-xs text-sidebar-foreground/60 group-data-[active=true]:text-blue-700/70">
-                                {material.mime_type?.split('/')[1]?.toUpperCase() || 'FILE'}
+    <TooltipProvider>
+      <Sidebar className="w-80 border-r">
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel className="px-4 py-3 text-sm font-semibold text-gray-700 bg-gray-50 border-b">
+              <div className="flex items-center justify-between">
+                <span>Course Materials</span>
+                <div className="flex items-center gap-2 text-xs">
+                  <Clock className="h-3 w-3" />
+                  <span>{courseDuration || 'N/A'}</span>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                {completedCount} of {materials.length} completed
+              </div>
+            </SidebarGroupLabel>
+            
+            <SidebarGroupContent className="px-2 py-2">
+              <SidebarMenu className="space-y-1">
+                {materials.map((material, index) => {
+                  const IconComponent = getFileTypeIcon(material.mime_type, material.file_url);
+                  const isSelected = selectedMaterialId === material.id;
+                  const isCompleted = getMaterialProgress(material.id)?.completed;
+                  const shortTitle = getShortTitle(material.title);
+                  
+                  return (
+                    <SidebarMenuItem key={material.id}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton
+                            onClick={() => onMaterialSelect(material.id)}
+                            isActive={isSelected}
+                            className={`
+                              w-full justify-start h-auto p-3 rounded-lg transition-all duration-200 
+                              hover:bg-blue-50 hover:shadow-sm group
+                              ${isSelected 
+                                ? 'bg-blue-100 border border-blue-200 shadow-sm' 
+                                : 'hover:bg-gray-50'
+                              }
+                            `}
+                          >
+                            <div className="flex items-start gap-3 w-full">
+                              <div className="flex-shrink-0 mt-0.5">
+                                <IconComponent className={`h-4 w-4 ${isSelected ? 'text-blue-600' : 'text-gray-500'}`} />
+                              </div>
+                              
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className={`text-xs font-medium ${isSelected ? 'text-blue-700' : 'text-gray-500'}`}>
+                                    {index + 1}
+                                  </span>
+                                  <div className="flex-shrink-0">
+                                    {isCompleted ? (
+                                      <CheckCircle2 className="h-3 w-3 text-green-600" />
+                                    ) : (
+                                      <Circle className="h-3 w-3 text-gray-400" />
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                <div className={`text-sm font-medium mt-1 ${isSelected ? 'text-blue-900' : 'text-gray-800'}`}>
+                                  {shortTitle}
+                                </div>
                               </div>
                             </div>
-                            {isCompleted ? (
-                              <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0" />
-                            ) : (
-                              <Circle className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <div className="space-y-1">
+                            <div className="font-medium">{material.title}</div>
+                            {material.description && (
+                              <div className="text-xs text-gray-600">{material.description}</div>
                             )}
                           </div>
-                        </SidebarMenuButton>
-                      </HoverCardTrigger>
-                      <HoverCardContent className="w-80" side="right">
-                        <div className="space-y-2">
-                          <h4 className="text-sm font-semibold">{material.title}</h4>
-                          {material.description && (
-                            <p className="text-sm text-muted-foreground">
-                              {material.description}
-                            </p>
-                          )}
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <FileIcon className="w-3 h-3" />
-                            <span>{material.mime_type?.split('/')[1]?.toUpperCase() || 'FILE'}</span>
-                            {isCompleted && (
-                              <>
-                                <span>•</span>
-                                <span className="text-green-600 flex items-center gap-1">
-                                  <CheckCircle2 className="w-3 h-3" />
-                                  Completed
-                                </span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </HoverCardContent>
-                    </HoverCard>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+                        </TooltipContent>
+                      </Tooltip>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+    </TooltipProvider>
   );
 }
