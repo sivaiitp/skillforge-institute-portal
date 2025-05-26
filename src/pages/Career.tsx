@@ -1,12 +1,14 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, TrendingUp, Users, Award, BookOpen, Target } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { useNavigate } from "react-router-dom";
 
 const Career = () => {
+  const navigate = useNavigate();
+
   const careerPaths = [
     {
       title: "Software Developer",
@@ -164,7 +166,10 @@ const Career = () => {
                     </ul>
                   </div>
                   
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    onClick={() => navigate('/contact')}
+                  >
                     Get Career Roadmap
                   </Button>
                 </CardContent>
@@ -182,10 +187,20 @@ const Career = () => {
             Book a free career consultation session with our experts and get personalized guidance.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-blue-600 hover:bg-gray-100">
+            <Button 
+              size="lg" 
+              variant="secondary" 
+              className="text-blue-600 hover:bg-gray-100"
+              onClick={() => navigate('/contact')}
+            >
               Book Free Consultation
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-white text-white hover:bg-white hover:text-blue-600"
+              onClick={() => navigate('/contact')}
+            >
               Take Skill Assessment
             </Button>
           </div>
