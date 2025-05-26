@@ -63,7 +63,7 @@ const StudentPayments = () => {
       // Calculate stats
       const totalSpent = paymentsData
         .filter(p => p.status === 'completed')
-        .reduce((sum, payment) => sum + parseFloat(payment.amount), 0);
+        .reduce((sum, payment) => sum + parseFloat(payment.amount.toString()), 0);
       
       const lastPayment = paymentsData.length > 0 ? paymentsData[0] : null;
       
@@ -207,7 +207,7 @@ const StudentPayments = () => {
                           </TableCell>
                           <TableCell>
                             <span className="font-medium">
-                              ${parseFloat(payment.amount).toFixed(2)} {payment.currency}
+                              ${parseFloat(payment.amount.toString()).toFixed(2)} {payment.currency}
                             </span>
                           </TableCell>
                           <TableCell>
