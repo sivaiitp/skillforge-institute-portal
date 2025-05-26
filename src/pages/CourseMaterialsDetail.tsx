@@ -6,7 +6,6 @@ import { ArrowLeft, Plus } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import AdminSidebar from '@/components/AdminSidebar';
 import StudyMaterialsGrid from '@/components/study-materials/StudyMaterialsGrid';
 import StudyMaterialForm from '@/components/study-materials/StudyMaterialForm';
@@ -247,72 +246,67 @@ const CourseMaterialsDetail = () => {
   if (!user) return null;
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-blue-50 to-indigo-100">
-        <AdminSidebar />
+    <div className="min-h-screen flex w-full bg-gradient-to-br from-blue-50 to-indigo-100">
+      <AdminSidebar />
+      
+      <div className="flex-1 ml-64">
+        <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/admin/study-materials')}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Courses
+          </Button>
+        </header>
         
-        <SidebarInset className="flex-1">
-          <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
-            <SidebarTrigger className="-ml-1" />
-            <Button
-              variant="ghost"
-              onClick={() => navigate('/admin/study-materials')}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to Courses
-            </Button>
-          </header>
-          
-          <div className="flex-1 flex justify-center">
-            <div className="p-8 space-y-8 max-w-7xl w-full">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                    {courseTitle} - Study Materials
-                  </h1>
-                  <p className="text-gray-600 mt-2">
-                    Manage study materials for this course
-                  </p>
-                </div>
-                <Button
-                  onClick={() => setShowForm(true)}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Material
-                </Button>
-              </div>
-
-              {loading ? (
-                <div className="text-center py-20">
-                  <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-6"></div>
-                  <p className="text-lg text-gray-600">Loading study materials...</p>
-                </div>
-              ) : (
-                <StudyMaterialsGrid
-                  materials={materials}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onAddFirst={handleAddFirst}
-                  selectedCourse={courseId || ''}
-                />
-              )}
-
-              <StudyMaterialForm
-                isOpen={showForm}
-                onClose={resetForm}
-                onSubmit={handleSubmit}
-                formData={formData}
-                onFormDataChange={setFormData}
-                courses={courses}
-                editingMaterial={editingMaterial}
-              />
+        <div className="p-8 space-y-8 max-w-7xl w-full">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                {courseTitle} - Study Materials
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Manage study materials for this course
+              </p>
             </div>
+            <Button
+              onClick={() => setShowForm(true)}
+              className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Material
+            </Button>
           </div>
-        </SidebarInset>
+
+          {loading ? (
+            <div className="text-center py-20">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-6"></div>
+              <p className="text-lg text-gray-600">Loading study materials...</p>
+            </div>
+          ) : (
+            <StudyMaterialsGrid
+              materials={materials}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onAddFirst={handleAddFirst}
+              selectedCourse={courseId || ''}
+            />
+          )}
+
+          <StudyMaterialForm
+            isOpen={showForm}
+            onClose={resetForm}
+            onSubmit={handleSubmit}
+            formData={formData}
+            onFormDataChange={setFormData}
+            courses={courses}
+            editingMaterial={editingMaterial}
+          />
+        </div>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
