@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Download, CheckCircle2, Circle } from "lucide-react";
+import { BookOpen, Download, CheckCircle2, Circle, ChevronLeft, ChevronRight } from "lucide-react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 interface Material {
@@ -82,48 +82,53 @@ export function MaterialContentArea({
               <p className="text-gray-600">{selectedMaterial.description}</p>
             )}
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span className="font-medium">Type:</span>
-                <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                  MARKDOWN
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                {getMaterialProgress(selectedMaterial.id)?.completed ? (
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                ) : (
-                  <Circle className="w-5 h-5 text-gray-400" />
-                )}
-              </div>
-            </div>
-            
-            <Button
-              onClick={() => onMaterialCompletion(selectedMaterial.id)}
-              disabled={progressLoading}
-              variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
-              className={`w-full ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
-            >
-              {getMaterialProgress(selectedMaterial.id)?.completed ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Mark as Incomplete
-                </>
-              ) : (
-                <>
-                  <Circle className="w-4 h-4 mr-2" />
-                  Mark as Completed
-                </>
-              )}
-            </Button>
-          </CardContent>
         </Card>
         
         <MarkdownRenderer 
           filePath={selectedMaterial.file_url} 
           className="border-0 bg-white/80 backdrop-blur-sm shadow-xl"
         />
+
+        {/* Bottom buttons */}
+        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
+          <CardContent className="p-6">
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+              >
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Previous
+              </Button>
+              
+              <Button
+                onClick={() => onMaterialCompletion(selectedMaterial.id)}
+                disabled={progressLoading}
+                variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
+                className={`flex-1 ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+              >
+                {getMaterialProgress(selectedMaterial.id)?.completed ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Mark as Incomplete
+                  </>
+                ) : (
+                  <>
+                    <Circle className="w-4 h-4 mr-2" />
+                    Mark as Complete
+                  </>
+                )}
+              </Button>
+
+              <Button
+                className="flex-1"
+              >
+                Next
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -139,42 +144,6 @@ export function MaterialContentArea({
               <p className="text-gray-600">{selectedMaterial.description}</p>
             )}
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span className="font-medium">Type:</span>
-                <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                  IMAGE
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                {getMaterialProgress(selectedMaterial.id)?.completed ? (
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                ) : (
-                  <Circle className="w-5 h-5 text-gray-400" />
-                )}
-              </div>
-            </div>
-            
-            <Button
-              onClick={() => onMaterialCompletion(selectedMaterial.id)}
-              disabled={progressLoading}
-              variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
-              className={`w-full ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
-            >
-              {getMaterialProgress(selectedMaterial.id)?.completed ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Mark as Incomplete
-                </>
-              ) : (
-                <>
-                  <Circle className="w-4 h-4 mr-2" />
-                  Mark as Completed
-                </>
-              )}
-            </Button>
-          </CardContent>
         </Card>
 
         <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
@@ -188,6 +157,47 @@ export function MaterialContentArea({
                 target.src = '/placeholder.svg';
               }}
             />
+          </CardContent>
+        </Card>
+
+        {/* Bottom buttons */}
+        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
+          <CardContent className="p-6">
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+              >
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Previous
+              </Button>
+              
+              <Button
+                onClick={() => onMaterialCompletion(selectedMaterial.id)}
+                disabled={progressLoading}
+                variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
+                className={`flex-1 ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+              >
+                {getMaterialProgress(selectedMaterial.id)?.completed ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Mark as Incomplete
+                  </>
+                ) : (
+                  <>
+                    <Circle className="w-4 h-4 mr-2" />
+                    Mark as Complete
+                  </>
+                )}
+              </Button>
+
+              <Button
+                className="flex-1"
+              >
+                Next
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -205,42 +215,6 @@ export function MaterialContentArea({
               <p className="text-gray-600">{selectedMaterial.description}</p>
             )}
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span className="font-medium">Type:</span>
-                <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
-                  VIDEO
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                {getMaterialProgress(selectedMaterial.id)?.completed ? (
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                ) : (
-                  <Circle className="w-5 h-5 text-gray-400" />
-                )}
-              </div>
-            </div>
-            
-            <Button
-              onClick={() => onMaterialCompletion(selectedMaterial.id)}
-              disabled={progressLoading}
-              variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
-              className={`w-full ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
-            >
-              {getMaterialProgress(selectedMaterial.id)?.completed ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 mr-2" />
-                  Mark as Incomplete
-                </>
-              ) : (
-                <>
-                  <Circle className="w-4 h-4 mr-2" />
-                  Mark as Completed
-                </>
-              )}
-            </Button>
-          </CardContent>
         </Card>
 
         <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
@@ -255,37 +229,69 @@ export function MaterialContentArea({
             </video>
           </CardContent>
         </Card>
+
+        {/* Bottom buttons */}
+        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
+          <CardContent className="p-6">
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+              >
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Previous
+              </Button>
+              
+              <Button
+                onClick={() => onMaterialCompletion(selectedMaterial.id)}
+                disabled={progressLoading}
+                variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
+                className={`flex-1 ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+              >
+                {getMaterialProgress(selectedMaterial.id)?.completed ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 mr-2" />
+                    Mark as Incomplete
+                  </>
+                ) : (
+                  <>
+                    <Circle className="w-4 h-4 mr-2" />
+                    Mark as Complete
+                  </>
+                )}
+              </Button>
+
+              <Button
+                className="flex-1"
+              >
+                Next
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   // Default material view for PDFs and other files that need to be opened externally
   return (
-    <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
-      <CardHeader>
-        <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
-        {selectedMaterial.description && (
-          <p className="text-gray-600">{selectedMaterial.description}</p>
-        )}
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+    <div className="space-y-6">
+      <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-2xl text-gray-800">{selectedMaterial.title}</CardTitle>
+          {selectedMaterial.description && (
+            <p className="text-gray-600">{selectedMaterial.description}</p>
+          )}
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-6">
             <span className="font-medium">Type:</span>
             <span className="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
               {selectedMaterial.mime_type?.split('/')[1]?.toUpperCase() || 'FILE'}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            {getMaterialProgress(selectedMaterial.id)?.completed ? (
-              <CheckCircle2 className="w-5 h-5 text-green-600" />
-            ) : (
-              <Circle className="w-5 h-5 text-gray-400" />
-            )}
-          </div>
-        </div>
-        
-        <div className="space-y-3">
+          
           <Button 
             className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             onClick={() => onDownload(selectedMaterial)}
@@ -294,27 +300,49 @@ export function MaterialContentArea({
             <Download className="w-4 h-4 mr-2" />
             {selectedMaterial.file_url ? 'Open Material' : 'Not Available'}
           </Button>
-          
-          <Button
-            onClick={() => onMaterialCompletion(selectedMaterial.id)}
-            disabled={progressLoading}
-            variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
-            className={`w-full ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
-          >
-            {getMaterialProgress(selectedMaterial.id)?.completed ? (
-              <>
-                <CheckCircle2 className="w-4 h-4 mr-2" />
-                Mark as Incomplete
-              </>
-            ) : (
-              <>
-                <Circle className="w-4 h-4 mr-2" />
-                Mark as Completed
-              </>
-            )}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Bottom buttons */}
+      <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
+        <CardContent className="p-6">
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              className="flex-1"
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Previous
+            </Button>
+            
+            <Button
+              onClick={() => onMaterialCompletion(selectedMaterial.id)}
+              disabled={progressLoading}
+              variant={getMaterialProgress(selectedMaterial.id)?.completed ? "default" : "outline"}
+              className={`flex-1 ${getMaterialProgress(selectedMaterial.id)?.completed ? "bg-green-600 hover:bg-green-700 text-white" : ""}`}
+            >
+              {getMaterialProgress(selectedMaterial.id)?.completed ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  Mark as Incomplete
+                </>
+              ) : (
+                <>
+                  <Circle className="w-4 h-4 mr-2" />
+                  Mark as Complete
+                </>
+              )}
+            </Button>
+
+            <Button
+              className="flex-1"
+            >
+              Next
+              <ChevronRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
