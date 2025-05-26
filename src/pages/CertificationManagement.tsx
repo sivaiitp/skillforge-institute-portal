@@ -11,8 +11,6 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { Award, Search, Check, X } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
 import AdminSidebar from '@/components/AdminSidebar';
 
 const CertificationManagement = () => {
@@ -24,6 +22,7 @@ const CertificationManagement = () => {
   const [selectedCourse, setSelectedCourse] = useState('');
   const [verificationNumber, setVerificationNumber] = useState('');
   const [verificationResult, setVerificationResult] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (userRole === 'admin') {
@@ -34,48 +33,68 @@ const CertificationManagement = () => {
   }, [userRole]);
 
   const fetchCertificates = async () => {
-    const { data, error } = await supabase
-      .from('certificates')
-      .select(`
-        *,
-        courses (title, certification),
-        profiles (full_name, email)
-      `)
-      .order('issued_date', { ascending: false });
-    
-    if (error) {
+    try {
+      const { data, error } = await supabase
+        .from('certificates')
+        .select(`
+          *,
+          courses (title, certification),
+          profiles (full_name, email)
+        `)
+        .order('issued_date', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching certificates:', error);
+        toast.error('Error fetching certificates');
+        return;
+      }
+      setCertificates(data || []);
+    } catch (error) {
+      console.error('Error fetching certificates:', error);
       toast.error('Error fetching certificates');
-      return;
+    } finally {
+      setLoading(false);
     }
-    setCertificates(data || []);
   };
 
   const fetchStudents = async () => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id, full_name, email')
-      .eq('role', 'student')
-      .order('full_name');
-    
-    if (error) {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .eq('role', 'student')
+        .order('full_name');
+      
+      if (error) {
+        console.error('Error fetching students:', error);
+        toast.error('Error fetching students');
+        return;
+      }
+      setStudents(data || []);
+    } catch (error) {
+      console.error('Error fetching students:', error);
       toast.error('Error fetching students');
-      return;
     }
-    setStudents(data || []);
   };
 
   const fetchCourses = async () => {
-    const { data, error } = await supabase
-      .from('courses')
-      .select('id, title, certification')
-      .eq('is_active', true)
-      .order('title');
-    
-    if (error) {
+    try {
+      const { data, error } = await supabase
+        .from('courses')
+        .select('id, title, certification')
+        .eq('is_active', true)
+        .order('title');
+      
+      if (error) {
+        console.error('Error fetching courses:', error);
+        toast.error('Error fetching courses');
+        return;
+      }
+      setCourses(data || []);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
       toast.error('Error fetching courses');
-      return;
     }
-    setCourses(data || []);
   };
 
   const generateCertificateNumber = () => {
@@ -162,194 +181,203 @@ const CertificationManagement = () => {
   };
 
   if (userRole !== 'admin') {
-    return <div>Access denied</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <AdminSidebar />
+        <div className="ml-64 p-8">
+          <div>Access denied</div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navigation />
       <AdminSidebar />
       
-      <div className="ml-64 pt-20">
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold mb-2">Certification Management</h1>
-              <p className="text-gray-600">Issue and validate certificates</p>
-            </div>
+      <div className="ml-64 p-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Certification Management</h1>
+          <p className="text-gray-600">Issue and validate certificates</p>
+        </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-              {/* Issue Certificate */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Award className="w-5 h-5" />
-                    Issue Certificate
-                  </CardTitle>
-                  <CardDescription>
-                    Issue a new certificate to a student
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleIssueCertificate} className="space-y-4">
-                    <div>
-                      <Label htmlFor="student">Student</Label>
-                      <Select value={selectedStudent} onValueChange={setSelectedStudent}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a student" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {students.map((student) => (
-                            <SelectItem key={student.id} value={student.id}>
-                              {student.full_name} ({student.email})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Issue Certificate */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="w-5 h-5" />
+                Issue Certificate
+              </CardTitle>
+              <CardDescription>
+                Issue a new certificate to a student
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleIssueCertificate} className="space-y-4">
+                <div>
+                  <Label htmlFor="student">Student</Label>
+                  <Select value={selectedStudent} onValueChange={setSelectedStudent}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a student" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {students.map((student) => (
+                        <SelectItem key={student.id} value={student.id}>
+                          {student.full_name} ({student.email})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                    <div>
-                      <Label htmlFor="course">Course</Label>
-                      <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a course" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {courses.map((course) => (
-                            <SelectItem key={course.id} value={course.id}>
-                              {course.title}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                <div>
+                  <Label htmlFor="course">Course</Label>
+                  <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a course" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {courses.map((course) => (
+                        <SelectItem key={course.id} value={course.id}>
+                          {course.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                    <Button type="submit" className="w-full">
-                      Issue Certificate
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+                <Button type="submit" className="w-full">
+                  Issue Certificate
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
 
-              {/* Verify Certificate */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Search className="w-5 h-5" />
-                    Verify Certificate
-                  </CardTitle>
-                  <CardDescription>
-                    Verify the authenticity of a certificate
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleVerifyCertificate} className="space-y-4">
-                    <div>
-                      <Label htmlFor="verificationNumber">Certificate Number</Label>
-                      <Input
-                        id="verificationNumber"
-                        value={verificationNumber}
-                        onChange={(e) => setVerificationNumber(e.target.value)}
-                        placeholder="Enter certificate number"
-                        required
-                      />
-                    </div>
+          {/* Verify Certificate */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Search className="w-5 h-5" />
+                Verify Certificate
+              </CardTitle>
+              <CardDescription>
+                Verify the authenticity of a certificate
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleVerifyCertificate} className="space-y-4">
+                <div>
+                  <Label htmlFor="verificationNumber">Certificate Number</Label>
+                  <Input
+                    id="verificationNumber"
+                    value={verificationNumber}
+                    onChange={(e) => setVerificationNumber(e.target.value)}
+                    placeholder="Enter certificate number"
+                    required
+                  />
+                </div>
 
-                    <Button type="submit" className="w-full">
-                      Verify Certificate
-                    </Button>
-                  </form>
+                <Button type="submit" className="w-full">
+                  Verify Certificate
+                </Button>
+              </form>
 
-                  {verificationResult && (
-                    <div className={`mt-4 p-4 rounded-lg ${verificationResult.valid ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-                      <div className="flex items-center gap-2 mb-2">
-                        {verificationResult.valid ? (
-                          <Check className="w-5 h-5 text-green-600" />
-                        ) : (
-                          <X className="w-5 h-5 text-red-600" />
-                        )}
-                        <span className={`font-medium ${verificationResult.valid ? 'text-green-800' : 'text-red-800'}`}>
-                          {verificationResult.message}
-                        </span>
-                      </div>
-                      
-                      {verificationResult.data && (
-                        <div className="text-sm space-y-1">
-                          <p><strong>Student:</strong> {verificationResult.data.profiles?.full_name}</p>
-                          <p><strong>Course:</strong> {verificationResult.data.courses?.title}</p>
-                          <p><strong>Issued:</strong> {new Date(verificationResult.data.issued_date).toLocaleDateString()}</p>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="mt-2"
-                            onClick={() => toggleCertificateValidity(verificationResult.data.id, verificationResult.data.is_valid)}
-                          >
-                            {verificationResult.data.is_valid ? 'Revoke' : 'Validate'}
-                          </Button>
-                        </div>
-                      )}
+              {verificationResult && (
+                <div className={`mt-4 p-4 rounded-lg ${verificationResult.valid ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    {verificationResult.valid ? (
+                      <Check className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <X className="w-5 h-5 text-red-600" />
+                    )}
+                    <span className={`font-medium ${verificationResult.valid ? 'text-green-800' : 'text-red-800'}`}>
+                      {verificationResult.message}
+                    </span>
+                  </div>
+                  
+                  {verificationResult.data && (
+                    <div className="text-sm space-y-1">
+                      <p><strong>Student:</strong> {verificationResult.data.profiles?.full_name}</p>
+                      <p><strong>Course:</strong> {verificationResult.data.courses?.title}</p>
+                      <p><strong>Issued:</strong> {new Date(verificationResult.data.issued_date).toLocaleDateString()}</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-2"
+                        onClick={() => toggleCertificateValidity(verificationResult.data.id, verificationResult.data.is_valid)}
+                      >
+                        {verificationResult.data.is_valid ? 'Revoke' : 'Validate'}
+                      </Button>
                     </div>
                   )}
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-            {/* Certificates List */}
-            <Card>
-              <CardHeader>
-                <CardTitle>All Certificates ({certificates.length})</CardTitle>
-                <CardDescription>
-                  List of all issued certificates
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Certificate Number</TableHead>
-                      <TableHead>Student</TableHead>
-                      <TableHead>Course</TableHead>
-                      <TableHead>Issued Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
+        {/* Certificates List */}
+        <Card>
+          <CardHeader>
+            <CardTitle>All Certificates ({certificates.length})</CardTitle>
+            <CardDescription>
+              List of all issued certificates
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="text-center py-4">Loading...</div>
+            ) : certificates.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Certificate Number</TableHead>
+                    <TableHead>Student</TableHead>
+                    <TableHead>Course</TableHead>
+                    <TableHead>Issued Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {certificates.map((cert) => (
+                    <TableRow key={cert.id}>
+                      <TableCell className="font-mono text-sm">
+                        {cert.certificate_number}
+                      </TableCell>
+                      <TableCell>{cert.profiles?.full_name || 'N/A'}</TableCell>
+                      <TableCell>{cert.courses?.title || 'N/A'}</TableCell>
+                      <TableCell>
+                        {new Date(cert.issued_date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={cert.is_valid ? 'default' : 'destructive'}>
+                          {cert.is_valid ? 'Valid' : 'Revoked'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleCertificateValidity(cert.id, cert.is_valid)}
+                        >
+                          {cert.is_valid ? 'Revoke' : 'Validate'}
+                        </Button>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {certificates.map((cert) => (
-                      <TableRow key={cert.id}>
-                        <TableCell className="font-mono text-sm">
-                          {cert.certificate_number}
-                        </TableCell>
-                        <TableCell>{cert.profiles?.full_name}</TableCell>
-                        <TableCell>{cert.courses?.title}</TableCell>
-                        <TableCell>
-                          {new Date(cert.issued_date).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={cert.is_valid ? 'default' : 'destructive'}>
-                            {cert.is_valid ? 'Valid' : 'Revoked'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => toggleCertificateValidity(cert.id, cert.is_valid)}
-                          >
-                            {cert.is_valid ? 'Revoke' : 'Validate'}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No certificates found</p>
+                <p className="text-sm text-gray-400 mt-2">No certificates have been issued yet</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-
-      <Footer />
     </div>
   );
 };

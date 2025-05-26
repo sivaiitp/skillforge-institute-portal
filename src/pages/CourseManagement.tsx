@@ -12,8 +12,6 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { Plus, Edit, Trash2, BookOpen } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
 import AdminSidebar from '@/components/AdminSidebar';
 
 const CourseManagement = () => {
@@ -128,187 +126,187 @@ const CourseManagement = () => {
   };
 
   if (userRole !== 'admin') {
-    return <div>Access denied</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <AdminSidebar />
+        <div className="ml-64 p-8">
+          <div>Access denied</div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <Navigation />
       <AdminSidebar />
       
-      <div className="ml-64 pt-20">
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <div className="mb-8 flex justify-between items-center">
-              <div>
-                <h1 className="text-3xl font-bold mb-2">Course Management</h1>
-                <p className="text-gray-600">Add, edit, and remove courses</p>
-              </div>
-              <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                Add New Course
-              </Button>
-            </div>
-
-            {showForm && (
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle>
-                    {editingCourse ? 'Edit Course' : 'Add New Course'}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="title">Course Title</Label>
-                        <Input
-                          id="title"
-                          value={formData.title}
-                          onChange={(e) => setFormData({...formData, title: e.target.value})}
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="duration">Duration</Label>
-                        <Input
-                          id="duration"
-                          value={formData.duration}
-                          onChange={(e) => setFormData({...formData, duration: e.target.value})}
-                          placeholder="e.g., 8 weeks"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="level">Level</Label>
-                        <Select value={formData.level} onValueChange={(value) => setFormData({...formData, level: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select level" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Beginner">Beginner</SelectItem>
-                            <SelectItem value="Intermediate">Intermediate</SelectItem>
-                            <SelectItem value="Advanced">Advanced</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="category">Category</Label>
-                        <Input
-                          id="category"
-                          value={formData.category}
-                          onChange={(e) => setFormData({...formData, category: e.target.value})}
-                          placeholder="e.g., Programming"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="price">Price</Label>
-                        <Input
-                          id="price"
-                          type="number"
-                          value={formData.price}
-                          onChange={(e) => setFormData({...formData, price: e.target.value})}
-                          placeholder="0.00"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="certification">Certification</Label>
-                        <Input
-                          id="certification"
-                          value={formData.certification}
-                          onChange={(e) => setFormData({...formData, certification: e.target.value})}
-                          placeholder="Certificate name"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="description">Description</Label>
-                      <Textarea
-                        id="description"
-                        value={formData.description}
-                        onChange={(e) => setFormData({...formData, description: e.target.value})}
-                        rows={3}
-                      />
-                    </div>
-                    <div className="flex gap-4">
-                      <Button type="submit">
-                        {editingCourse ? 'Update Course' : 'Create Course'}
-                      </Button>
-                      <Button type="button" variant="outline" onClick={() => {
-                        setShowForm(false);
-                        setEditingCourse(null);
-                      }}>
-                        Cancel
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
-            )}
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5" />
-                  All Courses ({courses.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Level</TableHead>
-                      <TableHead>Duration</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {courses.map((course) => (
-                      <TableRow key={course.id}>
-                        <TableCell className="font-medium">{course.title}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{course.level || 'N/A'}</Badge>
-                        </TableCell>
-                        <TableCell>{course.duration || 'N/A'}</TableCell>
-                        <TableCell>
-                          {course.price ? `$${course.price}` : 'Free'}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={course.is_active ? 'default' : 'secondary'}>
-                            {course.is_active ? 'Active' : 'Inactive'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEdit(course)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDelete(course.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+      <div className="ml-64 p-8">
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Course Management</h1>
+            <p className="text-gray-600">Add, edit, and remove courses</p>
           </div>
-        </section>
-      </div>
+          <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Add New Course
+          </Button>
+        </div>
 
-      <Footer />
+        {showForm && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>
+                {editingCourse ? 'Edit Course' : 'Add New Course'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="title">Course Title</Label>
+                    <Input
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => setFormData({...formData, title: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="duration">Duration</Label>
+                    <Input
+                      id="duration"
+                      value={formData.duration}
+                      onChange={(e) => setFormData({...formData, duration: e.target.value})}
+                      placeholder="e.g., 8 weeks"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="level">Level</Label>
+                    <Select value={formData.level} onValueChange={(value) => setFormData({...formData, level: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Beginner">Beginner</SelectItem>
+                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                        <SelectItem value="Advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="category">Category</Label>
+                    <Input
+                      id="category"
+                      value={formData.category}
+                      onChange={(e) => setFormData({...formData, category: e.target.value})}
+                      placeholder="e.g., Programming"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="price">Price (₹)</Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      value={formData.price}
+                      onChange={(e) => setFormData({...formData, price: e.target.value})}
+                      placeholder="0"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="certification">Certification</Label>
+                    <Input
+                      id="certification"
+                      value={formData.certification}
+                      onChange={(e) => setFormData({...formData, certification: e.target.value})}
+                      placeholder="Certificate name"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    rows={3}
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <Button type="submit">
+                    {editingCourse ? 'Update Course' : 'Create Course'}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={() => {
+                    setShowForm(false);
+                    setEditingCourse(null);
+                  }}>
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BookOpen className="w-5 h-5" />
+              All Courses ({courses.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Level</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {courses.map((course) => (
+                  <TableRow key={course.id}>
+                    <TableCell className="font-medium">{course.title}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{course.level || 'N/A'}</Badge>
+                    </TableCell>
+                    <TableCell>{course.duration || 'N/A'}</TableCell>
+                    <TableCell>
+                      {course.price ? `₹${course.price.toLocaleString('en-IN')}` : 'Free'}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={course.is_active ? 'default' : 'secondary'}>
+                        {course.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(course)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(course.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
