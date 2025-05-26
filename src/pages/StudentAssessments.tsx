@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -92,10 +91,10 @@ const StudentAssessments = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header Section */}
+      {/* Header Section - Independent */}
       <Navigation />
       
-      {/* Main Content Section */}
+      {/* Main Content Section - Independent */}
       <div className="flex-1">
         <SidebarProvider>
           <div className="flex min-h-full">
@@ -249,7 +248,7 @@ const StudentAssessments = () => {
         </SidebarProvider>
       </div>
       
-      {/* Footer Section */}
+      {/* Footer Section - Independent */}
       <Footer />
     </div>
   );
