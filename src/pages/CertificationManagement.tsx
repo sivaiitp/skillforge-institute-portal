@@ -119,16 +119,18 @@ const CertificationManagement = () => {
         user_id: selectedStudent,
         course_id: selectedCourse,
         certificate_number: certificateNumber,
+        certificate_id: certificateNumber, // Ensure both fields are set for compatibility
         issued_date: new Date().toISOString(),
         is_valid: true
       });
 
     if (error) {
+      console.error('Error issuing certificate:', error);
       toast.error('Error issuing certificate');
       return;
     }
 
-    toast.success('Certificate issued successfully!');
+    toast.success(`Certificate issued successfully! Number: ${certificateNumber}`);
     setSelectedStudent('');
     setSelectedCourse('');
     fetchCertificates();
@@ -142,6 +144,8 @@ const CertificationManagement = () => {
       return;
     }
 
+    console.log('Verifying certificate:', verificationNumber);
+
     const { data, error } = await supabase
       .from('certificates')
       .select(`
@@ -149,10 +153,18 @@ const CertificationManagement = () => {
         courses (title, certification),
         profiles (full_name, email)
       `)
-      .eq('certificate_number', verificationNumber)
-      .single();
+      .or(`certificate_number.eq.${verificationNumber},certificate_id.eq.${verificationNumber}`)
+      .maybeSingle();
 
-    if (error || !data) {
+    console.log('Verification result:', { data, error });
+
+    if (error) {
+      console.error('Error verifying certificate:', error);
+      setVerificationResult({ valid: false, message: 'Error verifying certificate' });
+      return;
+    }
+
+    if (!data) {
       setVerificationResult({ valid: false, message: 'Certificate not found' });
       return;
     }
@@ -171,6 +183,7 @@ const CertificationManagement = () => {
       .eq('id', certificateId);
 
     if (error) {
+      console.error('Error updating certificate status:', error);
       toast.error('Error updating certificate status');
       return;
     }
@@ -344,7 +357,7 @@ const CertificationManagement = () => {
                   {certificates.map((cert) => (
                     <TableRow key={cert.id}>
                       <TableCell className="font-mono text-sm">
-                        {cert.certificate_number}
+                        {cert.certificate_number || cert.certificate_id}
                       </TableCell>
                       <TableCell>{cert.profiles?.full_name || 'N/A'}</TableCell>
                       <TableCell>{cert.courses?.title || 'N/A'}</TableCell>
