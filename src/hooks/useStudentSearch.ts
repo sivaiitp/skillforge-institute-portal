@@ -92,49 +92,14 @@ export const useStudentSearch = () => {
     }
 
     setIsSearching(true);
-    console.log('Searching for student with email:', searchEmail.trim());
+    const normalizedEmail = searchEmail.trim().toLowerCase();
+    console.log('Searching for student with email:', normalizedEmail);
     
     try {
-      // First, let's check if student exists with any role
-      const { data: anyStudent, error: anyError } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, role')
-        .eq('email', searchEmail.trim())
-        .maybeSingle();
-
-      console.log('Search result for any user:', { anyStudent, anyError });
-
-      if (anyError) {
-        console.error('Error searching for user:', anyError);
-        toast.error('Error searching for student');
-        setSelectedStudent(null);
-        setEnrolledCourses([]);
-        setIsSearching(false);
-        return;
-      }
-
-      if (!anyStudent) {
-        toast.error('No user found with this email address');
-        setSelectedStudent(null);
-        setEnrolledCourses([]);
-        setIsSearching(false);
-        return;
-      }
-
-      // Check if the user is a student
-      if (anyStudent.role !== 'student') {
-        toast.error(`User found but they are registered as ${anyStudent.role}, not a student`);
-        setSelectedStudent(null);
-        setEnrolledCourses([]);
-        setIsSearching(false);
-        return;
-      }
-
-      // Now search specifically for student
       const { data: student, error } = await supabase
         .from('profiles')
-        .select('id, full_name, email')
-        .eq('email', searchEmail.trim())
+        .select('id, full_name, email, role')
+        .ilike('email', normalizedEmail)
         .eq('role', 'student')
         .maybeSingle();
 

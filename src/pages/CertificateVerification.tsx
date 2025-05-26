@@ -145,8 +145,8 @@ const CertificateVerification = () => {
                       <div className="flex items-center gap-3 text-green-600">
                         <CheckCircle size={32} />
                         <div>
-                          <h3 className="text-xl font-bold">Certificate Verified</h3>
-                          <p className="text-green-700">This certificate is authentic and valid</p>
+                          <h3 className="text-xl font-bold">Certificate Authentic</h3>
+                          <p className="text-green-700">This certificate is valid and issued by RaceCodingInstitute</p>
                         </div>
                       </div>
                       
