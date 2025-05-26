@@ -1,11 +1,21 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Menu, X, User, LogOut } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/AuthProvider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut, userRole } = useAuth();
+  const navigate = useNavigate();
 
   const navigationItems = [
     { name: "Home", href: "/" },
@@ -15,6 +25,15 @@ const Navigation = () => {
     { name: "Career Guidance", href: "/career" },
     { name: "Contact", href: "/contact" },
   ];
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
@@ -39,9 +58,35 @@ const Navigation = () => {
                 {item.name}
               </Link>
             ))}
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              Student Login
-            </Button>
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center space-x-2">
+                    <User size={16} />
+                    <span>{user.user_metadata?.full_name || user.email}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile ({userRole})</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() => navigate('/auth')}
+              >
+                Student Login
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -66,9 +111,28 @@ const Navigation = () => {
                 {item.name}
               </Link>
             ))}
-            <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700">
-              Student Login
-            </Button>
+            
+            {user ? (
+              <div className="pt-4 border-t mt-4">
+                <p className="text-sm text-gray-600 mb-2">
+                  {user.user_metadata?.full_name || user.email} ({userRole})
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={handleSignOut}
+                >
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <Button 
+                className="w-full mt-4 bg-blue-600 hover:bg-blue-700"
+                onClick={() => navigate('/auth')}
+              >
+                Student Login
+              </Button>
+            )}
           </div>
         )}
       </div>

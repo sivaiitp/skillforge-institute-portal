@@ -60,7 +60,7 @@ const FeaturedCourses = () => {
                   <Badge variant="secondary" className="bg-blue-100 text-blue-800">
                     {course.level}
                   </Badge>
-                  <span className="text-2xl font-bold text-blue-600">₹{course.price?.toLocaleString()}</span>
+                  <span className="text-2xl font-bold text-blue-600">₹{course.price?.toLocaleString('en-IN')}</span>
                 </div>
                 <CardTitle className="text-xl group-hover:text-blue-600 transition-colors">
                   {course.title}

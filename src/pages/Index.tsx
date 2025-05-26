@@ -51,10 +51,10 @@ const Index = () => {
             <Button size="lg" variant="secondary" className="text-blue-600 hover:bg-gray-100">
               Enroll Now
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+            <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600">
               Contact Us
             </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+            <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-blue-600">
               Take Assessment
             </Button>
           </div>
