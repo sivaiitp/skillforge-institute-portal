@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -129,7 +128,7 @@ const StudentStudyMaterials = () => {
         <div className="flex min-h-screen w-full">
           <StudentSidebar />
           
-          <SidebarInset className="flex-1 ml-64">
+          <SidebarInset className="flex-1">
             <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
               <SidebarTrigger className="-ml-1" />
               <div className="flex items-center gap-3">
@@ -153,7 +152,6 @@ const StudentStudyMaterials = () => {
                   </p>
                 </div>
 
-                {/* Course Filter */}
                 <div className="flex items-center justify-center gap-4">
                   <div className="flex items-center gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-emerald-100">
                     <Search className="h-5 w-5 text-emerald-500" />
