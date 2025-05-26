@@ -9,7 +9,8 @@ import {
   Award,
   DollarSign,
   BarChart3,
-  Home
+  Home,
+  ExternalLink
 } from 'lucide-react';
 
 const AdminSidebar = () => {
@@ -55,8 +56,22 @@ const AdminSidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-white shadow-lg h-screen fixed left-0 top-0 pt-20 z-40">
+    <div className="w-64 bg-white shadow-lg h-screen fixed left-0 top-0 z-40">
       <div className="p-4">
+        {/* Logo/Brand */}
+        <Link to="/" className="flex items-center space-x-2 mb-6 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold">R</span>
+          </div>
+          <div className="flex-1">
+            <div className="font-semibold text-gray-800">RaceCodingInstitute</div>
+            <div className="text-xs text-gray-500 flex items-center">
+              <span>Go to website</span>
+              <ExternalLink className="w-3 h-3 ml-1" />
+            </div>
+          </div>
+        </Link>
+
         <h2 className="text-lg font-semibold text-gray-800 mb-6">Admin Menu</h2>
         <nav className="space-y-2">
           {menuItems.map((item) => {
