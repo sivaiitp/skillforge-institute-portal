@@ -19,6 +19,7 @@ interface EnrolledCourse {
 export const useStudentSearch = () => {
   const [searchEmail, setSearchEmail] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [searchResults, setSearchResults] = useState<Student[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
   const [loadingEnrollments, setLoadingEnrollments] = useState(false);
@@ -92,50 +93,61 @@ export const useStudentSearch = () => {
     }
 
     setIsSearching(true);
-    const normalizedEmail = searchEmail.trim().toLowerCase();
-    console.log('Searching for student with email:', normalizedEmail);
+    const searchTerm = searchEmail.trim().toLowerCase();
+    console.log('Searching for students with email containing:', searchTerm);
     
     try {
-      const { data: student, error } = await supabase
+      const { data: students, error } = await supabase
         .from('profiles')
-        .select('id, full_name, email, role')
-        .ilike('email', normalizedEmail)
+        .select('id, full_name, email')
+        .ilike('email', `%${searchTerm}%`)
         .eq('role', 'student')
-        .maybeSingle();
+        .order('full_name');
 
-      console.log('Student search result:', { student, error });
+      console.log('Student search results:', { students, error });
 
       if (error) {
-        console.error('Error searching student:', error);
-        toast.error('Error searching for student');
-        setSelectedStudent(null);
-        setEnrolledCourses([]);
+        console.error('Error searching students:', error);
+        toast.error('Error searching for students');
+        setSearchResults([]);
         return;
       }
 
-      if (!student) {
-        toast.error('Student not found with this email address');
-        setSelectedStudent(null);
-        setEnrolledCourses([]);
+      if (!students || students.length === 0) {
+        toast.error('No students found with email containing this text');
+        setSearchResults([]);
         return;
       }
 
-      setSelectedStudent(student);
-      await fetchStudentEnrollments(student.id);
-      toast.success(`Found student: ${student.full_name}`);
+      setSearchResults(students);
+      if (students.length === 1) {
+        // Auto-select if only one result
+        setSelectedStudent(students[0]);
+        await fetchStudentEnrollments(students[0].id);
+        toast.success(`Found student: ${students[0].full_name}`);
+      } else {
+        toast.success(`Found ${students.length} students`);
+      }
     } catch (error) {
-      console.error('Error searching student:', error);
-      toast.error('Error searching for student');
-      setSelectedStudent(null);
-      setEnrolledCourses([]);
+      console.error('Error searching students:', error);
+      toast.error('Error searching for students');
+      setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
   };
 
+  const handleSelectStudent = async (student: Student) => {
+    setSelectedStudent(student);
+    setSearchResults([]);
+    await fetchStudentEnrollments(student.id);
+    toast.success(`Selected student: ${student.full_name}`);
+  };
+
   const handleClearStudent = () => {
     setSelectedStudent(null);
     setSearchEmail('');
+    setSearchResults([]);
     setEnrolledCourses([]);
   };
 
@@ -143,10 +155,12 @@ export const useStudentSearch = () => {
     searchEmail,
     setSearchEmail,
     selectedStudent,
+    searchResults,
     isSearching,
     enrolledCourses,
     loadingEnrollments,
     handleSearchStudent,
+    handleSelectStudent,
     handleClearStudent,
   };
 };
