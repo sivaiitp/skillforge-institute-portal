@@ -91,7 +91,7 @@ const StudentDashboard = () => {
         <div className="flex min-h-screen w-full">
           <StudentSidebar />
           
-          <SidebarInset className="flex-1">
+          <SidebarInset className="flex-1 ml-64">
             <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
               <SidebarTrigger className="-ml-1" />
               <div className="flex items-center gap-3">
@@ -104,7 +104,7 @@ const StudentDashboard = () => {
               </div>
             </header>
             
-            <div className="p-6">
+            <div className="p-8">
               {loading ? (
                 <div className="text-center py-20">
                   <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-6"></div>
@@ -113,7 +113,7 @@ const StudentDashboard = () => {
               ) : (
                 <>
                   {/* Header */}
-                  <div className="mb-6">
+                  <div className="mb-8">
                     <div className="bg-white rounded-xl shadow-sm border p-6">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3">

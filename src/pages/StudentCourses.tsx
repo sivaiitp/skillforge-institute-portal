@@ -69,11 +69,9 @@ const StudentCourses = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <SidebarProvider>
         <div className="flex min-h-screen w-full">
-          {/* Sidebar */}
           <StudentSidebar />
           
-          {/* Content Area */}
-          <SidebarInset className="flex-1">
+          <SidebarInset className="flex-1 ml-64">
             <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
               <SidebarTrigger className="-ml-1" />
               <div className="flex items-center gap-3">
