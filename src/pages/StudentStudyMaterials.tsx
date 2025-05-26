@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -168,9 +167,9 @@ const StudentStudyMaterials = () => {
     <div className="min-h-screen flex flex-col">
       <Navigation />
       
-      <div className="flex-1 flex">
+      <div className="flex-1">
         <SidebarProvider>
-          <div className="min-h-screen flex w-full">
+          <div className="min-h-full flex w-full">
             <StudentSidebar />
             <SidebarInset className="flex-1">
               <header className="flex h-16 shrink-0 items-center gap-2 px-4 border-b">
