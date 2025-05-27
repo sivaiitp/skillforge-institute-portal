@@ -37,6 +37,12 @@ export const useQuestionManagement = (assessmentId: string) => {
   });
 
   const fetchQuestions = async () => {
+    // Don't fetch if assessmentId is empty or invalid
+    if (!assessmentId || assessmentId.trim() === '') {
+      setQuestions([]);
+      return;
+    }
+
     try {
       setLoading(true);
       const { data, error } = await supabase
