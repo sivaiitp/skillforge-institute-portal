@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Search, Users, Eye, Download, Trash2, User, FileText, Calendar, CheckCircle, XCircle } from 'lucide-react';
 import { useStudentSearch } from '@/hooks/useStudentSearch';
+import CertificateViewModal from './CertificateViewModal';
+import { downloadCertificateAsPDF } from '@/utils/certificateUtils';
 
 interface Certificate {
   id: string;
@@ -31,6 +33,9 @@ interface CertificateSearchFormProps {
 }
 
 const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: CertificateSearchFormProps) => {
+  const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
+  const [showViewModal, setShowViewModal] = useState(false);
+
   const {
     searchName,
     setSearchName,
@@ -55,6 +60,20 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
 
   const handleClear = () => {
     handleClearStudent();
+  };
+
+  const handleViewCertificate = (certificate: Certificate) => {
+    setSelectedCertificate(certificate);
+    setShowViewModal(true);
+  };
+
+  const handleDownloadCertificate = (certificate: Certificate) => {
+    downloadCertificateAsPDF(certificate);
+  };
+
+  const handleCloseModal = () => {
+    setShowViewModal(false);
+    setSelectedCertificate(null);
   };
 
   console.log('Current state:', { searchResults, selectedStudent, searchName, isSearching });
@@ -244,10 +263,20 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
                         </div>
                       </div>
                       <div className="flex gap-2 ml-4">
-                        <Button size="sm" variant="outline" className="hover:bg-blue-50 hover:border-blue-300">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="hover:bg-blue-50 hover:border-blue-300"
+                          onClick={() => handleViewCertificate(certificate)}
+                        >
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button size="sm" variant="outline" className="hover:bg-green-50 hover:border-green-300">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="hover:bg-green-50 hover:border-green-300"
+                          onClick={() => handleDownloadCertificate(certificate)}
+                        >
                           <Download className="w-4 h-4" />
                         </Button>
                         {certificate.is_valid && (
@@ -269,6 +298,14 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
           </CardContent>
         </Card>
       )}
+
+      {/* Certificate View Modal */}
+      <CertificateViewModal
+        certificate={selectedCertificate}
+        isOpen={showViewModal}
+        onClose={handleCloseModal}
+        onDownload={handleDownloadCertificate}
+      />
     </div>
   );
 };
