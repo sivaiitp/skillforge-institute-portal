@@ -1,4 +1,3 @@
-
 import {
   Sidebar,
   SidebarContent,
@@ -33,13 +32,13 @@ const items = [
   },
   {
     title: "My Courses",
-    url: "/dashboard/courses",
+    url: "/my-courses",
     icon: BookOpen,
     description: "View enrolled courses"
   },
   {
     title: "Assessments",
-    url: "/dashboard/assessments",
+    url: "/assessments",
     icon: ClipboardList,
     description: "Take tests and quizzes"
   },
@@ -51,13 +50,13 @@ const items = [
   },
   {
     title: "Payments",
-    url: "/dashboard/payments",
+    url: "/payments",
     icon: CreditCard,
     description: "Payment history and billing"
   },
   {
     title: "Profile",
-    url: "/dashboard/profile",
+    url: "/profile",
     icon: User,
     description: "Manage your profile"
   },
