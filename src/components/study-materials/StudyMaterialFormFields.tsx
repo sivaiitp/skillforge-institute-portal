@@ -126,21 +126,6 @@ const StudyMaterialFormFields = ({
         </div>
       </div>
 
-      {!uploadedFile && (
-        <div>
-          <Label htmlFor="file_url">File URL</Label>
-          <Input
-            id="file_url"
-            value={formData.file_url}
-            onChange={(e) => handleInputChange('file_url', e.target.value)}
-            placeholder="https://example.com/file.pdf or /content/file.md"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Enter a URL or path to your file. For local files, use paths like "/content/filename.md"
-          </p>
-        </div>
-      )}
-
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="sort_order">Sort Order</Label>
