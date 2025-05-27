@@ -31,8 +31,6 @@ interface CertificateSearchFormProps {
 }
 
 const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: CertificateSearchFormProps) => {
-  const [hasSearched, setHasSearched] = useState(false);
-  
   const {
     searchName,
     setSearchName,
@@ -47,7 +45,6 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
   const handleSearch = async () => {
     console.log('Starting search for:', searchName);
     await handleSearchStudent();
-    setHasSearched(true);
   };
 
   const handleSelectAndSearch = async (student: any) => {
@@ -58,10 +55,9 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
 
   const handleClear = () => {
     handleClearStudent();
-    setHasSearched(false);
   };
 
-  console.log('Current state:', { searchResults, selectedStudent, searchName, isSearching, hasSearched });
+  console.log('Current state:', { searchResults, selectedStudent, searchName, isSearching });
 
   return (
     <div className="space-y-8">
@@ -115,7 +111,7 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
           </div>
           
           {/* Second Row - Search Results */}
-          {hasSearched && searchResults.length > 0 && !selectedStudent && (
+          {searchResults.length > 0 && !selectedStudent && (
             <div className="space-y-3">
               <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <Users className="w-4 h-4" />
@@ -125,7 +121,8 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
                 {searchResults.map((student) => (
                   <div 
                     key={student.id}
-                    className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg hover:from-blue-100 hover:to-indigo-100 transition-colors"
+                    className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg hover:from-blue-100 hover:to-indigo-100 transition-colors cursor-pointer"
+                    onClick={() => handleSelectAndSearch(student)}
                   >
                     <div className="flex items-center gap-3">
                       <User className="w-4 h-4 text-blue-600" />
@@ -136,7 +133,10 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
                       <Button 
                         size="sm"
                         className="bg-blue-600 hover:bg-blue-700 text-white shrink-0"
-                        onClick={() => handleSelectAndSearch(student)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectAndSearch(student);
+                        }}
                       >
                         Select
                       </Button>
@@ -170,7 +170,7 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
           )}
 
           {/* No Results Message */}
-          {hasSearched && searchResults.length === 0 && !selectedStudent && (
+          {searchName && searchResults.length === 0 && !selectedStudent && !isSearching && (
             <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-amber-700 font-medium text-center">
                 No students found matching "{searchName}". Try a different search term.
