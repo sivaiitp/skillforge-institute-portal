@@ -17,7 +17,7 @@ interface EnrolledCourse {
 }
 
 export const useStudentSearch = () => {
-  const [searchEmail, setSearchEmail] = useState('');
+  const [searchName, setSearchName] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
@@ -86,13 +86,13 @@ export const useStudentSearch = () => {
   };
 
   const handleSearchStudent = async () => {
-    if (!searchEmail.trim()) {
-      toast.error('Please enter an email address');
+    if (!searchName.trim()) {
+      toast.error('Please enter a student name');
       return;
     }
 
     setIsSearching(true);
-    console.log('Searching for student with email:', searchEmail.trim());
+    console.log('Searching for student with name:', searchName.trim());
     
     try {
       // First check if there are any profiles at all
@@ -106,13 +106,13 @@ export const useStudentSearch = () => {
         console.error('Error fetching all profiles:', allError);
       }
 
-      // Search for the user
+      // Search for the user by name
       const { data: users, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')
-        .ilike('email', searchEmail.trim());
+        .ilike('full_name', `%${searchName.trim()}%`);
 
-      console.log('Search results:', { users, error, searchEmail: searchEmail.trim() });
+      console.log('Search results:', { users, error, searchName: searchName.trim() });
 
       if (error) {
         console.error('Error searching student:', error);
@@ -123,8 +123,8 @@ export const useStudentSearch = () => {
       }
 
       if (!users || users.length === 0) {
-        console.log('No profile found for email:', searchEmail.trim());
-        toast.error(`No student profile found for ${searchEmail.trim()}. The user may need to complete their profile setup or contact admin.`);
+        console.log('No profile found for name:', searchName.trim());
+        toast.error(`No student profile found with name "${searchName.trim()}".`);
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
@@ -154,7 +154,7 @@ export const useStudentSearch = () => {
       setSelectedStudent({
         id: foundUser.id,
         full_name: foundUser.full_name || foundUser.email || 'Unknown',
-        email: foundUser.email || searchEmail.trim()
+        email: foundUser.email || ''
       });
       
       await fetchStudentEnrollments(foundUser.id);
@@ -172,13 +172,13 @@ export const useStudentSearch = () => {
 
   const handleClearStudent = () => {
     setSelectedStudent(null);
-    setSearchEmail('');
+    setSearchName('');
     setEnrolledCourses([]);
   };
 
   return {
-    searchEmail,
-    setSearchEmail,
+    searchName,
+    setSearchName,
     selectedStudent,
     isSearching,
     enrolledCourses,

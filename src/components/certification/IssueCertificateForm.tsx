@@ -29,8 +29,8 @@ const IssueCertificateForm = ({ onCertificateIssued }: IssueCertificateFormProps
   const [isLoading, setIsLoading] = useState(false);
 
   const {
-    searchEmail,
-    setSearchEmail,
+    searchName,
+    setSearchName,
     selectedStudent,
     isSearching,
     enrolledCourses,
@@ -96,8 +96,8 @@ const IssueCertificateForm = ({ onCertificateIssued }: IssueCertificateFormProps
   return (
     <form onSubmit={handleIssueCertificate} className="space-y-6">
       <StudentSearchSection
-        searchEmail={searchEmail}
-        setSearchEmail={setSearchEmail}
+        searchName={searchName}
+        setSearchName={setSearchName}
         selectedStudent={selectedStudent}
         isSearching={isSearching}
         onSearchStudent={handleSearchStudent}

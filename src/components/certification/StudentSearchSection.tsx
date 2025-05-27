@@ -12,8 +12,8 @@ interface Student {
 }
 
 interface StudentSearchSectionProps {
-  searchEmail: string;
-  setSearchEmail: (email: string) => void;
+  searchName: string;
+  setSearchName: (name: string) => void;
   selectedStudent: Student | null;
   isSearching: boolean;
   onSearchStudent: () => void;
@@ -21,8 +21,8 @@ interface StudentSearchSectionProps {
 }
 
 const StudentSearchSection = ({
-  searchEmail,
-  setSearchEmail,
+  searchName,
+  setSearchName,
   selectedStudent,
   isSearching,
   onSearchStudent,
@@ -39,16 +39,16 @@ const StudentSearchSection = ({
     <div className="space-y-4">
       <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
         <Search className="w-4 h-4" />
-        Search Student by Email
+        Search Student by Name
       </Label>
       
       <div className="flex gap-3">
         <div className="flex-1">
           <Input
-            type="email"
-            placeholder="Enter student email address..."
-            value={searchEmail}
-            onChange={(e) => setSearchEmail(e.target.value)}
+            type="text"
+            placeholder="Enter student name..."
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
             className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
             onKeyPress={handleKeyPress}
           />
@@ -56,7 +56,7 @@ const StudentSearchSection = ({
         <Button
           type="button"
           onClick={onSearchStudent}
-          disabled={isSearching || !searchEmail.trim()}
+          disabled={isSearching || !searchName.trim()}
           className="h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white"
         >
           {isSearching ? (
