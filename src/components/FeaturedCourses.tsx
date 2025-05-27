@@ -18,7 +18,8 @@ const FeaturedCourses = () => {
         .select('*')
         .eq('is_featured', true)
         .eq('is_active', true)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(3);
       
       if (error) throw error;
       return data;
@@ -48,7 +49,7 @@ const FeaturedCourses = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {courses?.map((course) => (
             <Card key={course.id} className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
               <div className="relative h-48 overflow-hidden rounded-t-lg">
