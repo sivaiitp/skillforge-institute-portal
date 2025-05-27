@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -108,7 +107,7 @@ const AssessmentResult = () => {
         id: q.id,
         question_text: q.question_text,
         question_type: q.question_type,
-        options: Array.isArray(q.options) ? q.options : null,
+        options: q.options ? (q.options as string[]) : null,
         correct_answer: q.correct_answer,
         explanation: q.explanation,
         points: q.points
