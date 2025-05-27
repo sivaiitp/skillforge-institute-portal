@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,7 +28,7 @@ const FeaturedCourses = () => {
   if (isLoading) {
     return (
       <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="w-full max-w-[85%] mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Featured Courses
@@ -47,7 +46,7 @@ const FeaturedCourses = () => {
       <div className="absolute top-20 left-10 w-24 h-24 bg-gradient-to-r from-blue-200 to-purple-200 rounded-full opacity-20 animate-pulse"></div>
       <div className="absolute bottom-20 right-10 w-20 h-20 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full opacity-20 animate-pulse delay-75"></div>
       
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="w-full max-w-[85%] mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl mb-4">
             <BookOpen className="h-6 w-6 text-white" />

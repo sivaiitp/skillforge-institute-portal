@@ -38,7 +38,7 @@ const Index = () => {
       {/* Enhanced Quick Stats Section */}
       <section className="py-16 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5"></div>
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="w-full max-w-[85%] mx-auto px-4 relative z-10">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Our Impact in Numbers
@@ -96,7 +96,7 @@ const Index = () => {
           }}
         ></div>
         
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="w-full max-w-[85%] mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-sm rounded-full mb-6">
               <Award className="h-8 w-8 text-white" />
