@@ -76,8 +76,8 @@ const Navigation = () => {
                 to={item.path}
                 className={`relative px-4 py-2 text-base font-medium transition-all duration-300 rounded-lg group ${
                   location.pathname === item.path 
-                    ? "text-blue-600 bg-blue-50" 
-                    : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    ? "text-blue-600" 
+                    : "text-gray-700 hover:text-blue-600"
                 }`}
               >
                 <span className="relative z-10">{item.label}</span>
@@ -139,8 +139,8 @@ const Navigation = () => {
                   to={item.path}
                   className={`block px-4 py-3 text-lg font-medium transition-all duration-300 rounded-lg ${
                     location.pathname === item.path
-                      ? "text-blue-600 bg-blue-50 border-l-4 border-blue-500"
-                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                      ? "text-blue-600 border-l-4 border-blue-500"
+                      : "text-gray-700 hover:text-blue-600"
                   }`}
                   onClick={() => setIsOpen(false)}
                 >
@@ -152,7 +152,7 @@ const Navigation = () => {
                 <>
                   <Link 
                     to={getDashboardPath()} 
-                    className="block px-4 py-3 text-lg font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-300"
+                    className="block px-4 py-3 text-lg font-medium text-gray-700 hover:text-blue-600 rounded-lg transition-all duration-300"
                     onClick={() => setIsOpen(false)}
                   >
                     <div className="flex items-center">
