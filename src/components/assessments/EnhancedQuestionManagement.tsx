@@ -51,7 +51,7 @@ const EnhancedQuestionManagement = ({ assessmentId, assessmentTitle }: EnhancedQ
 
       <QuestionManagementStats questions={questions} />
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <QuestionManagementTabs activeTab={activeTab} onTabChange={setActiveTab} />
         
         <TabsContent value="questions" className="space-y-4">
