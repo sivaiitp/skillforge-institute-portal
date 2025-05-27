@@ -1,8 +1,20 @@
 
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Footer = () => {
+  const { data: settings } = useSiteSettings();
+
+  const instituteName = settings?.institute_name || 'RaceCodingInstitute';
+  const institutePhone = settings?.institute_phone || '+1 (555) 123-4567';
+  const instituteEmail = settings?.institute_email || 'info@racecodinginstitute.com';
+  const instituteAddress = settings?.institute_address || '123 Training Street, Tech City, TC 12345';
+  const facebookUrl = settings?.facebook_url || '#';
+  const twitterUrl = settings?.twitter_url || '#';
+  const instagramUrl = settings?.instagram_url || '#';
+  const linkedinUrl = settings?.linkedin_url || '#';
+
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-16">
@@ -13,22 +25,22 @@ const Footer = () => {
               <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">R</span>
               </div>
-              <span className="text-xl font-bold">RaceCodingInstitute</span>
+              <span className="text-xl font-bold">{instituteName}</span>
             </div>
             <p className="text-gray-400 leading-relaxed">
               Empowering careers through comprehensive training programs in technology, data science, and digital innovation.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a href={facebookUrl} className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a href={twitterUrl} className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a href={instagramUrl} className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-blue-400 transition-colors">
+              <a href={linkedinUrl} className="text-gray-400 hover:text-blue-400 transition-colors">
                 <Linkedin className="h-5 w-5" />
               </a>
             </div>
@@ -64,15 +76,15 @@ const Footer = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <MapPin className="h-5 w-5 text-blue-400 flex-shrink-0" />
-                <span className="text-gray-400">123 Training Street, Tech City, TC 12345</span>
+                <span className="text-gray-400 whitespace-pre-line">{instituteAddress}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-blue-400 flex-shrink-0" />
-                <span className="text-gray-400">+1 (555) 123-4567</span>
+                <span className="text-gray-400">{institutePhone}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-blue-400 flex-shrink-0" />
-                <span className="text-gray-400">info@racecodinginstitute.com</span>
+                <span className="text-gray-400">{instituteEmail}</span>
               </div>
             </div>
             <Link 
@@ -87,7 +99,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © 2024 RaceCodingInstitute. All rights reserved.
+              © 2024 {instituteName}. All rights reserved.
             </p>
             <div className="flex space-x-6 text-sm">
               <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>

@@ -9,6 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      about_content: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          section: string
+          sort_order: number | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          section: string
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          section?: string
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       assessment_attempts: {
         Row: {
           answers: Json | null
@@ -552,6 +588,93 @@ export type Database = {
         }
         Relationships: []
       }
+      faculty_members: {
+        Row: {
+          bio: string | null
+          created_at: string
+          experience: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          role: string
+          sort_order: number | null
+          specialization: string | null
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          experience?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          role: string
+          sort_order?: number | null
+          specialization?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          experience?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          role?: string
+          sort_order?: number | null
+          specialization?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      homepage_content: {
+        Row: {
+          button_link: string | null
+          button_text: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          section: string
+          sort_order: number | null
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          section: string
+          sort_order?: number | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          section?: string
+          sort_order?: number | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -665,6 +788,33 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          key: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
+      }
       study_materials: {
         Row: {
           course_id: string
@@ -726,6 +876,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      testimonials: {
+        Row: {
+          company: string | null
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          rating: number | null
+          role: string | null
+          sort_order: number | null
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          company?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          rating?: number | null
+          role?: string | null
+          sort_order?: number | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          company?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          rating?: number | null
+          role?: string | null
+          sort_order?: number | null
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
       }
       user_study_progress: {
         Row: {

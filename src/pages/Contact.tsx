@@ -10,8 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Contact = () => {
+  const { data: settings } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,6 +21,12 @@ const Contact = () => {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const instituteName = settings?.institute_name || 'RaceCodingInstitute';
+  const institutePhone = settings?.institute_phone || '+91 98765 43210';
+  const instituteEmail = settings?.institute_email || 'info@racecodinginstitute.edu';
+  const instituteAddress = settings?.institute_address || '123 Tech Park, Sector 5\nBangalore, Karnataka 560001';
+  const officeHours = settings?.office_hours || 'Mon - Fri: 9:00 AM - 6:00 PM\nSat: 10:00 AM - 4:00 PM';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,7 +153,7 @@ const Contact = () => {
                     <Mail className="text-blue-600" size={24} />
                     <div>
                       <p className="font-semibold">Email</p>
-                      <p className="text-gray-600">info@racecodinginstitute.edu</p>
+                      <p className="text-gray-600">{instituteEmail}</p>
                     </div>
                   </div>
                   
@@ -153,7 +161,7 @@ const Contact = () => {
                     <Phone className="text-blue-600" size={24} />
                     <div>
                       <p className="font-semibold">Phone</p>
-                      <p className="text-gray-600">+91 98765 43210</p>
+                      <p className="text-gray-600">{institutePhone}</p>
                     </div>
                   </div>
                   
@@ -161,10 +169,7 @@ const Contact = () => {
                     <MapPin className="text-blue-600" size={24} />
                     <div>
                       <p className="font-semibold">Address</p>
-                      <p className="text-gray-600">
-                        123 Tech Park, Sector 5<br />
-                        Bangalore, Karnataka 560001
-                      </p>
+                      <p className="text-gray-600 whitespace-pre-line">{instituteAddress}</p>
                     </div>
                   </div>
                   
@@ -172,10 +177,7 @@ const Contact = () => {
                     <Clock className="text-blue-600" size={24} />
                     <div>
                       <p className="font-semibold">Office Hours</p>
-                      <p className="text-gray-600">
-                        Mon - Fri: 9:00 AM - 6:00 PM<br />
-                        Sat: 10:00 AM - 4:00 PM
-                      </p>
+                      <p className="text-gray-600 whitespace-pre-line">{officeHours}</p>
                     </div>
                   </div>
                 </CardContent>
