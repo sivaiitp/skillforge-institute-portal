@@ -61,7 +61,7 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
     setHasSearched(false);
   };
 
-  console.log('Current state:', { searchResults, selectedStudent, searchName, isSearching });
+  console.log('Current state:', { searchResults, selectedStudent, searchName, isSearching, hasSearched });
 
   return (
     <div className="space-y-8">
@@ -78,6 +78,7 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* First Row - Search Input */}
           <div className="space-y-3">
             <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <User className="w-4 h-4" />
@@ -111,65 +112,71 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
                 </Button>
               )}
             </div>
-            
-            {/* Search Results */}
-            {searchResults.length > 0 && !selectedStudent && (
-              <div className="mt-4 space-y-2">
-                <p className="text-sm font-medium text-gray-700 mb-2">
-                  Found {searchResults.length} student(s). Select one:
-                </p>
-                <div className="max-h-60 overflow-y-auto space-y-2">
-                  {searchResults.map((student) => (
-                    <div 
-                      key={student.id}
-                      className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg cursor-pointer hover:from-blue-100 hover:to-indigo-100 transition-colors"
-                      onClick={() => handleSelectAndSearch(student)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <User className="w-4 h-4 text-blue-600" />
-                        <div className="flex-1">
-                          <p className="font-semibold text-blue-800">{student.full_name}</p>
-                          <p className="text-sm text-blue-600">{student.email}</p>
-                        </div>
-                        <Button 
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSelectAndSearch(student);
-                          }}
-                        >
-                          Select
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Selected Student */}
-            {selectedStudent && (
-              <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl">
-                <div className="flex items-start gap-3">
-                  <User className="w-5 h-5 text-green-600 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="font-semibold text-green-800">{selectedStudent.full_name}</p>
-                    <p className="text-sm text-green-600">{selectedStudent.email}</p>
-                  </div>
-                  <Button 
-                    onClick={() => onSearch(selectedStudent.id)}
-                    disabled={loading}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
-                    size="sm"
-                  >
-                    <Search className="w-4 h-4 mr-2" />
-                    {loading ? 'Loading...' : 'View Certificates'}
-                  </Button>
-                </div>
-              </div>
-            )}
           </div>
+          
+          {/* Second Row - Search Results */}
+          {hasSearched && searchResults.length > 0 && !selectedStudent && (
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                Search Results ({searchResults.length} found)
+              </Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
+                {searchResults.map((student) => (
+                  <div 
+                    key={student.id}
+                    className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg hover:from-blue-100 hover:to-indigo-100 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <User className="w-4 h-4 text-blue-600" />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-blue-800 truncate">{student.full_name}</p>
+                        <p className="text-sm text-blue-600 truncate">{student.email}</p>
+                      </div>
+                      <Button 
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700 text-white shrink-0"
+                        onClick={() => handleSelectAndSearch(student)}
+                      >
+                        Select
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Selected Student Display */}
+          {selectedStudent && (
+            <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl">
+              <div className="flex items-start gap-3">
+                <User className="w-5 h-5 text-green-600 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-semibold text-green-800">{selectedStudent.full_name}</p>
+                  <p className="text-sm text-green-600">{selectedStudent.email}</p>
+                </div>
+                <Button 
+                  onClick={() => onSearch(selectedStudent.id)}
+                  disabled={loading}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                  size="sm"
+                >
+                  <Search className="w-4 h-4 mr-2" />
+                  {loading ? 'Loading...' : 'View Certificates'}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* No Results Message */}
+          {hasSearched && searchResults.length === 0 && !selectedStudent && (
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-amber-700 font-medium text-center">
+                No students found matching "{searchName}". Try a different search term.
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
