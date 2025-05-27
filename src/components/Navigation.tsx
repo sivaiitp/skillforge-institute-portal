@@ -74,7 +74,7 @@ const Navigation = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-lg group ${
+                className={`relative px-4 py-2 text-base font-medium transition-all duration-300 rounded-lg group ${
                   location.pathname === item.path 
                     ? "text-blue-600 bg-blue-50" 
                     : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
@@ -137,7 +137,7 @@ const Navigation = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`block px-4 py-3 text-base font-medium transition-all duration-300 rounded-lg ${
+                  className={`block px-4 py-3 text-lg font-medium transition-all duration-300 rounded-lg ${
                     location.pathname === item.path
                       ? "text-blue-600 bg-blue-50 border-l-4 border-blue-500"
                       : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
@@ -152,7 +152,7 @@ const Navigation = () => {
                 <>
                   <Link 
                     to={getDashboardPath()} 
-                    className="block px-4 py-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-300"
+                    className="block px-4 py-3 text-lg font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-300"
                     onClick={() => setIsOpen(false)}
                   >
                     <div className="flex items-center">
@@ -165,7 +165,7 @@ const Navigation = () => {
                       handleSignOut();
                       setIsOpen(false);
                     }}
-                    className="block w-full text-left px-4 py-3 text-base font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all duration-300"
+                    className="block w-full text-left px-4 py-3 text-lg font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all duration-300"
                   >
                     <div className="flex items-center">
                       <LogOut className="h-5 w-5 mr-3" />
