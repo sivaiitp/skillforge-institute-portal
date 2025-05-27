@@ -32,6 +32,7 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
     isSearching,
     enrolledCourses,
     loadingEnrollments,
+    hasSearched,
     handleSearchStudent,
     handleSelectStudent,
     handleClearStudent
@@ -120,6 +121,7 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
     enrolledCourses: enrolledCourses.length, 
     availableCourses: availableCourses.length,
     loadingEnrollments,
+    hasSearched,
     issuedCertificate: issuedCertificate?.certificate_number
   });
 
@@ -156,6 +158,7 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
           enrolledCourses={enrolledCourses}
           availableCourses={availableCourses}
           loadingEnrollments={loadingEnrollments}
+          hasSearched={hasSearched}
           onSearch={handleSearch}
           onSelectStudent={handleSelectAndContinue}
           onClearStudent={handleClearStudent}

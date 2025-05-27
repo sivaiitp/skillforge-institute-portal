@@ -42,6 +42,7 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
     searchResults,
     selectedStudent,
     isSearching,
+    hasSearched,
     handleSearchStudent,
     handleSelectStudent,
     handleClearStudent
@@ -76,7 +77,7 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
     setSelectedCertificate(null);
   };
 
-  console.log('Current state:', { searchResults, selectedStudent, searchName, isSearching });
+  console.log('Current state:', { searchResults, selectedStudent, searchName, isSearching, hasSearched });
 
   return (
     <div className="space-y-8">
@@ -111,7 +112,7 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
               </div>
               <Button 
                 onClick={handleSearch}
-                disabled={isSearching || !searchName.trim()}
+                disabled={isSearching || !searchName.trim() || searchName.trim().length < 2}
                 variant="outline"
                 className="px-4 border-gray-200 hover:bg-purple-50 hover:border-purple-300 transition-colors"
               >
@@ -127,6 +128,9 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
                 </Button>
               )}
             </div>
+            {searchName.trim().length > 0 && searchName.trim().length < 2 && (
+              <p className="text-sm text-gray-500">Type at least 2 characters to search</p>
+            )}
           </div>
           
           {/* Search Results Row - Single Column */}
@@ -190,8 +194,8 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
             </div>
           )}
 
-          {/* No Results Message */}
-          {searchName && searchResults.length === 0 && !selectedStudent && !isSearching && (
+          {/* No Results Message - only show after search is complete */}
+          {hasSearched && searchName.trim().length >= 2 && searchResults.length === 0 && !selectedStudent && !isSearching && (
             <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-amber-700 font-medium text-center">
                 No students found matching "{searchName}". Try a different search term.

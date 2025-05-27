@@ -13,6 +13,7 @@ interface StudentSearchSectionProps {
   enrolledCourses: any[];
   availableCourses: any[];
   loadingEnrollments: boolean;
+  hasSearched: boolean;
   onSearch: () => void;
   onSelectStudent: (student: any) => void;
   onClearStudent: () => void;
@@ -27,6 +28,7 @@ const StudentSearchSection = ({
   enrolledCourses,
   availableCourses,
   loadingEnrollments,
+  hasSearched,
   onSearch,
   onSelectStudent,
   onClearStudent
@@ -50,7 +52,7 @@ const StudentSearchSection = ({
           </div>
           <Button 
             onClick={onSearch}
-            disabled={isSearching || !searchName.trim()}
+            disabled={isSearching || !searchName.trim() || searchName.trim().length < 2}
             variant="outline"
             className="px-4 border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors"
           >
@@ -66,6 +68,9 @@ const StudentSearchSection = ({
             </Button>
           )}
         </div>
+        {searchName.trim().length > 0 && searchName.trim().length < 2 && (
+          <p className="text-sm text-gray-500">Type at least 2 characters to search</p>
+        )}
       </div>
 
       {/* Search Results */}
@@ -146,8 +151,8 @@ const StudentSearchSection = ({
         </div>
       )}
 
-      {/* No Results Message */}
-      {searchName && searchResults.length === 0 && !selectedStudent && !isSearching && (
+      {/* No Results Message - only show after search is complete and no results */}
+      {hasSearched && searchName.trim().length >= 2 && searchResults.length === 0 && !selectedStudent && !isSearching && (
         <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
           <p className="text-amber-700 font-medium text-center">
             No students found matching "{searchName}". Try a different search term.

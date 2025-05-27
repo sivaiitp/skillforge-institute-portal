@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -23,6 +23,29 @@ export const useStudentSearch = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
   const [loadingEnrollments, setLoadingEnrollments] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  // Debounced search effect
+  useEffect(() => {
+    if (!searchName.trim()) {
+      setSearchResults([]);
+      setHasSearched(false);
+      return;
+    }
+
+    // Only start searching if user has typed at least 2 characters
+    if (searchName.trim().length < 2) {
+      setSearchResults([]);
+      setHasSearched(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      performSearch();
+    }, 500); // Wait 500ms after user stops typing
+
+    return () => clearTimeout(timeoutId);
+  }, [searchName]);
 
   const fetchStudentEnrollments = async (studentId: string) => {
     if (!studentId) {
@@ -94,16 +117,14 @@ export const useStudentSearch = () => {
     }
   };
 
-  const handleSearchStudent = async () => {
-    if (!searchName.trim()) {
-      toast.error('Please enter a student name to search');
+  const performSearch = async () => {
+    if (!searchName.trim() || searchName.trim().length < 2) {
       return;
     }
 
     setIsSearching(true);
     setSearchResults([]);
-    setSelectedStudent(null);
-    setEnrolledCourses([]);
+    setHasSearched(true);
     console.log('Searching for student:', searchName);
     
     try {
@@ -125,7 +146,8 @@ export const useStudentSearch = () => {
       }
 
       if (!students || students.length === 0) {
-        toast.error(`No students found matching "${searchName.trim()}"`);
+        console.log(`No students found matching "${searchName.trim()}"`);
+        setSearchResults([]);
         return;
       }
 
@@ -136,7 +158,6 @@ export const useStudentSearch = () => {
       }));
 
       setSearchResults(formattedStudents);
-      toast.success(`Found ${formattedStudents.length} student(s) matching "${searchName.trim()}"`);
       
     } catch (error) {
       console.error('Error in search:', error);
@@ -146,10 +167,19 @@ export const useStudentSearch = () => {
     }
   };
 
+  const handleSearchStudent = async () => {
+    if (!searchName.trim()) {
+      toast.error('Please enter a student name to search');
+      return;
+    }
+    await performSearch();
+  };
+
   const handleSelectStudent = async (student: Student) => {
     console.log('Selecting student:', student);
     setSelectedStudent(student);
     setSearchResults([]); // Clear search results after selection
+    setHasSearched(false);
     await fetchStudentEnrollments(student.id);
     toast.success(`Selected student: ${student.full_name}`);
   };
@@ -159,6 +189,7 @@ export const useStudentSearch = () => {
     setSearchName('');
     setSearchResults([]);
     setEnrolledCourses([]);
+    setHasSearched(false);
   };
 
   return {
@@ -169,6 +200,7 @@ export const useStudentSearch = () => {
     isSearching,
     enrolledCourses,
     loadingEnrollments,
+    hasSearched,
     handleSearchStudent,
     handleSelectStudent,
     handleClearStudent,
