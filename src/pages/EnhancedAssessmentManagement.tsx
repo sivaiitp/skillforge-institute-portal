@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,6 +16,7 @@ const EnhancedAssessmentManagement = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingAssessment, setEditingAssessment] = useState(null);
   const [selectedAssessment, setSelectedAssessment] = useState(null);
+  const [showQuestionManagement, setShowQuestionManagement] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -130,6 +130,7 @@ const EnhancedAssessmentManagement = () => {
 
   const handleManageQuestions = (assessment) => {
     setSelectedAssessment(assessment);
+    setShowQuestionManagement(true);
   };
 
   const handleAddAssessment = () => {
@@ -164,26 +165,27 @@ const EnhancedAssessmentManagement = () => {
     );
   }
 
-  if (selectedAssessment) {
+  if (showQuestionManagement) {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <AdminSidebar />
         <div className="flex-1 ml-64 p-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="mb-6">
-              <Button 
-                variant="outline" 
-                onClick={() => setSelectedAssessment(null)}
-                className="mb-4"
-              >
-                ← Back to Assessments
-              </Button>
-            </div>
-            <EnhancedQuestionManagement 
-              assessmentId={selectedAssessment.id} 
-              assessmentTitle={selectedAssessment.title}
-            />
+          <div className="mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowQuestionManagement(false);
+                setSelectedAssessment(null);
+              }}
+              className="mb-4"
+            >
+              ← Back to Assessments
+            </Button>
           </div>
+          <EnhancedQuestionManagement 
+            assessmentId={selectedAssessment?.id} 
+            assessmentTitle={selectedAssessment?.title}
+          />
         </div>
       </div>
     );
