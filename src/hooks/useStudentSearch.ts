@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -86,7 +87,7 @@ export const useStudentSearch = () => {
 
   const handleSearchStudent = async () => {
     if (!searchName.trim()) {
-      toast.error('Please enter a student name');
+      toast.error('Please enter a user name');
       return;
     }
 
@@ -95,14 +96,30 @@ export const useStudentSearch = () => {
     console.log('Searching for admin users with name (case-insensitive partial match):', searchTerm);
     
     try {
-      // Search using ILIKE for case-insensitive partial matching, filtering for admin role only
+      // First, let's check all users to see what we have
+      const { data: allUsers, error: allUsersError } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, role');
+
+      console.log('All users in database:', allUsers);
+      console.log('All users error:', allUsersError);
+
+      // Then search with our filter
       const { data: users, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')
         .ilike('full_name', `%${searchTerm}%`)
-        .eq('role', 'admin'); // Only search for admin users
+        .eq('role', 'admin');
 
-      console.log('Search results (admin only):', { users, error, searchTerm });
+      console.log('Filtered search results (admin only):', { users, error, searchTerm, searchQuery: `%${searchTerm}%` });
+
+      // Also try without the role filter to see if the name search works
+      const { data: usersWithoutRoleFilter, error: errorWithoutRoleFilter } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, role')
+        .ilike('full_name', `%${searchTerm}%`);
+
+      console.log('Search results without role filter:', { usersWithoutRoleFilter, errorWithoutRoleFilter });
 
       if (error) {
         console.error('Error searching admin user:', error);
@@ -120,7 +137,7 @@ export const useStudentSearch = () => {
         return;
       }
 
-      // If multiple results, take the first one (you could enhance this to show a selection UI)
+      // If multiple results, take the first one
       const foundUser = users[0];
       console.log('Found admin user:', foundUser);
 
