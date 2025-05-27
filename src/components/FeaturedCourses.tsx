@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, Users, Star } from "lucide-react";
+import { Clock, Users, Star, TrendingUp, BookOpen, Award } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link, useNavigate } from "react-router-dom";
@@ -28,10 +28,12 @@ const FeaturedCourses = () => {
 
   if (isLoading) {
     return (
-      <section className="py-20 bg-white">
+      <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Courses</h2>
+          <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Featured Courses
+            </h2>
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
           </div>
         </div>
@@ -40,83 +42,130 @@ const FeaturedCourses = () => {
   }
 
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Courses</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+    <section className="py-24 bg-white relative overflow-hidden">
+      {/* Background Elements */}
+      <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-blue-200 to-purple-200 rounded-full opacity-20 animate-pulse"></div>
+      <div className="absolute bottom-20 right-10 w-24 h-24 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full opacity-20 animate-pulse delay-75"></div>
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl mb-6">
+            <BookOpen className="h-8 w-8 text-white" />
+          </div>
+          
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Featured Courses
+          </h2>
+          
+          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Discover our most popular training programs designed to accelerate your career growth
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {courses?.map((course) => (
-            <Card key={course.id} className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-0 shadow-lg">
-              <div className="relative h-48 overflow-hidden rounded-t-lg">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          {courses?.map((course, index) => (
+            <Card key={course.id} className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-0 shadow-lg bg-white hover:bg-gradient-to-br hover:from-white hover:to-blue-50 transform hover:-translate-y-3">
+              <div className="relative h-56 overflow-hidden rounded-t-lg">
                 <img 
                   src={course.image_url || `https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80`}
                   alt={course.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className="absolute top-4 left-4">
-                  <Badge className="bg-blue-600 hover:bg-blue-700 text-white">
+                
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                {/* Badges */}
+                <div className="absolute top-4 left-4 flex gap-2">
+                  <Badge className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold">
                     {course.level}
                   </Badge>
+                  {index === 0 && (
+                    <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold">
+                      Popular
+                    </Badge>
+                  )}
+                </div>
+                
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-xl">
+                    <TrendingUp className="h-8 w-8 text-blue-600" />
+                  </div>
                 </div>
               </div>
               
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                  <Clock className="h-4 w-4" />
-                  <span>{course.duration}</span>
-                  <Users className="h-4 w-4 ml-2" />
-                  <span>500+ students</span>
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    <span>{course.duration}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Users className="h-4 w-4" />
+                    <span>500+ students</span>
+                  </div>
                 </div>
-                <CardTitle className="text-xl group-hover:text-blue-600 transition-colors">
+                
+                <CardTitle className="text-xl font-bold group-hover:text-blue-600 transition-colors leading-tight">
                   {course.title}
                 </CardTitle>
-                <CardDescription className="text-gray-600">
+                
+                <CardDescription className="text-gray-600 leading-relaxed">
                   {course.description}
                 </CardDescription>
               </CardHeader>
               
               <CardContent className="pt-0">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     ))}
-                    <span className="text-sm text-gray-500 ml-1">(4.8)</span>
+                    <span className="text-sm text-gray-500 ml-2 font-medium">(4.8)</span>
                   </div>
-                  <span className="text-2xl font-bold text-blue-600">
-                    ₹{course.price?.toLocaleString('en-IN') || '0'}
-                  </span>
+                  
+                  <div className="text-right">
+                    <span className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      ₹{course.price?.toLocaleString('en-IN') || '0'}
+                    </span>
+                  </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <Button 
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    onClick={() => navigate(`/courses/${course.id}`)}
-                  >
-                    View Details
-                  </Button>
-                </div>
+                <Button 
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
+                  onClick={() => navigate(`/courses/${course.id}`)}
+                >
+                  View Details
+                  <Award className="ml-2 h-4 w-4" />
+                </Button>
               </CardContent>
             </Card>
           ))}
         </div>
 
+        {/* CTA Section */}
         <div className="text-center">
-          <Button 
-            size="lg" 
-            variant="outline" 
-            className="px-8 py-3 text-lg border-2 hover:bg-gray-50"
-            asChild
-          >
-            <Link to="/courses">
-              View All Courses
-            </Link>
-          </Button>
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-3xl p-12 max-w-4xl mx-auto">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              Explore All Our Courses
+            </h3>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Discover more specialized programs tailored to your career goals and interests
+            </p>
+            
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="px-12 py-4 text-lg font-semibold border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+              asChild
+            >
+              <Link to="/courses">
+                View All Courses
+                <BookOpen className="ml-3 h-5 w-5" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </section>
