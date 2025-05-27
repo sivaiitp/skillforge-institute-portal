@@ -93,42 +93,58 @@ export const useStudentSearch = () => {
     }
 
     setIsSearching(true);
-    const searchTerm = searchName.trim();
+    const searchTerm = searchName.trim().toLowerCase();
     console.log('Searching for students with name (case-insensitive partial match):', searchTerm);
     
     try {
-      // Search specifically for student role users only
+      // Search for students with more flexible matching
       const { data: students, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')
-        .eq('role', 'student')
-        .ilike('full_name', `%${searchTerm}%`);
+        .eq('role', 'student');
 
-      console.log('Search results for students:', { students, error, searchTerm, searchQuery: `%${searchTerm}%` });
+      console.log('All students fetched:', { students, error });
 
       if (error) {
-        console.error('Error searching student:', error);
-        toast.error('Error searching for student');
+        console.error('Error fetching students:', error);
+        toast.error('Error searching for students');
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
       if (!students || students.length === 0) {
-        console.log('No student found for name (partial match):', searchTerm);
-        toast.error(`No student found with name containing "${searchTerm}"`);
+        console.log('No students found in database');
+        toast.error('No students found in database');
+        setSelectedStudent(null);
+        setEnrolledCourses([]);
+        return;
+      }
+
+      // Filter students client-side for more flexible matching
+      const matchingStudents = students.filter(student => {
+        const fullName = (student.full_name || '').toLowerCase();
+        const email = (student.email || '').toLowerCase();
+        return fullName.includes(searchTerm) || email.includes(searchTerm);
+      });
+
+      console.log('Matching students found:', { matchingStudents, searchTerm });
+
+      if (matchingStudents.length === 0) {
+        console.log('No student found matching search term:', searchTerm);
+        toast.error(`No student found with name or email containing "${searchName.trim()}"`);
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
       // If multiple results, take the first one
-      const foundStudent = students[0];
-      console.log('Found student:', foundStudent);
+      const foundStudent = matchingStudents[0];
+      console.log('Selected student:', foundStudent);
 
-      if (students.length > 1) {
-        console.log(`Found ${students.length} students matching "${searchTerm}", selecting first one:`, foundStudent);
-        toast.info(`Found ${students.length} matches, selected: ${foundStudent.full_name}`);
+      if (matchingStudents.length > 1) {
+        console.log(`Found ${matchingStudents.length} students matching "${searchTerm}", selecting first one:`, foundStudent);
+        toast.info(`Found ${matchingStudents.length} matches, selected: ${foundStudent.full_name || foundStudent.email}`);
       }
 
       // Student found - set as selected student
