@@ -74,7 +74,7 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* First Row - Search Input */}
+          {/* Search Input Row */}
           <div className="space-y-3">
             <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <User className="w-4 h-4" />
@@ -110,25 +110,27 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
             </div>
           </div>
           
-          {/* Second Row - Search Results */}
+          {/* Search Results Row - Single Column */}
           {searchResults.length > 0 && !selectedStudent && (
             <div className="space-y-3">
               <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                 <Users className="w-4 h-4" />
                 Search Results ({searchResults.length} found)
               </Label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-60 overflow-y-auto">
+              <div className="space-y-3 max-h-60 overflow-y-auto">
                 {searchResults.map((student) => (
                   <div 
                     key={student.id}
                     className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg hover:from-blue-100 hover:to-indigo-100 transition-colors cursor-pointer"
                     onClick={() => handleSelectAndSearch(student)}
                   >
-                    <div className="flex items-center gap-3">
-                      <User className="w-4 h-4 text-blue-600" />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-blue-800 truncate">{student.full_name}</p>
-                        <p className="text-sm text-blue-600 truncate">{student.email}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <User className="w-4 h-4 text-blue-600" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-blue-800 truncate">{student.full_name}</p>
+                          <p className="text-sm text-blue-600 truncate">{student.email}</p>
+                        </div>
                       </div>
                       <Button 
                         size="sm"
