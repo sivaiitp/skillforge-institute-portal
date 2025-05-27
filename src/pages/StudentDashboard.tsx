@@ -1,7 +1,8 @@
+
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import StudentSidebar from "@/components/StudentSidebar";
+import { StudentSidebar } from "@/components/StudentSidebar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, FileText, Users } from "lucide-react";
