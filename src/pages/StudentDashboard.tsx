@@ -1,317 +1,254 @@
-
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import StudentSidebar from "@/components/StudentSidebar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Award, BookOpen, ClipboardList, TrendingUp, GraduationCap, Target, Calendar, ExternalLink, User, CreditCard, FileText } from "lucide-react";
-import { useAuth } from "@/components/AuthProvider";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { StudentSidebar } from "@/components/StudentSidebar";
+import { Calendar, Clock, FileText, Users } from "lucide-react";
+import { format } from "date-fns";
+import { Progress } from "@/components/ui/progress";
+import UserEventRegistrations from "@/components/events/UserEventRegistrations";
 
 const StudentDashboard = () => {
-  const { user, userRole } = useAuth();
-  const navigate = useNavigate();
-  const [certificates, setCertificates] = useState([]);
-  const [enrollments, setEnrollments] = useState([]);
-  const [assessments, setAssessments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [fullName, setFullName] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-      return;
+  // Fetch user profile
+  const { data: profile, isLoading: profileLoading } = useQuery({
+    queryKey: ['user-profile'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
     }
-    
-    if (userRole === 'admin') {
-      navigate('/admin');
-      return;
-    }
-    
-    fetchDashboardData();
-  }, [user, userRole, navigate]);
+  });
 
-  const fetchDashboardData = async () => {
-    if (!user) return;
-    
-    setLoading(true);
-    try {
-      // Fetch certificates using type assertion
-      const { data: certsData } = await (supabase as any)
-        .from('certificates')
-        .select(`
-          *,
-          courses (title, certification, description)
-        `)
-        .eq('user_id', user.id)
-        .eq('is_valid', true)
-        .order('issued_date', { ascending: false })
-        .limit(3);
+  // Fetch enrolled courses
+  const { data: enrolledCourses, isLoading: coursesLoading } = useQuery({
+    queryKey: ['enrolled-courses'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
 
-      // Fetch enrollments
-      const { data: enrollData } = await supabase
+      const { data, error } = await supabase
         .from('enrollments')
         .select(`
           *,
-          courses (title, description, duration, category)
+          courses (
+            title,
+            description,
+            image_url,
+            duration
+          )
         `)
-        .eq('user_id', user.id)
-        .eq('status', 'active')
-        .order('enrollment_date', { ascending: false })
-        .limit(3);
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+      return data;
+    }
+  });
 
-      // Fetch recent assessment results
-      const { data: assessData } = await supabase
-        .from('assessment_results')
+  // Fetch recent activity (study materials)
+  const { data: recentActivity, isLoading: activityLoading } = useQuery({
+    queryKey: ['recent-activity'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+
+      const { data, error } = await supabase
+        .from('user_study_progress')
         .select(`
           *,
-          assessments (title, total_marks, passing_marks)
+          study_materials (
+            title,
+            description,
+            material_type
+          ),
+          courses (
+            title
+          )
         `)
         .eq('user_id', user.id)
-        .order('taken_at', { ascending: false })
-        .limit(3);
-
-      setCertificates(certsData || []);
-      setEnrollments(enrollData || []);
-      setAssessments(assessData || []);
-    } catch (error) {
-      toast.error('Error fetching dashboard data');
-      console.error('Error:', error);
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      if (error) throw error;
+      return data;
     }
-    setLoading(false);
-  };
+  });
 
-  if (!user) return null;
+  useEffect(() => {
+    if (profile) {
+      setFullName(profile.full_name);
+    }
+  }, [profile]);
+
+  if (profileLoading || coursesLoading || activityLoading) {
+    return <div className="text-center py-8">Loading dashboard...</div>;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <SidebarProvider>
-        <div className="flex min-h-screen w-full">
-          <StudentSidebar />
-          
-          <SidebarInset className="flex-1">
-            <header className="flex h-16 shrink-0 items-center gap-2 px-6 border-b bg-white/80 backdrop-blur-sm">
-              <SidebarTrigger className="-ml-1" />
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg">
-                  <GraduationCap className="h-5 w-5 text-white" />
+    <div className="min-h-screen bg-gray-50 flex">
+      <StudentSidebar />
+      <div className="flex-1 p-8">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-bold mb-6">
+            Welcome, {fullName || 'Student'}!
+          </h1>
+
+          {/* Dashboard Statistics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Enrolled Courses</CardTitle>
+                <CardDescription>Number of courses you're currently enrolled in</CardDescription>
+              </CardHeader>
+              <CardContent className="text-2xl font-semibold">
+                {enrolledCourses?.length || 0} Courses
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Active Since</CardTitle>
+                <CardDescription>Your account creation date</CardDescription>
+              </CardHeader>
+              <CardContent className="text-2xl font-semibold">
+                {profile?.created_at ? format(new Date(profile.created_at), 'MMM dd, yyyy') : 'N/A'}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Last Activity</CardTitle>
+                <CardDescription>Date of your last study session</CardDescription>
+              </CardHeader>
+              <CardContent className="text-2xl font-semibold">
+                {recentActivity && recentActivity.length > 0 ? format(new Date(recentActivity[0].created_at), 'MMM dd, yyyy') : 'No Activity'}
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8 mb-8">
+            {/* Enrolled Courses */}
+            <div>
+              <h2 className="text-2xl font-bold mb-4">My Courses</h2>
+              {enrolledCourses && enrolledCourses.length > 0 ? (
+                <div className="space-y-4">
+                  {enrolledCourses.map((enrollment) => (
+                    <Card key={enrollment.id}>
+                      <CardHeader>
+                        <CardTitle>{enrollment.courses?.title}</CardTitle>
+                        <CardDescription>{enrollment.courses?.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                          <Clock size={16} />
+                          {enrollment.courses?.duration}
+                        </div>
+                        <Badge variant="secondary">
+                          {enrollment.status}
+                        </Badge>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-                <h1 className="text-xl font-semibold text-gray-800">
-                  Student Dashboard
-                </h1>
-              </div>
-            </header>
-            
-            <div className="p-6">
-              <div className="max-w-7xl mx-auto space-y-8">
-                {loading ? (
-                  <div className="text-center py-20">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-6"></div>
-                    <p className="text-lg text-gray-600">Loading your dashboard...</p>
-                  </div>
-                ) : (
-                  <>
-                    {/* Header */}
-                    <div className="mb-8">
-                      <div className="bg-white rounded-xl shadow-sm border p-6">
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center gap-3">
-                            <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg">
-                              <GraduationCap className="w-8 h-8 text-white" />
-                            </div>
-                            <div>
-                              <h1 className="text-3xl font-bold text-gray-800 mb-1">Welcome back!</h1>
-                              <p className="text-gray-600">Continue your learning journey and track your progress</p>
-                            </div>
-                          </div>
-                          <Button 
-                            onClick={() => navigate('/courses')} 
-                            className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white flex items-center gap-2"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                            Browse Courses
-                          </Button>
-                        </div>
-                        
-                        {/* Quick Stats */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/dashboard/courses')}>
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-blue-700 text-sm font-medium">Active Courses</p>
-                                <p className="text-2xl font-bold text-gray-800">{enrollments.length}</p>
-                              </div>
-                              <BookOpen className="w-8 h-8 text-blue-500" />
-                            </div>
-                          </div>
-                          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/dashboard/certificates')}>
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-green-700 text-sm font-medium">Certificates</p>
-                                <p className="text-2xl font-bold text-gray-800">{certificates.length}</p>
-                              </div>
-                              <Award className="w-8 h-8 text-green-500" />
-                            </div>
-                          </div>
-                          <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/dashboard/assessments')}>
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="text-purple-700 text-sm font-medium">Recent Tests</p>
-                                <p className="text-2xl font-bold text-gray-800">{assessments.length}</p>
-                              </div>
-                              <Target className="w-8 h-8 text-purple-500" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Recent Activity */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Current Courses */}
-                      <Card className="shadow-sm border bg-white">
-                        <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 border-b">
-                          <CardTitle className="flex items-center gap-2">
-                            <BookOpen className="h-5 w-5 text-blue-600" />
-                            Current Courses
-                          </CardTitle>
-                          <CardDescription>Your active enrollments</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-6">
-                          {enrollments.length === 0 ? (
-                            <div className="text-center py-8">
-                              <BookOpen className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                              <p className="text-gray-500">No active courses yet</p>
-                            </div>
-                          ) : (
-                            <div className="space-y-4">
-                              {enrollments.map((enrollment) => (
-                                <div key={enrollment.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200">
-                                  <div className="flex items-center gap-4">
-                                    <div className="p-2 bg-blue-100 rounded-lg">
-                                      <BookOpen className="h-5 w-5 text-blue-600" />
-                                    </div>
-                                    <div>
-                                      <h4 className="font-semibold text-gray-800">{enrollment.courses?.title}</h4>
-                                      <p className="text-sm text-gray-600">{enrollment.courses?.duration}</p>
-                                    </div>
-                                  </div>
-                                  <Badge variant="outline" className="bg-white border-blue-200 text-blue-700">
-                                    {enrollment.courses?.category}
-                                  </Badge>
-                                </div>
-                              ))}
-                              <Button 
-                                variant="outline"
-                                className="w-full mt-2 border-blue-200 text-blue-700 hover:bg-blue-50"
-                                onClick={() => navigate('/dashboard/courses')}
-                              >
-                                View All Courses
-                              </Button>
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-
-                      {/* Recent Certificates */}
-                      <Card className="shadow-sm border bg-white">
-                        <CardHeader className="bg-gradient-to-r from-green-50 to-green-100 border-b">
-                          <CardTitle className="flex items-center gap-2">
-                            <Award className="h-5 w-5 text-green-600" />
-                            Recent Certificates
-                          </CardTitle>
-                          <CardDescription>Your latest achievements</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-6">
-                          {certificates.length === 0 ? (
-                            <div className="text-center py-8">
-                              <Award className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                              <p className="text-gray-500">No certificates earned yet</p>
-                            </div>
-                          ) : (
-                            <div className="space-y-4">
-                              {certificates.map((cert: any) => (
-                                <div key={cert.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200">
-                                  <div className="flex items-center gap-4">
-                                    <div className="p-2 bg-green-100 rounded-lg">
-                                      <Award className="h-5 w-5 text-green-600" />
-                                    </div>
-                                    <div>
-                                      <h4 className="font-semibold text-gray-800">{cert.courses?.title}</h4>
-                                      <p className="text-sm text-gray-600 flex items-center gap-1">
-                                        <Calendar className="h-3 w-3" />
-                                        Issued: {new Date(cert.issued_date).toLocaleDateString()}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <Badge className="bg-green-100 text-green-800 border-green-200">
-                                    Certified
-                                  </Badge>
-                                </div>
-                              ))}
-                              <Button 
-                                variant="outline"
-                                className="w-full mt-2 border-green-200 text-green-700 hover:bg-green-50"
-                                onClick={() => navigate('/dashboard/certificates')}
-                              >
-                                View All Certificates
-                              </Button>
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    {/* Recent Test Results */}
-                    {assessments.length > 0 && (
-                      <Card className="shadow-sm border bg-white mt-6">
-                        <CardHeader className="bg-gradient-to-r from-purple-50 to-purple-100 border-b">
-                          <CardTitle className="flex items-center gap-2">
-                            <TrendingUp className="h-5 w-5 text-purple-600" />
-                            Recent Test Results
-                          </CardTitle>
-                          <CardDescription>Your latest assessment performance</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-6">
-                          <div className="space-y-4">
-                            {assessments.map((result) => (
-                              <div key={result.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200">
-                                <div className="flex items-center gap-4">
-                                  <div className="p-2 bg-purple-100 rounded-lg">
-                                    <ClipboardList className="h-5 w-5 text-purple-600" />
-                                  </div>
-                                  <div>
-                                    <h4 className="font-semibold text-gray-800">{result.assessments?.title}</h4>
-                                    <p className="text-sm text-gray-600">
-                                      Score: {result.score}/{result.total_marks} ({Math.round((result.score / result.total_marks) * 100)}%)
-                                    </p>
-                                  </div>
-                                </div>
-                                <Badge variant={result.passed ? "default" : "destructive"} className={result.passed ? "bg-green-100 text-green-800 border-green-200" : ""}>
-                                  {result.passed ? "Passed" : "Failed"}
-                                </Badge>
-                              </div>
-                            ))}
-                            <Button 
-                              variant="outline"
-                              className="w-full mt-2 border-purple-200 text-purple-700 hover:bg-purple-50"
-                              onClick={() => navigate('/dashboard/assessments')}
-                            >
-                              View All Assessments
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </>
-                )}
-              </div>
+              ) : (
+                <Card>
+                  <CardContent className="text-center py-8">
+                    <h3 className="text-lg font-semibold text-gray-600 mb-2">No Enrolled Courses</h3>
+                    <p className="text-gray-500">Explore our courses and start learning today!</p>
+                  </CardContent>
+                </Card>
+              )}
             </div>
-          </SidebarInset>
+
+            {/* Progress Overview */}
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Progress Overview</h2>
+              {enrolledCourses && enrolledCourses.length > 0 ? (
+                <div className="space-y-4">
+                  {enrolledCourses.map((enrollment) => (
+                    <Card key={enrollment.id}>
+                      <CardHeader>
+                        <CardTitle>{enrollment.courses?.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="mb-2">
+                          <div className="text-sm font-medium">
+                            {enrollment.progress}% Completed
+                          </div>
+                          <Progress value={enrollment.progress} />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardContent className="text-center py-8">
+                    <h3 className="text-lg font-semibold text-gray-600 mb-2">No Progress Available</h3>
+                    <p className="text-gray-500">Enroll in courses to track your learning progress.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </div>
+
+          {/* Recent Activity and Event Registrations */}
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Recent Activity */}
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Recent Activity</h2>
+              {recentActivity && recentActivity.length > 0 ? (
+                <div className="space-y-4">
+                  {recentActivity.map((activity) => (
+                    <Card key={activity.id}>
+                      <CardHeader>
+                        <CardTitle>{activity.study_materials?.title}</CardTitle>
+                        <CardDescription>
+                          {activity.study_materials?.description}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                          <FileText size={16} />
+                          {activity.study_materials?.material_type} from {activity.courses?.title}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Calendar size={16} />
+                          Completed on {format(new Date(activity.completed_at || activity.created_at), 'MMM dd, yyyy')}
+                        </div>
+                        <Badge variant="secondary">
+                          Completed
+                        </Badge>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardContent className="text-center py-8">
+                    <h3 className="text-lg font-semibold text-gray-600 mb-2">No Recent Activity</h3>
+                    <p className="text-gray-500">Start learning to see your recent activity here.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+            
+            <div>
+              <UserEventRegistrations />
+            </div>
+          </div>
         </div>
-      </SidebarProvider>
+      </div>
     </div>
   );
 };

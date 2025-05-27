@@ -7,10 +7,15 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import EventRegistrationModal from "@/components/events/EventRegistrationModal";
 import { format } from "date-fns";
+import { useState } from "react";
 
 const Events = () => {
-  const { data: events, isLoading } = useQuery({
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+
+  const { data: events, isLoading, refetch } = useQuery({
     queryKey: ['events'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -23,6 +28,15 @@ const Events = () => {
       return data;
     }
   });
+
+  const handleRegisterClick = (event: any) => {
+    setSelectedEvent(event);
+    setIsRegistrationModalOpen(true);
+  };
+
+  const handleRegistrationSuccess = () => {
+    refetch(); // Refresh events to update participant counts
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -47,57 +61,89 @@ const Events = () => {
             <div className="text-center">
               <p className="text-xl text-gray-600">Loading events...</p>
             </div>
-          ) : (
+          ) : events && events.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {events?.map((event) => (
-                <Card key={event.id} className="hover:shadow-lg transition-all duration-300">
-                  <CardHeader>
-                    <div className="flex justify-between items-start mb-2">
-                      <Badge variant="secondary" className="bg-green-100 text-green-800">
-                        {event.registration_fee === 0 ? 'Free' : `₹${event.registration_fee}`}
-                      </Badge>
-                      <Badge variant="outline">
-                        {event.current_participants}/{event.max_participants}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-xl">{event.title}</CardTitle>
-                    <CardDescription className="text-gray-600">
-                      {event.description}
-                    </CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Calendar size={16} />
-                        {format(new Date(event.event_date), 'PPP')}
+              {events.map((event) => {
+                const spotsAvailable = event.max_participants ? event.max_participants - (event.current_participants || 0) : null;
+                const isEventFull = spotsAvailable !== null && spotsAvailable <= 0;
+                const eventDate = new Date(event.event_date);
+                const isPastEvent = eventDate < new Date();
+                
+                return (
+                  <Card key={event.id} className="hover:shadow-lg transition-all duration-300">
+                    <CardHeader>
+                      <div className="flex justify-between items-start mb-2">
+                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                          {event.registration_fee === 0 ? 'Free' : `₹${event.registration_fee}`}
+                        </Badge>
+                        {event.max_participants && (
+                          <Badge variant={isEventFull ? "destructive" : "outline"}>
+                            {event.current_participants || 0}/{event.max_participants}
+                          </Badge>
+                        )}
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Clock size={16} />
-                        {event.duration}
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <MapPin size={16} />
-                        {event.location}
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <Users size={16} />
-                        {event.max_participants - (event.current_participants || 0)} spots available
-                      </div>
-                    </div>
+                      <CardTitle className="text-xl">{event.title}</CardTitle>
+                      <CardDescription className="text-gray-600">
+                        {event.description}
+                      </CardDescription>
+                    </CardHeader>
                     
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                      Register Now
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                    <CardContent>
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Calendar size={16} />
+                          {format(eventDate, 'PPP')}
+                        </div>
+                        {event.duration && (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Clock size={16} />
+                            {event.duration}
+                          </div>
+                        )}
+                        {event.location && (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <MapPin size={16} />
+                            {event.location}
+                          </div>
+                        )}
+                        {spotsAvailable !== null && (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <Users size={16} />
+                            {isEventFull ? 'Event Full' : `${spotsAvailable} spots available`}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <Button 
+                        className={`w-full ${isPastEvent ? 'bg-gray-400' : isEventFull ? 'bg-orange-600 hover:bg-orange-700' : 'bg-blue-600 hover:bg-blue-700'}`}
+                        onClick={() => handleRegisterClick(event)}
+                        disabled={isPastEvent}
+                      >
+                        {isPastEvent ? 'Event Ended' : isEventFull ? 'Join Waitlist' : 'Register Now'}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <h3 className="text-2xl font-semibold text-gray-600 mb-4">No Events Available</h3>
+              <p className="text-gray-500">Check back soon for upcoming events and workshops!</p>
             </div>
           )}
         </div>
       </section>
 
       <Footer />
+
+      {/* Registration Modal */}
+      <EventRegistrationModal
+        isOpen={isRegistrationModalOpen}
+        onClose={() => setIsRegistrationModalOpen(false)}
+        event={selectedEvent}
+        onRegistrationSuccess={handleRegistrationSuccess}
+      />
     </div>
   );
 };

@@ -1,137 +1,53 @@
-
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/components/AuthProvider';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import {
-  Users,
   BookOpen,
+  Calendar,
+  ClipboardCheck,
+  CreditCard,
   FileText,
+  LayoutDashboard,
   Award,
-  DollarSign,
-  Home,
-  ExternalLink,
-  Files,
-  LogOut
-} from 'lucide-react';
+  Users,
+} from "lucide-react";
+import { NavLink, useLocation } from "react-router-dom";
 
 const AdminSidebar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast.success('Logged out successfully');
-      navigate('/');
-    } catch (error) {
-      toast.error('Error logging out');
-    }
-  };
 
   const menuItems = [
-    {
-      title: 'Dashboard',
-      icon: Home,
-      href: '/admin',
-      description: 'Overview and quick actions'
-    },
-    {
-      title: 'Student Management',
-      icon: Users,
-      href: '/admin/students',
-      description: 'View and manage student details'
-    },
-    {
-      title: 'Course Management',
-      icon: BookOpen,
-      href: '/admin/courses',
-      description: 'Add/edit/remove courses'
-    },
-    {
-      title: 'Study Materials',
-      icon: Files,
-      href: '/admin/study-materials',
-      description: 'Manage course materials and resources'
-    },
-    {
-      title: 'Assessment Management',
-      icon: FileText,
-      href: '/admin/assessments',
-      description: 'Add/edit/remove online assessments'
-    },
-    {
-      title: 'Certification Management',
-      icon: Award,
-      href: '/admin/certificates',
-      description: 'Issue and validate certificates'
-    },
-    {
-      title: 'Payment & Reports',
-      icon: DollarSign,
-      href: '/admin/payments',
-      description: 'Financial reports and analytics'
-    }
+    { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { path: "/admin/courses", label: "Courses", icon: BookOpen },
+    { path: "/admin/study-materials", label: "Study Materials", icon: FileText },
+    { path: "/admin/students", label: "Students", icon: Users },
+    { path: "/admin/assessments", label: "Assessments", icon: ClipboardCheck },
+    { path: "/admin/certificates", label: "Certificates", icon: Award },
+    { path: "/admin/events", label: "Events", icon: Calendar },
+    { path: "/admin/payments", label: "Payment Reports", icon: CreditCard },
   ];
 
   return (
-    <div className="w-64 bg-white shadow-lg h-screen fixed left-0 top-0 z-40 overflow-y-auto">
-      <div className="p-3">
-        {/* Logo/Brand */}
-        <Link to="/" className="flex items-center space-x-2 mb-4 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold">R</span>
-          </div>
-          <div className="flex-1">
-            <div className="font-semibold text-gray-800 text-sm">RaceCodingInstitute</div>
-            <div className="text-xs text-gray-500 flex items-center">
-              <span>Go to website</span>
-              <ExternalLink className="w-3 h-3 ml-1" />
-            </div>
-          </div>
-        </Link>
-
-        <h2 className="text-md font-semibold text-gray-800 mb-3">Admin Menu</h2>
-        <nav className="space-y-1">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.href;
-            
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={cn(
-                  "flex items-center p-2 rounded-lg transition-colors duration-200",
-                  isActive
-                    ? "bg-blue-100 text-blue-700 border-l-4 border-blue-700"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                )}
+    <div className="w-64 bg-gray-100 min-h-screen py-4 px-2">
+      <div className="font-bold text-xl mb-4 px-4">Admin Panel</div>
+      <nav>
+        <ul>
+          {menuItems.map((item) => (
+            <li key={item.path} className="mb-1">
+              <NavLink
+                to={item.path}
+                className={({ isActive }) =>
+                  `flex items-center p-3 rounded-md hover:bg-gray-200 ${
+                    isActive
+                      ? "bg-gray-200 font-semibold"
+                      : "text-gray-700"
+                  }`
+                }
               >
-                <Icon className="w-4 h-4 mr-2" />
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm truncate">{item.title}</div>
-                  <div className="text-xs text-gray-500 truncate">{item.description}</div>
-                </div>
-              </Link>
-            );
-          })}
-          
-          {/* Logout Link */}
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center p-2 rounded-lg text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-200 mt-4 border-t border-gray-200 pt-3"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            <div className="flex-1 text-left">
-              <div className="font-medium text-sm">Logout</div>
-              <div className="text-xs text-gray-500">Sign out of admin panel</div>
-            </div>
-          </button>
-        </nav>
-      </div>
+                <item.icon className="mr-2 h-4 w-4" />
+                {item.label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
   );
 };
