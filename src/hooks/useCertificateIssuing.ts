@@ -34,11 +34,16 @@ export const useCertificateIssuing = () => {
 
     setIsSearching(true);
     try {
+      console.log('Searching for users with name containing:', searchName.trim());
+      
+      // Search ALL users in the profiles table - no role filter, no user restriction
       const { data: users, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')
         .ilike('full_name', `%${searchName.trim()}%`)
         .order('full_name');
+
+      console.log('Search results:', { users, error, searchTerm: searchName.trim() });
 
       if (error) {
         console.error('Error searching users:', error);
