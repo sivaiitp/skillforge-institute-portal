@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { EnrolledCourse } from '@/types/certificateIssuing';
@@ -8,7 +8,7 @@ export const useUserEnrollments = () => {
   const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
   const [loadingEnrollments, setLoadingEnrollments] = useState(false);
 
-  const fetchUserEnrollments = async (userId: string) => {
+  const fetchUserEnrollments = useCallback(async (userId: string) => {
     if (!userId) {
       setEnrolledCourses([]);
       return;
@@ -16,6 +16,8 @@ export const useUserEnrollments = () => {
 
     setLoadingEnrollments(true);
     try {
+      console.log('Fetching enrollments for user:', userId);
+      
       // Get user enrollments
       const { data: enrollments, error: enrollmentError } = await supabase
         .from('enrollments')
@@ -33,8 +35,11 @@ export const useUserEnrollments = () => {
       if (enrollmentError) {
         console.error('Error fetching enrollments:', enrollmentError);
         toast.error('Error fetching user enrollments');
+        setEnrolledCourses([]);
         return;
       }
+
+      console.log('Enrollments fetched:', enrollments);
 
       if (!enrollments || enrollments.length === 0) {
         setEnrolledCourses([]);
@@ -64,14 +69,16 @@ export const useUserEnrollments = () => {
           has_certificate: certificatedCourseIds.has(enrollment.course_id)
         }));
 
+      console.log('Formatted courses:', formattedCourses);
       setEnrolledCourses(formattedCourses);
     } catch (error) {
       console.error('Error fetching user enrollments:', error);
       toast.error('Error fetching user enrollments');
+      setEnrolledCourses([]);
     } finally {
       setLoadingEnrollments(false);
     }
-  };
+  }, []);
 
   return {
     enrolledCourses,

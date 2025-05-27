@@ -32,13 +32,16 @@ export const useCertificateIssuing = () => {
   // Fetch enrollments when user is selected
   useEffect(() => {
     if (selectedUser) {
+      console.log('Selected user changed, fetching enrollments for:', selectedUser.id);
       fetchUserEnrollments(selectedUser.id);
     } else {
+      console.log('No user selected, clearing enrollments');
       setEnrolledCourses([]);
     }
   }, [selectedUser, fetchUserEnrollments, setEnrolledCourses]);
 
   const issueCertificate = async () => {
+    console.log('Issuing certificate for:', { selectedUser: selectedUser?.full_name, selectedCourse });
     const success = await generateCertificate(selectedUser, selectedCourse, enrolledCourses);
     if (success) {
       clearForm();
@@ -47,6 +50,7 @@ export const useCertificateIssuing = () => {
   };
 
   const clearForm = () => {
+    console.log('Clearing form');
     clearUser();
     setEnrolledCourses([]);
     setSelectedCourse('');
