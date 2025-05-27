@@ -1,3 +1,4 @@
+
 import {
   BookOpen,
   Calendar,
@@ -8,11 +9,9 @@ import {
   Award,
   Users,
 } from "lucide-react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const AdminSidebar = () => {
-  const location = useLocation();
-
   const menuItems = [
     { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { path: "/admin/courses", label: "Courses", icon: BookOpen },
@@ -25,24 +24,26 @@ const AdminSidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-gray-100 min-h-screen py-4 px-2">
-      <div className="font-bold text-xl mb-4 px-4">Admin Panel</div>
-      <nav>
-        <ul>
+    <div className="fixed left-0 top-0 w-64 h-screen bg-white border-r border-gray-200 shadow-sm z-10">
+      <div className="p-6 border-b border-gray-200">
+        <h2 className="text-xl font-bold text-gray-800">Admin Panel</h2>
+      </div>
+      <nav className="p-4">
+        <ul className="space-y-2">
           {menuItems.map((item) => (
-            <li key={item.path} className="mb-1">
+            <li key={item.path}>
               <NavLink
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center p-3 rounded-md hover:bg-gray-200 ${
+                  `flex items-center p-3 rounded-lg transition-colors duration-200 ${
                     isActive
-                      ? "bg-gray-200 font-semibold"
-                      : "text-gray-700"
+                      ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   }`
                 }
               >
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.label}
+                <item.icon className="mr-3 h-5 w-5" />
+                <span className="font-medium">{item.label}</span>
               </NavLink>
             </li>
           ))}

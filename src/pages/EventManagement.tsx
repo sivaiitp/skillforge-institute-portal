@@ -286,8 +286,8 @@ const EventManagement = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <AdminSidebar />
-      <div className="flex-1 p-8">
-        <div className="max-w-6xl mx-auto">
+      <div className="flex-1 ml-64 p-8">
+        <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold">Event Management</h1>
             <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
