@@ -3,10 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, TrendingUp } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import CareerRoadmapModal from "./CareerRoadmapModal";
 
 const CareerPaths = () => {
-  const navigate = useNavigate();
+  const [selectedCareer, setSelectedCareer] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const careerPaths = [
     {
@@ -42,6 +44,11 @@ const CareerPaths = () => {
       courses: ["Digital Marketing", "Social Media Marketing"]
     }
   ];
+
+  const handleGetRoadmap = (careerTitle: string) => {
+    setSelectedCareer(careerTitle);
+    setIsModalOpen(true);
+  };
 
   return (
     <section className="py-20 bg-white">
@@ -98,7 +105,7 @@ const CareerPaths = () => {
                 
                 <Button 
                   className="w-full bg-blue-600 hover:bg-blue-700"
-                  onClick={() => navigate('/contact')}
+                  onClick={() => handleGetRoadmap(path.title)}
                 >
                   Get Career Roadmap
                 </Button>
@@ -107,6 +114,12 @@ const CareerPaths = () => {
           ))}
         </div>
       </div>
+
+      <CareerRoadmapModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        careerPath={selectedCareer || ""}
+      />
     </section>
   );
 };
