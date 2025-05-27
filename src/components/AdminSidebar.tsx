@@ -8,10 +8,15 @@ import {
   LayoutDashboard,
   Award,
   Users,
+  LogOut,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "@/components/AuthProvider";
+import { Button } from "@/components/ui/button";
 
 const AdminSidebar = () => {
+  const { signOut } = useAuth();
+
   const menuItems = [
     { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { path: "/admin/courses", label: "Courses", icon: BookOpen },
@@ -23,12 +28,20 @@ const AdminSidebar = () => {
     { path: "/admin/payments", label: "Payment Reports", icon: CreditCard },
   ];
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
-    <div className="fixed left-0 top-0 w-64 h-screen bg-white border-r border-gray-200 shadow-sm z-10">
+    <div className="fixed left-0 top-0 w-64 h-screen bg-white border-r border-gray-200 shadow-sm z-10 flex flex-col">
       <div className="p-6 border-b border-gray-200">
         <h2 className="text-xl font-bold text-gray-800">Admin Panel</h2>
       </div>
-      <nav className="p-4">
+      <nav className="p-4 flex-1">
         <ul className="space-y-2">
           {menuItems.map((item) => (
             <li key={item.path}>
@@ -49,6 +62,16 @@ const AdminSidebar = () => {
           ))}
         </ul>
       </nav>
+      <div className="p-4 border-t border-gray-200">
+        <Button
+          onClick={handleLogout}
+          variant="outline"
+          className="w-full flex items-center justify-start text-gray-600 hover:text-red-600 hover:border-red-200"
+        >
+          <LogOut className="mr-3 h-5 w-5" />
+          <span className="font-medium">Logout</span>
+        </Button>
+      </div>
     </div>
   );
 };
