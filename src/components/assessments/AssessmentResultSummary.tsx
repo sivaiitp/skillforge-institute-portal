@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, XCircle, RotateCcw, Award } from 'lucide-react';
+import { CheckCircle, XCircle, RotateCcw, Award, History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface AssessmentAttempt {
@@ -35,6 +35,10 @@ const AssessmentResultSummary = ({ attempt, userRole }: AssessmentResultSummaryP
 
   const retakeAssessment = () => {
     navigate(`/take-assessment/${attempt?.assessment_id}`);
+  };
+
+  const viewHistory = () => {
+    navigate(`/assessment-history/${attempt?.assessment_id}`);
   };
 
   return (
@@ -73,13 +77,23 @@ const AssessmentResultSummary = ({ attempt, userRole }: AssessmentResultSummaryP
           </div>
 
           {/* Actions */}
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-4 flex-wrap">
+            <Button
+              onClick={viewHistory}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <History className="w-4 h-4" />
+              View History
+            </Button>
+            
             {!attempt.passed && (
               <Button onClick={retakeAssessment} className="bg-gradient-to-r from-blue-500 to-indigo-500">
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Retake Assessment
               </Button>
             )}
+            
             {attempt.passed && userRole === 'student' && (
               <Button onClick={() => navigate('/certificates')} className="bg-gradient-to-r from-green-500 to-emerald-500">
                 <Award className="w-4 h-4 mr-2" />

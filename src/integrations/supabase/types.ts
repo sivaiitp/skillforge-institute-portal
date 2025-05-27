@@ -62,6 +62,51 @@ export type Database = {
           },
         ]
       }
+      assessment_history: {
+        Row: {
+          answers: Json | null
+          assessment_id: string
+          attempt_number: number
+          completed_at: string
+          created_at: string
+          id: string
+          passed: boolean
+          score: number
+          started_at: string
+          time_spent: number | null
+          total_marks: number
+          user_id: string
+        }
+        Insert: {
+          answers?: Json | null
+          assessment_id: string
+          attempt_number?: number
+          completed_at: string
+          created_at?: string
+          id?: string
+          passed?: boolean
+          score?: number
+          started_at: string
+          time_spent?: number | null
+          total_marks: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json | null
+          assessment_id?: string
+          attempt_number?: number
+          completed_at?: string
+          created_at?: string
+          id?: string
+          passed?: boolean
+          score?: number
+          started_at?: string
+          time_spent?: number | null
+          total_marks?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       assessment_questions: {
         Row: {
           assessment_id: string

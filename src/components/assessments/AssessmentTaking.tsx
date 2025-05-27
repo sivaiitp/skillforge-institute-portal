@@ -167,6 +167,25 @@ const AssessmentTaking = ({ assessmentId }: AssessmentTakingProps) => {
     return score;
   };
 
+  const getAttemptNumber = async () => {
+    if (!user) return 1;
+    
+    const { data, error } = await supabase
+      .from('assessment_history')
+      .select('attempt_number')
+      .eq('user_id', user.id)
+      .eq('assessment_id', assessmentId)
+      .order('attempt_number', { ascending: false })
+      .limit(1);
+
+    if (error) {
+      console.error('Error getting attempt number:', error);
+      return 1;
+    }
+
+    return data && data.length > 0 ? data[0].attempt_number + 1 : 1;
+  };
+
   const handleSubmitAssessment = async (isAutoSubmit = false) => {
     if (!attemptId || !user || !assessment) return;
 
@@ -175,6 +194,7 @@ const AssessmentTaking = ({ assessmentId }: AssessmentTakingProps) => {
       const score = calculateScore();
       const passed = score >= assessment.passing_marks;
       const timeSpent = (assessment.duration_minutes * 60) - timeRemaining;
+      const attemptNumber = await getAttemptNumber();
 
       const { error: updateError } = await supabase
         .from('assessment_attempts')
@@ -189,6 +209,24 @@ const AssessmentTaking = ({ assessmentId }: AssessmentTakingProps) => {
         .eq('id', attemptId);
 
       if (updateError) throw updateError;
+
+      // Save to assessment history
+      const { error: historyError } = await supabase
+        .from('assessment_history')
+        .insert({
+          user_id: user.id,
+          assessment_id: assessmentId,
+          attempt_number: attemptNumber,
+          score: score,
+          total_marks: assessment.total_marks,
+          passed: passed,
+          time_spent: timeSpent,
+          answers: answers,
+          started_at: new Date(Date.now() - timeSpent * 1000).toISOString(),
+          completed_at: new Date().toISOString()
+        });
+
+      if (historyError) throw historyError;
 
       // Use upsert to handle both new results and updates for retakes
       const { error: resultError } = await supabase
