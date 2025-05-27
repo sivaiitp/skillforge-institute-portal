@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import QuestionImporter from './QuestionImporter';
 import QuestionAssignment from './QuestionAssignment';
 import QuestionBank from './QuestionBank';
@@ -51,7 +51,9 @@ const EnhancedQuestionManagement = ({ assessmentId, assessmentTitle }: EnhancedQ
 
       <QuestionManagementStats questions={questions} />
 
-      <QuestionManagementTabs activeTab={activeTab} onTabChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <QuestionManagementTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        
         <TabsContent value="questions" className="space-y-4">
           <QuestionsList
             questions={questions}
@@ -88,7 +90,7 @@ const EnhancedQuestionManagement = ({ assessmentId, assessmentTitle }: EnhancedQ
         <TabsContent value="bank" className="space-y-4">
           <QuestionBank mode="manage" />
         </TabsContent>
-      </QuestionManagementTabs>
+      </Tabs>
     </div>
   );
 };
