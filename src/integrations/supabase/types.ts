@@ -91,47 +91,6 @@ export type Database = {
           },
         ]
       }
-      certificates: {
-        Row: {
-          certificate_id: string | null
-          certificate_number: string
-          course_id: string | null
-          expiry_date: string | null
-          id: string
-          is_valid: boolean | null
-          issued_date: string | null
-          user_id: string | null
-        }
-        Insert: {
-          certificate_id?: string | null
-          certificate_number: string
-          course_id?: string | null
-          expiry_date?: string | null
-          id?: string
-          is_valid?: boolean | null
-          issued_date?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          certificate_id?: string | null
-          certificate_number?: string
-          course_id?: string | null
-          expiry_date?: string | null
-          id?: string
-          is_valid?: boolean | null
-          issued_date?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "certificates_course_id_fkey"
-            columns: ["course_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       contact_inquiries: {
         Row: {
           created_at: string | null

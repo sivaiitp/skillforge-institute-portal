@@ -24,7 +24,6 @@ import StudyMaterialManagement from "./pages/StudyMaterialManagement";
 import CourseMaterialsDetail from "./pages/CourseMaterialsDetail";
 import StudentManagement from "./pages/StudentManagement";
 import AssessmentManagement from "./pages/AssessmentManagement";
-import CertificationManagement from "./pages/CertificationManagement";
 import PaymentReports from "./pages/PaymentReports";
 
 // Student pages
@@ -32,7 +31,6 @@ import StudentDashboard from "./pages/StudentDashboard";
 import StudentCourses from "./pages/StudentCourses";
 import StudentStudyMaterials from "./pages/StudentStudyMaterials";
 import StudentAssessments from "./pages/StudentAssessments";
-import StudentCertificates from "./pages/StudentCertificates";
 import StudentPayments from "./pages/StudentPayments";
 import StudentProfile from "./pages/StudentProfile";
 
@@ -66,7 +64,6 @@ function App() {
               <Route path="/admin/study-materials/course/:courseId" element={<CourseMaterialsDetail />} />
               <Route path="/admin/students" element={<StudentManagement />} />
               <Route path="/admin/assessments" element={<AssessmentManagement />} />
-              <Route path="/admin/certifications" element={<CertificationManagement />} />
               <Route path="/admin/payments" element={<PaymentReports />} />
               
               {/* Student routes */}
@@ -74,7 +71,6 @@ function App() {
               <Route path="/dashboard/courses" element={<StudentCourses />} />
               <Route path="/dashboard/study-materials" element={<StudentStudyMaterials />} />
               <Route path="/dashboard/assessments" element={<StudentAssessments />} />
-              <Route path="/dashboard/certificates" element={<StudentCertificates />} />
               <Route path="/dashboard/payments" element={<StudentPayments />} />
               <Route path="/dashboard/profile" element={<StudentProfile />} />
               
