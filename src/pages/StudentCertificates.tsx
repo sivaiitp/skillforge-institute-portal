@@ -60,10 +60,6 @@ const StudentCertificates = () => {
           courses (
             title,
             certification
-          ),
-          profiles (
-            full_name,
-            email
           )
         `)
         .eq('user_id', user?.id)
@@ -76,7 +72,16 @@ const StudentCertificates = () => {
         return;
       }
 
-      setCertificates(data || []);
+      // Transform the data to match our interface, adding mock profile data
+      const transformedData = (data || []).map(cert => ({
+        ...cert,
+        profiles: {
+          full_name: user?.user_metadata?.full_name || 'Unknown User',
+          email: user?.email || 'unknown@email.com'
+        }
+      }));
+
+      setCertificates(transformedData);
     } catch (error) {
       console.error('Error fetching certificates:', error);
       toast.error('Error loading certificates');

@@ -26,7 +26,7 @@ interface Material {
 interface CourseLearningMaterialsSidebarProps {
   materials: Material[];
   selectedMaterialId: string | null;
-  onMaterialSelect: (materialId: string) => void;
+  onMaterialSelect: (material: Material) => void;
   progressData: any[];
   courseDuration?: string;
 }
@@ -72,6 +72,11 @@ export function CourseLearningMaterialsSidebar({
 
   const progressPercentage = materials.length > 0 ? Math.round((completedCount / materials.length) * 100) : 0;
 
+  const handleMaterialClick = (material: Material) => {
+    console.log('Material clicked in sidebar:', material);
+    onMaterialSelect(material);
+  };
+
   return (
     <TooltipProvider>
       <Sidebar className="w-80 border-r">
@@ -110,7 +115,7 @@ export function CourseLearningMaterialsSidebar({
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <SidebarMenuButton
-                            onClick={() => onMaterialSelect(material.id)}
+                            onClick={() => handleMaterialClick(material)}
                             isActive={isSelected}
                             className={`
                               w-full justify-start h-auto p-4 rounded-lg transition-all duration-200 
