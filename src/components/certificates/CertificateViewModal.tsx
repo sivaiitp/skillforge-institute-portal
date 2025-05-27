@@ -31,7 +31,7 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto bg-gradient-to-br from-slate-50 to-blue-50">
+      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto bg-gradient-to-br from-slate-50 to-blue-50">
         <DialogHeader className="flex flex-row items-center justify-between border-b border-gray-200 pb-4">
           <DialogTitle className="text-2xl font-bold flex items-center gap-3 text-gray-800">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
@@ -43,81 +43,107 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
         
         <div className="mt-6">
           {/* Certificate Design */}
-          <div className="relative bg-gradient-to-br from-white via-blue-50 to-indigo-50 border-4 border-amber-400 rounded-3xl p-12 text-center overflow-hidden shadow-2xl">
-            {/* Decorative background elements */}
-            <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-amber-200/20 to-transparent rounded-full -translate-x-16 -translate-y-16"></div>
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-200/20 to-transparent rounded-full translate-x-16 -translate-y-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-200/20 to-transparent rounded-full -translate-x-12 translate-y-12"></div>
-            <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-indigo-200/20 to-transparent rounded-full translate-x-12 translate-y-12"></div>
+          <div className="relative bg-white border rounded-2xl p-0 text-center overflow-hidden shadow-2xl" style={{ aspectRatio: '1414/1000' }}>
+            {/* Blue curved background design */}
+            <div className="absolute inset-0">
+              {/* Top right curved element */}
+              <div className="absolute top-0 right-0 w-80 h-80">
+                <svg viewBox="0 0 320 320" className="w-full h-full">
+                  <path d="M320,0 L320,200 Q200,320 0,320 L0,0 Z" fill="#2563eb" opacity="0.9"/>
+                </svg>
+              </div>
+              {/* Bottom left curved element */}
+              <div className="absolute bottom-0 left-0 w-96 h-96">
+                <svg viewBox="0 0 384 384" className="w-full h-full">
+                  <path d="M0,384 L0,184 Q120,64 320,64 L384,64 L384,384 Z" fill="#2563eb" opacity="0.9"/>
+                </svg>
+              </div>
+              {/* Large watermark background */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-5">
+                <div className="text-9xl font-bold text-gray-600 transform -rotate-12">RaceCoding</div>
+              </div>
+            </div>
             
-            {/* Inner border */}
-            <div className="absolute inset-4 border-2 border-amber-300/50 rounded-2xl"></div>
-            
-            <div className="relative z-10">
-              {/* Institute Header */}
-              <div className="mb-8">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
-                  <GraduationCap className="w-10 h-10 text-white" />
+            <div className="relative z-10 p-12 h-full flex flex-col">
+              {/* Header with logos */}
+              <div className="flex justify-between items-start mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+                    <GraduationCap className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-lg font-bold text-gray-800">RaceCoding</h3>
+                    <p className="text-xs text-gray-600">Excellence in Digital Education</p>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-1">RaceCoding Institute</h3>
-                <p className="text-sm text-gray-600 font-medium tracking-wider">Excellence in Digital Education</p>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-700">2024</div>
+                </div>
               </div>
               
               {/* Certificate Title */}
               <div className="mb-8">
-                <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-3">
-                  Certificate of Completion
+                <h1 className="text-5xl font-bold text-blue-700 mb-2 tracking-wider">
+                  CERTIFICATE
                 </h1>
-                <div className="w-40 h-1 bg-gradient-to-r from-amber-400 to-amber-600 mx-auto rounded-full"></div>
+                <h2 className="text-4xl font-bold text-blue-700 tracking-wider">
+                  OF COMPLETION
+                </h2>
               </div>
               
-              {/* Achievement Section */}
-              <div className="mb-8 space-y-4">
-                <p className="text-lg text-gray-600 font-medium">This certifies that</p>
-                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-amber-200 shadow-lg">
-                  <h2 className="text-4xl font-bold text-gray-800 mb-2">{certificate.profiles.full_name}</h2>
-                  <div className="w-32 h-0.5 bg-amber-500 mx-auto"></div>
+              {/* Certificate Content */}
+              <div className="flex-1 flex flex-col justify-center space-y-6">
+                <p className="text-lg text-gray-700 font-medium">
+                  This certificate is proudly presented to
+                </p>
+                
+                <div className="my-8">
+                  <h2 className="text-4xl font-bold text-gray-800 mb-4">{certificate.profiles.full_name}</h2>
+                  <div className="w-32 h-0.5 bg-gray-400 mx-auto"></div>
                 </div>
-                <p className="text-lg text-gray-600 font-medium">has successfully completed the course</p>
-                <h3 className="text-3xl font-bold text-blue-700 px-6 py-3 bg-white/50 rounded-xl border border-blue-200">
-                  {certificate.courses.title}
-                </h3>
-              </div>
-              
-              {/* Details Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-gray-200 shadow-lg">
-                  <Calendar className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                  <p className="font-bold text-gray-700 mb-1">Date Issued</p>
-                  <p className="text-gray-600 font-medium">
-                    {new Date(certificate.issued_date).toLocaleDateString('en-US', { 
+                
+                <div className="space-y-2">
+                  <p className="text-lg text-gray-700">has successfully completed the course on</p>
+                  <h3 className="text-2xl font-bold text-blue-700 px-6 py-2">
+                    {certificate.courses.title}
+                  </h3>
+                  <p className="text-lg text-gray-700">Conducted by RaceCoding Institute</p>
+                  <p className="text-lg text-gray-700">
+                    on {new Date(certificate.issued_date).toLocaleDateString('en-US', { 
                       year: 'numeric', 
                       month: 'long', 
                       day: 'numeric' 
                     })}
                   </p>
                 </div>
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-gray-200 shadow-lg">
-                  <User className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                  <p className="font-bold text-gray-700 mb-1">Certificate ID</p>
-                  <p className="text-gray-600 font-mono text-sm break-all">{certificate.certificate_number}</p>
+              </div>
+              
+              {/* Footer with signatures */}
+              <div className="mt-8 grid grid-cols-3 gap-8 text-sm">
+                <div className="text-center">
+                  <div className="w-24 h-px bg-gray-400 mx-auto mb-2"></div>
+                  <p className="font-semibold text-gray-700">Technical Director</p>
+                  <p className="text-gray-600">RaceCoding</p>
                 </div>
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-gray-200 shadow-lg">
-                  <BookOpen className="w-8 h-8 text-blue-600 mx-auto mb-3" />
-                  <p className="font-bold text-gray-700 mb-1">Status</p>
-                  <p className={`font-bold text-lg ${certificate.is_valid ? 'text-green-600' : 'text-red-600'}`}>
-                    {certificate.is_valid ? 'Valid' : 'Revoked'}
-                  </p>
+                <div className="text-center">
+                  <div className="w-24 h-px bg-gray-400 mx-auto mb-2"></div>
+                  <p className="font-semibold text-gray-700">Overall Head</p>
+                  <p className="text-gray-600">RaceCoding Institute</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-24 h-px bg-gray-400 mx-auto mb-2"></div>
+                  <p className="font-semibold text-gray-700">Business Head</p>
+                  <p className="text-gray-600">RaceCoding</p>
                 </div>
               </div>
               
-              {/* Footer */}
-              <div className="border-t border-gray-300 pt-6 space-y-3">
-                <div className="w-48 h-px bg-gray-400 mx-auto"></div>
-                <p className="text-sm font-semibold text-gray-700">Authorized Signature</p>
-                <p className="text-xs text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                  This certificate can be verified at our official website using Certificate ID: {certificate.certificate_number}<br/>
-                  Issued by RaceCoding Institute | Digital Learning Excellence
+              {/* Certificate ID */}
+              <div className="mt-6 text-center">
+                <p className="text-xs text-gray-500">
+                  Certificate ID: {certificate.certificate_number} | 
+                  Status: <span className={certificate.is_valid ? 'text-green-600' : 'text-red-600'}>
+                    {certificate.is_valid ? 'Valid' : 'Revoked'}
+                  </span>
                 </p>
               </div>
             </div>
