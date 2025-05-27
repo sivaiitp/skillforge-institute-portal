@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -93,28 +92,29 @@ export const useStudentSearch = () => {
 
     setIsSearching(true);
     const searchTerm = searchName.trim();
-    console.log('Searching for student with name (case-insensitive partial match):', searchTerm);
+    console.log('Searching for admin users with name (case-insensitive partial match):', searchTerm);
     
     try {
-      // Search using ILIKE for case-insensitive partial matching
+      // Search using ILIKE for case-insensitive partial matching, filtering for admin role only
       const { data: users, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')
-        .ilike('full_name', `%${searchTerm}%`);
+        .ilike('full_name', `%${searchTerm}%`)
+        .eq('role', 'admin'); // Only search for admin users
 
-      console.log('Search results:', { users, error, searchTerm });
+      console.log('Search results (admin only):', { users, error, searchTerm });
 
       if (error) {
-        console.error('Error searching student:', error);
-        toast.error('Error searching for student');
+        console.error('Error searching admin user:', error);
+        toast.error('Error searching for admin user');
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
       if (!users || users.length === 0) {
-        console.log('No profile found for name (partial match):', searchTerm);
-        toast.error(`No student found with name containing "${searchTerm}"`);
+        console.log('No admin user found for name (partial match):', searchTerm);
+        toast.error(`No admin user found with name containing "${searchTerm}"`);
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
@@ -122,31 +122,14 @@ export const useStudentSearch = () => {
 
       // If multiple results, take the first one (you could enhance this to show a selection UI)
       const foundUser = users[0];
-      console.log('Found user:', foundUser);
+      console.log('Found admin user:', foundUser);
 
       if (users.length > 1) {
-        console.log(`Found ${users.length} users matching "${searchTerm}", selecting first one:`, foundUser);
-        toast.info(`Found ${users.length} matches, selected: ${foundUser.full_name}`);
+        console.log(`Found ${users.length} admin users matching "${searchTerm}", selecting first one:`, foundUser);
+        toast.info(`Found ${users.length} admin matches, selected: ${foundUser.full_name}`);
       }
 
-      // Check if the user has a role assigned
-      if (!foundUser.role) {
-        console.log('User found but has no role assigned');
-        toast.error('User found but has no role assigned. Please contact admin to set up the user role.');
-        setSelectedStudent(null);
-        setEnrolledCourses([]);
-        return;
-      }
-
-      // Check if the user is a student (or allow admins too for testing)
-      if (foundUser.role !== 'student' && foundUser.role !== 'admin') {
-        toast.error(`User found but they are registered as ${foundUser.role}, not a student`);
-        setSelectedStudent(null);
-        setEnrolledCourses([]);
-        return;
-      }
-
-      // User found and is valid - set as selected student
+      // User found and is admin - set as selected student
       setSelectedStudent({
         id: foundUser.id,
         full_name: foundUser.full_name || foundUser.email || 'Unknown',
@@ -154,11 +137,11 @@ export const useStudentSearch = () => {
       });
       
       await fetchStudentEnrollments(foundUser.id);
-      toast.success(`Found student: ${foundUser.full_name || foundUser.email}`);
+      toast.success(`Found admin user: ${foundUser.full_name || foundUser.email}`);
       
     } catch (error) {
-      console.error('Error searching student:', error);
-      toast.error('Error searching for student');
+      console.error('Error searching admin user:', error);
+      toast.error('Error searching for admin user');
       setSelectedStudent(null);
       setEnrolledCourses([]);
     } finally {

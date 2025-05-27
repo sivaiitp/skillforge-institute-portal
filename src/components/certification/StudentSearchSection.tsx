@@ -39,14 +39,14 @@ const StudentSearchSection = ({
     <div className="space-y-4">
       <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
         <Search className="w-4 h-4" />
-        Search Student by Name
+        Search Admin User by Name
       </Label>
       
       <div className="flex gap-3">
         <div className="flex-1">
           <Input
             type="text"
-            placeholder="Enter student name..."
+            placeholder="Enter admin user name..."
             value={searchName}
             onChange={(e) => setSearchName(e.target.value)}
             className="h-11 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
@@ -83,6 +83,7 @@ const StudentSearchSection = ({
               <div>
                 <p className="font-medium text-gray-900">{selectedStudent.full_name}</p>
                 <p className="text-sm text-gray-600">{selectedStudent.email}</p>
+                <p className="text-xs text-blue-600 font-medium">Admin User</p>
               </div>
             </div>
             <Button
