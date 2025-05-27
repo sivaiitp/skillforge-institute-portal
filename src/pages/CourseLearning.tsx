@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 import EnhancedCourseLearning from "@/components/EnhancedCourseLearning";
 
 const CourseLearning = () => {
-  const { id } = useParams();
+  const { courseId } = useParams(); // Changed from 'id' to 'courseId' to match the route
   const navigate = useNavigate();
   const { user, userRole } = useAuth();
 
@@ -28,59 +28,68 @@ const CourseLearning = () => {
   }, [user, userRole, navigate]);
 
   const { data: course, isLoading: courseLoading } = useQuery({
-    queryKey: ['course', id],
+    queryKey: ['course', courseId],
     queryFn: async () => {
-      if (!id) throw new Error('Course ID is required');
+      if (!courseId) throw new Error('Course ID is required');
+
+      console.log('Fetching course with ID:', courseId);
 
       const { data, error } = await supabase
         .from('courses')
         .select('*')
-        .eq('id', id)
+        .eq('id', courseId)
         .eq('is_active', true)
         .maybeSingle();
       
-      if (error) throw error;
-      if (!data) throw new Error('Course not found');
+      if (error) {
+        console.error('Course fetch error:', error);
+        throw error;
+      }
+      if (!data) {
+        console.log('No course found with ID:', courseId);
+        throw new Error('Course not found');
+      }
       
+      console.log('Course found:', data);
       return data;
     },
-    enabled: !!id
+    enabled: !!courseId
   });
 
   const { data: studyMaterials, isLoading: materialsLoading } = useQuery({
-    queryKey: ['study-materials', id],
+    queryKey: ['study-materials', courseId],
     queryFn: async () => {
-      if (!id) return [];
+      if (!courseId) return [];
 
       const { data, error } = await supabase
         .from('study_materials')
         .select('*')
-        .eq('course_id', id)
+        .eq('course_id', courseId)
         .eq('is_active', true)
         .order('sort_order', { ascending: true });
 
       if (error) throw error;
       return data || [];
     },
-    enabled: !!id
+    enabled: !!courseId
   });
 
   const { data: assessments, isLoading: assessmentsLoading } = useQuery({
-    queryKey: ['assessments', id],
+    queryKey: ['assessments', courseId],
     queryFn: async () => {
-      if (!id) return [];
+      if (!courseId) return [];
 
       const { data, error } = await supabase
         .from('assessments')
         .select('*')
-        .eq('course_id', id)
+        .eq('course_id', courseId)
         .eq('is_active', true)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
       return data || [];
     },
-    enabled: !!id
+    enabled: !!courseId
   });
 
   if (!user) return null;
@@ -107,7 +116,8 @@ const CourseLearning = () => {
         <div className="container mx-auto px-4 py-20">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Course Not Found</h1>
-            <Button onClick={() => navigate('/courses')}>Back to Courses</Button>
+            <p className="text-gray-600 mb-4">Course ID: {courseId}</p>
+            <Button onClick={() => navigate('/dashboard')}>Back to Dashboard</Button>
           </div>
         </div>
         <Footer />
@@ -123,7 +133,7 @@ const CourseLearning = () => {
         course={course}
         studyMaterials={studyMaterials || []}
         assessments={assessments || []}
-        onBack={() => navigate('/dashboard/courses')}
+        onBack={() => navigate('/dashboard')}
       />
 
       <Footer />

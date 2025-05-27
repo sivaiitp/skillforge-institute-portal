@@ -202,7 +202,7 @@ const StudentCourses = () => {
                                   <div className="flex flex-col gap-2 ml-6">
                                     <Button 
                                       className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                                      onClick={() => navigate(`/learn/${enrollment.courses?.id}`)}
+                                      onClick={() => navigate(`/course/${enrollment.courses?.id}/learn`)}
                                     >
                                       <Play className="w-4 h-4 mr-2" />
                                       Continue Learning
