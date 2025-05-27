@@ -30,6 +30,7 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
     selectedStudent,
     isSearching,
     enrolledCourses,
+    loadingEnrollments,
     handleSearchStudent,
     handleSelectStudent,
     handleClearStudent
@@ -106,12 +107,13 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
   };
 
   console.log('Certificate Issue Form state:', { 
-    searchResults, 
-    selectedStudent, 
+    searchResults: searchResults.length, 
+    selectedStudent: selectedStudent?.full_name, 
     searchName, 
     isSearching, 
     enrolledCourses: enrolledCourses.length, 
-    availableCourses: availableCourses.length 
+    availableCourses: availableCourses.length,
+    loadingEnrollments
   });
 
   return (
@@ -209,19 +211,30 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
             <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-xl">
               <div className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-emerald-600 mt-0.5" />
-                <div>
+                <div className="flex-1">
                   <p className="font-semibold text-emerald-800">{selectedStudent.full_name}</p>
                   <p className="text-sm text-emerald-600">{selectedStudent.email}</p>
-                  <p className="text-xs text-emerald-700 mt-2 font-medium">
-                    {enrolledCourses.length} enrolled course(s) • {availableCourses.length} available for certification
-                  </p>
+                  {loadingEnrollments ? (
+                    <p className="text-xs text-emerald-700 mt-2 font-medium">Loading enrollments...</p>
+                  ) : (
+                    <p className="text-xs text-emerald-700 mt-2 font-medium">
+                      {enrolledCourses.length} enrolled course(s) • {availableCourses.length} available for certification
+                    </p>
+                  )}
                   {enrolledCourses.length > 0 && (
                     <div className="mt-2">
                       <p className="text-xs text-emerald-600 font-medium">Enrolled in:</p>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {enrolledCourses.map((course) => (
-                          <span key={course.id} className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded">
-                            {course.title}
+                          <span 
+                            key={course.id} 
+                            className={`text-xs px-2 py-1 rounded ${
+                              course.has_certificate 
+                                ? 'bg-gray-100 text-gray-600' 
+                                : 'bg-emerald-100 text-emerald-700'
+                            }`}
+                          >
+                            {course.title} {course.has_certificate ? '(Certified)' : ''}
                           </span>
                         ))}
                       </div>
@@ -251,12 +264,14 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
           <Select 
             value={selectedCourse} 
             onValueChange={setSelectedCourse}
-            disabled={!selectedStudent || availableCourses.length === 0}
+            disabled={!selectedStudent || availableCourses.length === 0 || loadingEnrollments}
           >
             <SelectTrigger className="border-gray-200 focus:border-blue-400 focus:ring-blue-400 transition-colors">
               <SelectValue placeholder={
                 !selectedStudent 
                   ? "Select a student first" 
+                  : loadingEnrollments
+                  ? "Loading enrollments..."
                   : availableCourses.length === 0 
                   ? "No courses available for certification" 
                   : "Select a course to certify"
@@ -270,14 +285,14 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
               ))}
             </SelectContent>
           </Select>
-          {selectedStudent && enrolledCourses.length === 0 && (
+          {selectedStudent && !loadingEnrollments && enrolledCourses.length === 0 && (
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-sm text-amber-700 font-medium">
                 This student has no active enrollments.
               </p>
             </div>
           )}
-          {selectedStudent && enrolledCourses.length > 0 && availableCourses.length === 0 && (
+          {selectedStudent && !loadingEnrollments && enrolledCourses.length > 0 && availableCourses.length === 0 && (
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-sm text-amber-700 font-medium">
                 This student already has certificates for all enrolled courses.
@@ -289,7 +304,7 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
         <div className="pt-4 border-t border-gray-100">
           <Button 
             onClick={handleIssue}
-            disabled={loading || !selectedStudent || !selectedCourse}
+            disabled={loading || !selectedStudent || !selectedCourse || loadingEnrollments}
             className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
           >
             <Award className="w-5 h-5 mr-2" />
