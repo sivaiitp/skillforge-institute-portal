@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, XCircle, RotateCcw, Award, History } from 'lucide-react';
+import { CheckCircle, XCircle, RotateCcw, History } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface AssessmentAttempt {
@@ -91,13 +91,6 @@ const AssessmentResultSummary = ({ attempt, userRole }: AssessmentResultSummaryP
               <Button onClick={retakeAssessment} className="bg-gradient-to-r from-blue-500 to-indigo-500">
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Retake Assessment
-              </Button>
-            )}
-            
-            {attempt.passed && userRole === 'student' && (
-              <Button onClick={() => navigate('/certificates')} className="bg-gradient-to-r from-green-500 to-emerald-500">
-                <Award className="w-4 h-4 mr-2" />
-                View Certificate
               </Button>
             )}
           </div>
