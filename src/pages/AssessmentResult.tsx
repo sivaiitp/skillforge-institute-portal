@@ -73,7 +73,26 @@ const AssessmentResult = () => {
         .single();
 
       if (attemptError) throw attemptError;
-      setAttempt(attemptData);
+      
+      // Transform the data to match our interface
+      const transformedAttempt: AssessmentAttempt = {
+        id: attemptData.id,
+        assessment_id: attemptData.assessment_id,
+        score: attemptData.score,
+        total_marks: attemptData.total_marks,
+        passed: attemptData.passed,
+        time_spent: attemptData.time_spent,
+        answers: (attemptData.answers as Record<string, string>) || {},
+        completed_at: attemptData.completed_at,
+        assessments: {
+          title: attemptData.assessments.title,
+          description: attemptData.assessments.description,
+          passing_marks: attemptData.assessments.passing_marks,
+          courses: attemptData.assessments.courses
+        }
+      };
+      
+      setAttempt(transformedAttempt);
 
       // Fetch questions for detailed review
       const { data: questionsData, error: questionsError } = await supabase
@@ -83,7 +102,19 @@ const AssessmentResult = () => {
         .order('sort_order');
 
       if (questionsError) throw questionsError;
-      setQuestions(questionsData || []);
+      
+      // Transform the questions data
+      const transformedQuestions: Question[] = (questionsData || []).map(q => ({
+        id: q.id,
+        question_text: q.question_text,
+        question_type: q.question_type,
+        options: Array.isArray(q.options) ? q.options : null,
+        correct_answer: q.correct_answer,
+        explanation: q.explanation,
+        points: q.points
+      }));
+      
+      setQuestions(transformedQuestions);
     } catch (error) {
       toast.error('Error loading assessment result');
       console.error('Error:', error);

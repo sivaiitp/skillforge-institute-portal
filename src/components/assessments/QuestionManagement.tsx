@@ -56,7 +56,20 @@ const QuestionManagement = ({ assessmentId, assessmentTitle }: QuestionManagemen
         .order('sort_order');
 
       if (error) throw error;
-      setQuestions(data || []);
+      
+      // Transform the data to match our Question interface
+      const transformedQuestions: Question[] = (data || []).map(q => ({
+        id: q.id,
+        question_text: q.question_text,
+        question_type: q.question_type,
+        options: Array.isArray(q.options) ? q.options : null,
+        correct_answer: q.correct_answer,
+        explanation: q.explanation,
+        points: q.points,
+        sort_order: q.sort_order
+      }));
+      
+      setQuestions(transformedQuestions);
     } catch (error) {
       toast.error('Error fetching questions');
       console.error('Error:', error);
