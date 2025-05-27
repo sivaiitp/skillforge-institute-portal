@@ -37,6 +37,7 @@ import FreeAssessment from "./pages/FreeAssessment";
 import NotFound from "./pages/NotFound";
 import TakeAssessment from "./pages/TakeAssessment";
 import AssessmentResult from "./pages/AssessmentResult";
+import AssessmentHistory from "./pages/AssessmentHistory";
 import QuestionManagementSystem from "./pages/QuestionManagementSystem";
 
 const queryClient = new QueryClient();
@@ -90,6 +91,7 @@ function App() {
               {/* Assessment Routes */}
               <Route path="/take-assessment/:assessmentId" element={<TakeAssessment />} />
               <Route path="/assessment-result/:attemptId" element={<AssessmentResult />} />
+              <Route path="/assessment-history/:assessmentId" element={<AssessmentHistory />} />
               
               {/* Certificate Verification */}
               <Route path="/verify-certificate/:certificateNumber" element={<CertificateVerification />} />
