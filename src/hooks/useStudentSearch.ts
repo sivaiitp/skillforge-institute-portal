@@ -31,6 +31,8 @@ export const useStudentSearch = () => {
     }
 
     setLoadingEnrollments(true);
+    console.log('Fetching enrollments for student:', studentId);
+    
     try {
       const { data: enrollments, error: enrollmentError } = await supabase
         .from('enrollments')
@@ -45,6 +47,8 @@ export const useStudentSearch = () => {
         .eq('user_id', studentId)
         .eq('status', 'active');
 
+      console.log('Raw enrollments data:', enrollments);
+
       if (enrollmentError) {
         console.error('Error fetching enrollments:', enrollmentError);
         toast.error('Error fetching student enrollments');
@@ -52,11 +56,12 @@ export const useStudentSearch = () => {
       }
 
       if (!enrollments || enrollments.length === 0) {
+        console.log('No enrollments found for student');
         setEnrolledCourses([]);
         return;
       }
 
-      // Check for certificates for this student using type assertion
+      // Check for certificates for this student
       const { data: certificates, error: certError } = await (supabase as any)
         .from('certificates')
         .select('course_id')
@@ -78,7 +83,9 @@ export const useStudentSearch = () => {
           has_certificate: certificatedCourseIds.has(enrollment.course_id)
         }));
 
+      console.log('Formatted enrolled courses:', formattedCourses);
       setEnrolledCourses(formattedCourses);
+      
     } catch (error) {
       console.error('Error fetching student enrollments:', error);
       toast.error('Error fetching student enrollments');
@@ -102,7 +109,7 @@ export const useStudentSearch = () => {
     try {
       const searchTerm = searchName.trim().toLowerCase();
       
-      // Search for students by name or email with the new RLS policies
+      // Search for students by name or email
       const { data: students, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')

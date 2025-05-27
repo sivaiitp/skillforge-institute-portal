@@ -37,7 +37,7 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
 
   // Fetch available courses when a student is selected
   useEffect(() => {
-    if (selectedStudent) {
+    if (selectedStudent && enrolledCourses.length > 0) {
       fetchAvailableCoursesForStudent();
     } else {
       setAvailableCourses([]);
@@ -49,31 +49,39 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
     if (!selectedStudent) return;
 
     try {
+      console.log('Fetching certificates for student:', selectedStudent.id);
+      console.log('Enrolled courses:', enrolledCourses);
+
       // Get existing certificates for this student
       const { data: existingCerts, error: certsError } = await (supabase as any)
         .from('certificates')
         .select('course_id')
-        .eq('user_id', selectedStudent.id);
+        .eq('user_id', selectedStudent.id)
+        .eq('is_valid', true);
 
       if (certsError) {
         console.error('Error fetching existing certificates:', certsError);
         return;
       }
 
+      console.log('Existing certificates:', existingCerts);
+
       // Get the course IDs that already have certificates
       const certifiedCourseIds = new Set(existingCerts?.map((cert: any) => cert.course_id) || []);
+      console.log('Certified course IDs:', certifiedCourseIds);
 
       // Filter enrolled courses to exclude those with existing certificates
       const coursesWithoutCertificates = enrolledCourses.filter(
         course => !certifiedCourseIds.has(course.id)
       );
 
+      console.log('Courses without certificates:', coursesWithoutCertificates);
+
       setAvailableCourses(coursesWithoutCertificates.map(course => ({
         id: course.id,
         title: course.title
       })));
 
-      console.log('Available courses for certificate:', coursesWithoutCertificates);
     } catch (error) {
       console.error('Error fetching available courses:', error);
     }
@@ -97,7 +105,14 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
     }
   };
 
-  console.log('Certificate Issue Form state:', { searchResults, selectedStudent, searchName, isSearching, enrolledCourses, availableCourses });
+  console.log('Certificate Issue Form state:', { 
+    searchResults, 
+    selectedStudent, 
+    searchName, 
+    isSearching, 
+    enrolledCourses: enrolledCourses.length, 
+    availableCourses: availableCourses.length 
+  });
 
   return (
     <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-blue-50/50">
@@ -125,7 +140,7 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
                 <Input
                   value={searchName}
                   onChange={(e) => setSearchName(e.target.value)}
-                  placeholder="Enter student name to search..."
+                  placeholder="Enter student name or email to search..."
                   className="border-gray-200 focus:border-blue-400 focus:ring-blue-400 transition-colors"
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
@@ -150,7 +165,7 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
             </div>
           </div>
 
-          {/* Search Results - Single Column */}
+          {/* Search Results */}
           {searchResults.length > 0 && !selectedStudent && (
             <div className="space-y-3">
               <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
@@ -198,8 +213,20 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
                   <p className="font-semibold text-emerald-800">{selectedStudent.full_name}</p>
                   <p className="text-sm text-emerald-600">{selectedStudent.email}</p>
                   <p className="text-xs text-emerald-700 mt-2 font-medium">
-                    {enrolledCourses.length} enrolled courses • {availableCourses.length} available for certification
+                    {enrolledCourses.length} enrolled course(s) • {availableCourses.length} available for certification
                   </p>
+                  {enrolledCourses.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-xs text-emerald-600 font-medium">Enrolled in:</p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {enrolledCourses.map((course) => (
+                          <span key={course.id} className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded">
+                            {course.title}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -219,7 +246,7 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
         <div className="space-y-3">
           <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
-            Available Courses
+            Available Courses for Certification
           </Label>
           <Select 
             value={selectedCourse} 
@@ -243,10 +270,17 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
               ))}
             </SelectContent>
           </Select>
-          {selectedStudent && availableCourses.length === 0 && (
+          {selectedStudent && enrolledCourses.length === 0 && (
             <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-sm text-amber-700 font-medium">
-                This student either has no enrollments or already has certificates for all enrolled courses.
+                This student has no active enrollments.
+              </p>
+            </div>
+          )}
+          {selectedStudent && enrolledCourses.length > 0 && availableCourses.length === 0 && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-sm text-amber-700 font-medium">
+                This student already has certificates for all enrolled courses.
               </p>
             </div>
           )}
