@@ -1,4 +1,3 @@
-
 import {
   BookOpen,
   Calendar,
@@ -11,7 +10,6 @@ import {
   LogOut,
   Home,
   HelpCircle,
-  Settings,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
@@ -27,7 +25,6 @@ const AdminSidebar = () => {
     { path: "/admin/study-materials", label: "Study Materials", icon: FileText },
     { path: "/admin/students", label: "Students", icon: Users },
     { path: "/admin/assessments", label: "Assessments", icon: ClipboardCheck },
-    { path: "/admin/enhanced-assessments", label: "Enhanced Assessments", icon: Settings },
     { path: "/admin/question-management", label: "Question Management", icon: HelpCircle },
     { path: "/admin/certificates", label: "Certificates", icon: Award },
     { path: "/admin/events", label: "Events", icon: Calendar },
