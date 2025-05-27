@@ -80,9 +80,9 @@ export function CourseLearningMaterialsSidebar({
   return (
     <TooltipProvider>
       <Sidebar className="w-80 border-r">
-        <SidebarContent>
+        <SidebarContent className="pt-4">
           <SidebarGroup>
-            <SidebarGroupLabel className="px-4 py-3 text-sm font-semibold text-gray-700 bg-gray-50 border-b">
+            <SidebarGroupLabel className="px-4 py-3 text-sm font-semibold text-gray-700 bg-gray-50 border-b mb-4">
               <div className="flex items-center justify-between mb-2">
                 <span>Course Materials</span>
                 <div className="flex items-center gap-2 text-xs">
