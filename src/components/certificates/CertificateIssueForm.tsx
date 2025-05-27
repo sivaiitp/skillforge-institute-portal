@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Award } from 'lucide-react';
+import { Search, Award, User, BookOpen, CheckCircle } from 'lucide-react';
 import { useStudentSearch } from '@/hooks/useStudentSearch';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -85,56 +86,76 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Issue New Certificate</CardTitle>
-        <CardDescription>
+    <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-blue-50/50">
+      <CardHeader className="pb-6">
+        <CardTitle className="flex items-center gap-3 text-2xl font-bold text-gray-800">
+          <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
+            <Award className="w-6 h-6 text-white" />
+          </div>
+          Issue New Certificate
+        </CardTitle>
+        <CardDescription className="text-base text-gray-600 leading-relaxed">
           Select a student and course to issue a certificate. Only enrolled courses without existing certificates are shown.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label>Search Student</Label>
-            <div className="flex gap-2 mt-1">
-              <Input
-                value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
-                placeholder="Enter student name"
-              />
+      <CardContent className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="space-y-3">
+            <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <User className="w-4 h-4" />
+              Search Student
+            </Label>
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <Input
+                  value={searchName}
+                  onChange={(e) => setSearchName(e.target.value)}
+                  placeholder="Enter student name to search..."
+                  className="border-gray-200 focus:border-blue-400 focus:ring-blue-400 transition-colors"
+                />
+              </div>
               <Button 
                 onClick={handleSearchStudent}
                 disabled={isSearching}
                 variant="outline"
+                className="px-4 border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-colors"
               >
                 <Search className="w-4 h-4" />
               </Button>
             </div>
             {selectedStudent && (
-              <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded">
-                <p className="font-medium">{selectedStudent.full_name}</p>
-                <p className="text-sm text-gray-600">{selectedStudent.email}</p>
-                <p className="text-xs text-blue-600 mt-1">
-                  {enrolledCourses.length} enrolled courses, {availableCourses.length} available for certification
-                </p>
+              <div className="mt-4 p-4 bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-xl">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-emerald-600 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-emerald-800">{selectedStudent.full_name}</p>
+                    <p className="text-sm text-emerald-600">{selectedStudent.email}</p>
+                    <p className="text-xs text-emerald-700 mt-2 font-medium">
+                      {enrolledCourses.length} enrolled courses • {availableCourses.length} available for certification
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
           
-          <div>
-            <Label>Course (Enrolled & No Certificate)</Label>
+          <div className="space-y-3">
+            <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <BookOpen className="w-4 h-4" />
+              Available Courses
+            </Label>
             <Select 
               value={selectedCourse} 
               onValueChange={setSelectedCourse}
               disabled={!selectedStudent || availableCourses.length === 0}
             >
-              <SelectTrigger className="mt-1">
+              <SelectTrigger className="border-gray-200 focus:border-blue-400 focus:ring-blue-400 transition-colors">
                 <SelectValue placeholder={
                   !selectedStudent 
                     ? "Select a student first" 
                     : availableCourses.length === 0 
                     ? "No courses available for certification" 
-                    : "Select a course"
+                    : "Select a course to certify"
                 } />
               </SelectTrigger>
               <SelectContent>
@@ -146,20 +167,22 @@ const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) =
               </SelectContent>
             </Select>
             {selectedStudent && availableCourses.length === 0 && (
-              <p className="text-sm text-amber-600 mt-1">
-                This student either has no enrollments or already has certificates for all enrolled courses.
-              </p>
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-700 font-medium">
+                  This student either has no enrollments or already has certificates for all enrolled courses.
+                </p>
+              </div>
             )}
           </div>
         </div>
         
-        <div className="flex gap-2">
+        <div className="pt-4 border-t border-gray-100">
           <Button 
             onClick={handleIssue}
             disabled={loading || !selectedStudent || !selectedCourse}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
           >
-            <Award className="w-4 h-4 mr-2" />
+            <Award className="w-5 h-5 mr-2" />
             Issue Certificate
           </Button>
         </div>
