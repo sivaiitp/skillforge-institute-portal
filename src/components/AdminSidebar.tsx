@@ -11,12 +11,13 @@ import {
   Home,
   HelpCircle,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 
 const AdminSidebar = () => {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
 
   const menuItems = [
     { path: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -34,8 +35,11 @@ const AdminSidebar = () => {
   const handleLogout = async () => {
     try {
       await signOut();
+      navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
+      // Force navigation to home even if signOut fails
+      navigate('/');
     }
   };
 
