@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Award, Calendar, User, BookOpen, Download, X } from 'lucide-react';
+import { Award, Calendar, User, BookOpen, Download, X, GraduationCap } from 'lucide-react';
 
 interface Certificate {
   id: string;
@@ -31,78 +31,111 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="flex flex-row items-center justify-between">
-          <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            <Award className="w-6 h-6 text-yellow-600" />
+      <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto bg-gradient-to-br from-slate-50 to-blue-50">
+        <DialogHeader className="flex flex-row items-center justify-between border-b border-gray-200 pb-4">
+          <DialogTitle className="text-2xl font-bold flex items-center gap-3 text-gray-800">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+              <Award className="w-5 h-5 text-white" />
+            </div>
             Certificate Preview
           </DialogTitle>
         </DialogHeader>
         
         <div className="mt-6">
           {/* Certificate Design */}
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-100 border-4 border-yellow-500 rounded-2xl p-12 text-center relative overflow-hidden">
-            {/* Decorative elements */}
-            <div className="absolute top-4 left-4 w-16 h-16 bg-yellow-200/30 rounded-full"></div>
-            <div className="absolute top-4 right-4 w-16 h-16 bg-blue-200/30 rounded-full"></div>
-            <div className="absolute bottom-4 left-4 w-12 h-12 bg-indigo-200/30 rounded-full"></div>
-            <div className="absolute bottom-4 right-4 w-12 h-12 bg-purple-200/30 rounded-full"></div>
+          <div className="relative bg-gradient-to-br from-white via-blue-50 to-indigo-50 border-4 border-amber-400 rounded-3xl p-12 text-center overflow-hidden shadow-2xl">
+            {/* Decorative background elements */}
+            <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-amber-200/20 to-transparent rounded-full -translate-x-16 -translate-y-16"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-200/20 to-transparent rounded-full translate-x-16 -translate-y-16"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-200/20 to-transparent rounded-full -translate-x-12 translate-y-12"></div>
+            <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-indigo-200/20 to-transparent rounded-full translate-x-12 translate-y-12"></div>
+            
+            {/* Inner border */}
+            <div className="absolute inset-4 border-2 border-amber-300/50 rounded-2xl"></div>
             
             <div className="relative z-10">
+              {/* Institute Header */}
               <div className="mb-8">
-                <Award className="w-20 h-20 text-yellow-600 mx-auto mb-4" />
-                <h1 className="text-4xl font-bold text-gray-800 mb-2">Certificate of Completion</h1>
-                <div className="w-32 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 mx-auto"></div>
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
+                  <GraduationCap className="w-10 h-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-1">EduTech Institute</h3>
+                <p className="text-sm text-gray-600 font-medium tracking-wider">Excellence in Digital Education</p>
               </div>
               
+              {/* Certificate Title */}
               <div className="mb-8">
-                <p className="text-lg text-gray-600 mb-4">This is to certify that</p>
-                <h2 className="text-3xl font-bold text-blue-800 mb-4">{certificate.profiles.full_name}</h2>
-                <p className="text-lg text-gray-600 mb-2">has successfully completed the course</p>
-                <h3 className="text-2xl font-semibold text-indigo-700 mb-6">{certificate.courses.title}</h3>
+                <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-3">
+                  Certificate of Completion
+                </h1>
+                <div className="w-40 h-1 bg-gradient-to-r from-amber-400 to-amber-600 mx-auto rounded-full"></div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-sm">
-                <div className="bg-white/50 rounded-lg p-4">
-                  <Calendar className="w-5 h-5 text-blue-600 mx-auto mb-2" />
-                  <p className="font-semibold text-gray-700">Date Issued</p>
-                  <p className="text-gray-600">{new Date(certificate.issued_date).toLocaleDateString()}</p>
+              {/* Achievement Section */}
+              <div className="mb-8 space-y-4">
+                <p className="text-lg text-gray-600 font-medium">This certifies that</p>
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-amber-200 shadow-lg">
+                  <h2 className="text-4xl font-bold text-gray-800 mb-2">{certificate.profiles.full_name}</h2>
+                  <div className="w-32 h-0.5 bg-amber-500 mx-auto"></div>
                 </div>
-                <div className="bg-white/50 rounded-lg p-4">
-                  <User className="w-5 h-5 text-blue-600 mx-auto mb-2" />
-                  <p className="font-semibold text-gray-700">Certificate ID</p>
-                  <p className="text-gray-600 font-mono text-xs">{certificate.certificate_number}</p>
+                <p className="text-lg text-gray-600 font-medium">has successfully completed the course</p>
+                <h3 className="text-3xl font-bold text-blue-700 px-6 py-3 bg-white/50 rounded-xl border border-blue-200">
+                  {certificate.courses.title}
+                </h3>
+              </div>
+              
+              {/* Details Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-gray-200 shadow-lg">
+                  <Calendar className="w-8 h-8 text-blue-600 mx-auto mb-3" />
+                  <p className="font-bold text-gray-700 mb-1">Date Issued</p>
+                  <p className="text-gray-600 font-medium">
+                    {new Date(certificate.issued_date).toLocaleDateString('en-US', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </p>
                 </div>
-                <div className="bg-white/50 rounded-lg p-4">
-                  <BookOpen className="w-5 h-5 text-blue-600 mx-auto mb-2" />
-                  <p className="font-semibold text-gray-700">Status</p>
-                  <p className={`font-semibold ${certificate.is_valid ? 'text-green-600' : 'text-red-600'}`}>
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-gray-200 shadow-lg">
+                  <User className="w-8 h-8 text-blue-600 mx-auto mb-3" />
+                  <p className="font-bold text-gray-700 mb-1">Certificate ID</p>
+                  <p className="text-gray-600 font-mono text-sm break-all">{certificate.certificate_number}</p>
+                </div>
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-gray-200 shadow-lg">
+                  <BookOpen className="w-8 h-8 text-blue-600 mx-auto mb-3" />
+                  <p className="font-bold text-gray-700 mb-1">Status</p>
+                  <p className={`font-bold text-lg ${certificate.is_valid ? 'text-green-600' : 'text-red-600'}`}>
                     {certificate.is_valid ? 'Valid' : 'Revoked'}
                   </p>
                 </div>
               </div>
               
-              <div className="border-t border-gray-300 pt-6">
-                <p className="text-sm text-gray-500">
-                  This certificate verifies the successful completion of the above-mentioned course.
+              {/* Footer */}
+              <div className="border-t border-gray-300 pt-6 space-y-3">
+                <div className="w-48 h-px bg-gray-400 mx-auto"></div>
+                <p className="text-sm font-semibold text-gray-700">Authorized Signature</p>
+                <p className="text-xs text-gray-500 max-w-2xl mx-auto leading-relaxed">
+                  This certificate can be verified at our official website using Certificate ID: {certificate.certificate_number}<br/>
+                  Issued by EduTech Institute | Digital Learning Excellence
                 </p>
               </div>
             </div>
           </div>
           
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 mt-6">
+          <div className="flex justify-end gap-4 mt-8">
             <Button 
               variant="outline" 
               onClick={onClose}
-              className="px-6"
+              className="px-8 py-3 border-2 border-gray-300 hover:border-gray-400 transition-colors"
             >
               <X className="w-4 h-4 mr-2" />
               Close
             </Button>
             <Button 
               onClick={() => onDownload(certificate)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 shadow-lg transition-all duration-200"
             >
               <Download className="w-4 h-4 mr-2" />
               Download PDF
