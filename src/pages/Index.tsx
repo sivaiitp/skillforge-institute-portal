@@ -36,10 +36,10 @@ const Index = () => {
       <FeaturedCourses />
       
       {/* Enhanced Quick Stats Section */}
-      <section className="py-20 bg-white relative overflow-hidden">
+      <section className="py-16 bg-white relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5"></div>
         <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Our Impact in Numbers
             </h2>
@@ -48,37 +48,37 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="group text-center p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Users className="h-8 w-8 text-white" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="group text-center p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                <Users className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-4xl font-bold text-blue-600 mb-2">{studentsCount}</h3>
-              <p className="text-gray-600 font-medium">Students Trained</p>
+              <h3 className="text-3xl font-bold text-blue-600 mb-2">{studentsCount}</h3>
+              <p className="text-gray-600 font-medium text-sm">Students Trained</p>
             </div>
             
-            <div className="group text-center p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                <BookOpen className="h-8 w-8 text-white" />
+            <div className="group text-center p-6 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                <BookOpen className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-4xl font-bold text-purple-600 mb-2">{coursesCount}</h3>
-              <p className="text-gray-600 font-medium">Courses Available</p>
+              <h3 className="text-3xl font-bold text-purple-600 mb-2">{coursesCount}</h3>
+              <p className="text-gray-600 font-medium text-sm">Courses Available</p>
             </div>
             
-            <div className="group text-center p-8 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                <TrendingUp className="h-8 w-8 text-white" />
+            <div className="group text-center p-6 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-green-600 to-green-700 rounded-2xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                <TrendingUp className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-4xl font-bold text-green-600 mb-2">{placementRate}</h3>
-              <p className="text-gray-600 font-medium">Placement Rate</p>
+              <h3 className="text-3xl font-bold text-green-600 mb-2">{placementRate}</h3>
+              <p className="text-gray-600 font-medium text-sm">Placement Rate</p>
             </div>
             
-            <div className="group text-center p-8 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-600 to-orange-700 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300">
-                <Award className="h-8 w-8 text-white" />
+            <div className="group text-center p-6 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-orange-600 to-orange-700 rounded-2xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                <Award className="h-6 w-6 text-white" />
               </div>
-              <h3 className="text-4xl font-bold text-orange-600 mb-2">{experienceYears}</h3>
-              <p className="text-gray-600 font-medium">Years Experience</p>
+              <h3 className="text-3xl font-bold text-orange-600 mb-2">{experienceYears}</h3>
+              <p className="text-gray-600 font-medium text-sm">Years Experience</p>
             </div>
           </div>
         </div>
@@ -87,7 +87,7 @@ const Index = () => {
       <Testimonials />
 
       {/* Enhanced Call to Action Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-16 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900"></div>
         <div 
           className="absolute inset-0 opacity-30"
@@ -98,22 +98,22 @@ const Index = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-sm rounded-full mb-8">
-              <Award className="h-10 w-10 text-white" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-sm rounded-full mb-6">
+              <Award className="h-8 w-8 text-white" />
             </div>
             
-            <h2 className="text-4xl md:text-5xl font-bold mb-8 text-white leading-tight">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white leading-tight">
               {ctaTitle}
             </h2>
             
-            <p className="text-xl md:text-2xl mb-12 text-blue-100 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl mb-8 text-blue-100 leading-relaxed max-w-3xl mx-auto">
               {ctaDescription}
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button 
                 size="lg" 
-                className="bg-white hover:bg-gray-100 text-blue-900 font-semibold px-8 py-4 text-lg rounded-full shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+                className="bg-white hover:bg-gray-100 text-blue-900 font-semibold px-8 py-3 text-lg rounded-full shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
                 onClick={() => navigate(ctaButtonLink)}
               >
                 {ctaButtonText}
@@ -123,7 +123,7 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-2 border-white/30 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 font-semibold px-8 py-4 text-lg rounded-full shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+                className="border-2 border-white/30 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 font-semibold px-8 py-3 text-lg rounded-full shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
                 onClick={() => navigate('/contact')}
               >
                 Contact Us
@@ -133,7 +133,7 @@ const Index = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-2 border-white/30 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 font-semibold px-8 py-4 text-lg rounded-full shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+                className="border-2 border-white/30 text-white bg-white/10 backdrop-blur-sm hover:bg-white/20 font-semibold px-8 py-3 text-lg rounded-full shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
                 onClick={() => navigate('/free-assessment')}
               >
                 Take Assessment
@@ -141,16 +141,16 @@ const Index = () => {
               </Button>
             </div>
             
-            <div className="mt-16 text-center">
-              <p className="text-blue-200 text-sm mb-4">Trusted by students from</p>
-              <div className="flex justify-center items-center space-x-8 opacity-60">
-                <span className="text-white font-semibold">Google</span>
+            <div className="mt-12 text-center">
+              <p className="text-blue-200 text-sm mb-3">Trusted by students from</p>
+              <div className="flex justify-center items-center space-x-6 opacity-60">
+                <span className="text-white font-semibold text-sm">Google</span>
                 <span className="text-white">•</span>
-                <span className="text-white font-semibold">Microsoft</span>
+                <span className="text-white font-semibold text-sm">Microsoft</span>
                 <span className="text-white">•</span>
-                <span className="text-white font-semibold">Amazon</span>
+                <span className="text-white font-semibold text-sm">Amazon</span>
                 <span className="text-white">•</span>
-                <span className="text-white font-semibold">Meta</span>
+                <span className="text-white font-semibold text-sm">Meta</span>
               </div>
             </div>
           </div>

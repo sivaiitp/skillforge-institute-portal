@@ -31,7 +31,7 @@ const Hero = () => {
   ];
 
   return (
-    <section className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <section className="relative py-16 md:py-20 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Background Pattern */}
       <div 
         className="absolute inset-0 opacity-40"
@@ -41,8 +41,8 @@ const Hero = () => {
       ></div>
       
       <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="space-y-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-8">
             {/* Trust Indicators */}
             <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
               <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
@@ -50,74 +50,74 @@ const Hero = () => {
             </div>
             
             <div className="space-y-6">
-              <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+              <h1 className="text-4xl md:text-6xl font-bold leading-tight">
                 <span className="block text-gray-900">Transform Your</span>
                 <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
                   Career Journey
                 </span>
               </h1>
               
-              <p className="text-xl md:text-2xl text-gray-600 leading-relaxed max-w-xl">
+              <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-xl">
                 {description}
               </p>
             </div>
             
             {/* Features List */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               {features.map((feature, index) => (
                 <div key={index} className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
-                  <span className="text-gray-700 font-medium">{feature}</span>
+                  <span className="text-gray-700 font-medium text-sm">{feature}</span>
                 </div>
               ))}
             </div>
             
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-6">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 size="lg" 
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-6 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
                 onClick={() => navigate(buttonLink)}
               >
                 {buttonText}
-                <ArrowRight className="ml-3 h-6 w-6" />
+                <ArrowRight className="ml-3 h-5 w-5" />
               </Button>
               
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="px-10 py-6 text-lg font-semibold border-2 border-gray-300 hover:border-blue-600 hover:bg-blue-50 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                className="px-8 py-4 text-lg font-semibold border-2 border-gray-300 hover:border-blue-600 hover:bg-blue-50 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
                 onClick={() => navigate('/contact')}
               >
-                <Play className="mr-3 h-6 w-6" />
+                <Play className="mr-3 h-5 w-5" />
                 Watch Demo
               </Button>
             </div>
 
             {/* Mini Stats */}
-            <div className="flex items-center space-x-8 pt-8 border-t border-gray-200/60">
+            <div className="flex items-center space-x-6 pt-6 border-t border-gray-200/60">
               <div className="text-center">
-                <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl mb-2">
-                  <BookOpen className="h-6 w-6 text-white" />
+                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl mb-2">
+                  <BookOpen className="h-5 w-5 text-white" />
                 </div>
-                <div className="text-2xl font-bold text-gray-900">{coursesCount}</div>
-                <div className="text-sm text-gray-600">Courses</div>
+                <div className="text-xl font-bold text-gray-900">{coursesCount}</div>
+                <div className="text-xs text-gray-600">Courses</div>
               </div>
               
               <div className="text-center">
-                <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl mb-2">
-                  <Users className="h-6 w-6 text-white" />
+                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl mb-2">
+                  <Users className="h-5 w-5 text-white" />
                 </div>
-                <div className="text-2xl font-bold text-gray-900">{studentsCount}</div>
-                <div className="text-sm text-gray-600">Students</div>
+                <div className="text-xl font-bold text-gray-900">{studentsCount}</div>
+                <div className="text-xs text-gray-600">Students</div>
               </div>
               
               <div className="text-center">
-                <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-green-600 to-green-700 rounded-xl mb-2">
-                  <Award className="h-6 w-6 text-white" />
+                <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-green-600 to-green-700 rounded-xl mb-2">
+                  <Award className="h-5 w-5 text-white" />
                 </div>
-                <div className="text-2xl font-bold text-gray-900">{placementRate}</div>
-                <div className="text-sm text-gray-600">Success Rate</div>
+                <div className="text-xl font-bold text-gray-900">{placementRate}</div>
+                <div className="text-xs text-gray-600">Success Rate</div>
               </div>
             </div>
           </div>
@@ -131,30 +131,30 @@ const Hero = () => {
                 <img 
                   src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
                   alt="Students learning"
-                  className="rounded-2xl w-full h-96 object-cover"
+                  className="rounded-2xl w-full h-80 object-cover"
                 />
                 
                 {/* Floating Card 1 */}
-                <div className="absolute -top-4 -left-4 bg-white rounded-2xl p-4 shadow-xl animate-bounce">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-semibold text-gray-700">Live Session</span>
+                <div className="absolute -top-4 -left-4 bg-white rounded-2xl p-3 shadow-xl animate-bounce">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs font-semibold text-gray-700">Live Session</span>
                   </div>
                 </div>
                 
                 {/* Floating Card 2 */}
-                <div className="absolute -bottom-4 -right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl p-4 shadow-xl">
+                <div className="absolute -bottom-4 -right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl p-3 shadow-xl">
                   <div className="text-center">
-                    <div className="text-2xl font-bold">95%</div>
-                    <div className="text-sm opacity-90">Job Success</div>
+                    <div className="text-xl font-bold">95%</div>
+                    <div className="text-xs opacity-90">Job Success</div>
                   </div>
                 </div>
               </div>
             </div>
             
             {/* Background Decorations */}
-            <div className="absolute top-1/4 -right-8 w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-60 animate-pulse"></div>
-            <div className="absolute bottom-1/4 -left-8 w-16 h-16 bg-gradient-to-r from-green-400 to-blue-400 rounded-full opacity-60 animate-pulse delay-75"></div>
+            <div className="absolute top-1/4 -right-8 w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-60 animate-pulse"></div>
+            <div className="absolute bottom-1/4 -left-8 w-12 h-12 bg-gradient-to-r from-green-400 to-blue-400 rounded-full opacity-60 animate-pulse delay-75"></div>
           </div>
         </div>
       </div>
