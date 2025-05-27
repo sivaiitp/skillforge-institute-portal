@@ -15,15 +15,38 @@ const CertificateVerification = () => {
   const [certificate, setCertificate] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<any>(null);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSearching(true);
     setHasSearched(true);
+    setDebugInfo(null);
 
     try {
       console.log('Searching for certificate:', certificateNumber);
       
+      // First, let's search for the certificate regardless of validity status
+      const { data: allCerts, error: allCertsError } = await (supabase as any)
+        .from('certificates')
+        .select(`
+          *,
+          courses (
+            id,
+            title,
+            certification
+          ),
+          profiles (
+            id,
+            full_name,
+            email
+          )
+        `)
+        .eq('certificate_number', certificateNumber.trim());
+
+      console.log('All certificates query result:', { data: allCerts, error: allCertsError });
+
+      // Now search for valid certificates only
       const { data, error } = await (supabase as any)
         .from('certificates')
         .select(`
@@ -43,7 +66,16 @@ const CertificateVerification = () => {
         .eq('is_valid', true)
         .maybeSingle();
 
-      console.log('Certificate query result:', { data, error });
+      console.log('Valid certificate query result:', { data, error });
+
+      // Set debug information
+      setDebugInfo({
+        searchTerm: certificateNumber.trim(),
+        allCertificates: allCerts,
+        validCertificate: data,
+        totalFound: allCerts?.length || 0,
+        foundButInvalid: allCerts && allCerts.length > 0 && !data
+      });
 
       if (error) {
         console.error('Error fetching certificate:', error);
@@ -54,7 +86,11 @@ const CertificateVerification = () => {
 
       if (!data) {
         setCertificate(null);
-        toast.error('Certificate not found or invalid.');
+        if (allCerts && allCerts.length > 0) {
+          toast.error('Certificate found but is not valid (revoked).');
+        } else {
+          toast.error('Certificate not found.');
+        }
       } else {
         setCertificate(data);
         toast.success('Certificate verified successfully!');
@@ -137,6 +173,16 @@ const CertificateVerification = () => {
                 </Button>
               </form>
 
+              {/* Debug Information (only in development) */}
+              {debugInfo && process.env.NODE_ENV === 'development' && (
+                <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+                  <h4 className="font-semibold text-sm text-gray-800 mb-2">Debug Information:</h4>
+                  <pre className="text-xs text-gray-600 overflow-auto">
+                    {JSON.stringify(debugInfo, null, 2)}
+                  </pre>
+                </div>
+              )}
+
               {/* Results */}
               {hasSearched && (
                 <div className="mt-8 pt-8 border-t">
@@ -208,21 +254,38 @@ const CertificateVerification = () => {
                       <div className="flex items-center gap-3 text-red-600">
                         <XCircle size={32} />
                         <div>
-                          <h3 className="text-xl font-bold">Certificate Not Found</h3>
-                          <p className="text-red-700">Unable to verify this certificate</p>
+                          <h3 className="text-xl font-bold">
+                            {debugInfo?.foundButInvalid ? 'Certificate Revoked' : 'Certificate Not Found'}
+                          </h3>
+                          <p className="text-red-700">
+                            {debugInfo?.foundButInvalid 
+                              ? 'This certificate exists but has been revoked'
+                              : 'Unable to verify this certificate'
+                            }
+                          </p>
                         </div>
                       </div>
                       
                       <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-                        <h4 className="font-semibold text-red-800 mb-2">Possible reasons:</h4>
-                        <ul className="text-red-700 space-y-1">
-                          <li>• The certificate number is incorrect or contains typos</li>
-                          <li>• The certificate has been revoked or is no longer valid</li>
-                          <li>• The certificate was not issued by RaceCodingInstitute</li>
-                        </ul>
+                        <h4 className="font-semibold text-red-800 mb-2">
+                          {debugInfo?.foundButInvalid ? 'Certificate Status:' : 'Possible reasons:'}
+                        </h4>
+                        {debugInfo?.foundButInvalid ? (
+                          <ul className="text-red-700 space-y-1">
+                            <li>• This certificate has been revoked by the institution</li>
+                            <li>• The certificate is no longer valid</li>
+                            <li>• Please contact RaceCodingInstitute for more information</li>
+                          </ul>
+                        ) : (
+                          <ul className="text-red-700 space-y-1">
+                            <li>• The certificate number is incorrect or contains typos</li>
+                            <li>• The certificate was not issued by RaceCodingInstitute</li>
+                            <li>• The certificate may not exist in our system</li>
+                          </ul>
+                        )}
                         <p className="text-red-700 mt-4">
                           Please double-check the certificate number and try again. If you believe this is an error, 
-                          please contact our support team.
+                          please contact our support team with certificate number: <strong>{certificateNumber}</strong>
                         </p>
                       </div>
                     </div>
