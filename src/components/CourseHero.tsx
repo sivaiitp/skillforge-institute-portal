@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Clock, Users, Star, BookOpen, Download, CheckCircle } from 'lucide-react';
+import { Clock, Users, Star, BookOpen, Download } from 'lucide-react';
 
 interface Course {
   title: string;
@@ -16,13 +17,10 @@ interface Course {
 
 interface CourseHeroProps {
   course: Course;
-  onEnroll: () => void;
   onDownloadBrochure: () => void;
-  isEnrolled?: boolean;
-  enrollmentLoading?: boolean;
 }
 
-const CourseHero = ({ course, onEnroll, onDownloadBrochure, isEnrolled = false, enrollmentLoading = false }: CourseHeroProps) => {
+const CourseHero = ({ course, onDownloadBrochure }: CourseHeroProps) => {
   return (
     <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
       <div className="container mx-auto px-4">
@@ -32,12 +30,6 @@ const CourseHero = ({ course, onEnroll, onDownloadBrochure, isEnrolled = false, 
               <Badge variant="secondary" className="bg-white/20 text-white">
                 {course.level} Level
               </Badge>
-              {isEnrolled && (
-                <Badge className="bg-green-500 text-white flex items-center gap-1">
-                  <CheckCircle className="w-3 h-3" />
-                  Enrolled
-                </Badge>
-              )}
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">{course.title}</h1>
             <p className="text-xl mb-8 leading-relaxed opacity-90">
@@ -66,31 +58,6 @@ const CourseHero = ({ course, onEnroll, onDownloadBrochure, isEnrolled = false, 
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg" 
-                className={`${
-                  isEnrolled 
-                    ? 'bg-green-600 hover:bg-green-700 text-white' 
-                    : 'bg-white text-blue-600 hover:bg-gray-100'
-                }`}
-                onClick={onEnroll}
-                disabled={enrollmentLoading}
-              >
-                {enrollmentLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
-                    Processing...
-                  </div>
-                ) : isEnrolled ? (
-                  <>
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Go to Course
-                  </>
-                ) : (
-                  `Enroll Now - ₹${course.price?.toLocaleString('en-IN') || '0'}`
-                )}
-              </Button>
-              
               <Button 
                 size="lg" 
                 variant="outline" 
