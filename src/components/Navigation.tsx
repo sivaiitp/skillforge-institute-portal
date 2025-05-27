@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -35,7 +34,6 @@ const Navigation = () => {
     { path: "/courses", label: "Courses" },
     { path: "/events", label: "Events" },
     { path: "/career", label: "Career" },
-    { path: "/free-assessment", label: "Free Assessment" },
     { path: "/verify-certificate", label: "Verify Certificate" },
     { path: "/contact", label: "Contact" },
   ];
