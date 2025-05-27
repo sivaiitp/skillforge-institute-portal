@@ -107,7 +107,7 @@ const PaymentReports = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <AdminSidebar />
-        <div className="ml-64 p-6">
+        <div className="pl-64 p-6">
           <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
             <p className="text-gray-600">You don't have permission to access this page.</p>
@@ -121,7 +121,7 @@ const PaymentReports = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <AdminSidebar />
-        <div className="ml-64 p-6">
+        <div className="pl-64 p-6">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading payment reports...</p>
@@ -138,7 +138,7 @@ const PaymentReports = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <AdminSidebar />
       
-      <div className="ml-64 p-6">
+      <div className="pl-64 p-6">
         {/* Header */}
         <div className="mb-6">
           <div className="bg-white rounded-xl shadow-sm border p-6">

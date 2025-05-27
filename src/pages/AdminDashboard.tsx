@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,24 +29,25 @@ const AdminDashboard = () => {
     fetchRecentActivities();
   }, [userRole, navigate]);
 
-  const fetchDashboardStats = async () => {
-    try {
-      const [studentsRes, coursesRes, certificatesRes, enrollmentsRes] = await Promise.all([
-        supabase.from('profiles').select('id').eq('role', 'student'),
-        supabase.from('courses').select('id'),
-        (supabase as any).from('certificates').select('id'),
-        supabase.from('enrollments').select('id')
-      ]);
+  const calculateStats = () => {
+    const totalRevenue = enrollments.reduce((sum, enrollment) => {
+      return sum + (enrollment.courses?.price || 0);
+    }, 0);
 
-      setStats({
-        totalStudents: studentsRes.data?.length || 0,
-        totalCourses: coursesRes.data?.length || 0,
-        totalCertificates: certificatesRes.data?.length || 0,
-        totalEnrollments: enrollmentsRes.data?.length || 0
-      });
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    }
+    const activeEnrollments = enrollments.filter(e => e.status === 'active').length;
+    const completedEnrollments = enrollments.filter(e => e.status === 'completed').length;
+    const activeCourses = courses.filter(c => c.is_active).length;
+
+    return {
+      totalRevenue,
+      totalEnrollments: enrollments.length,
+      activeEnrollments,
+      completedEnrollments,
+      totalStudents: students.length,
+      totalCourses: courses.length,
+      activeCourses,
+      totalCertificates: certificates.length
+    };
   };
 
   const fetchRecentActivities = async () => {
@@ -70,6 +70,26 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchDashboardStats = async () => {
+    try {
+      const [studentsRes, coursesRes, certificatesRes, enrollmentsRes] = await Promise.all([
+        supabase.from('profiles').select('id').eq('role', 'student'),
+        supabase.from('courses').select('id'),
+        (supabase as any).from('certificates').select('id'),
+        supabase.from('enrollments').select('id')
+      ]);
+
+      setStats({
+        totalStudents: studentsRes.data?.length || 0,
+        totalCourses: coursesRes.data?.length || 0,
+        totalCertificates: certificatesRes.data?.length || 0,
+        totalEnrollments: enrollmentsRes.data?.length || 0
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
+
   if (userRole !== 'admin') {
     return (
       <div className="min-h-screen bg-gray-50 flex">
@@ -88,7 +108,7 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gray-50 flex">
       <AdminSidebar />
       
-      <div className="flex-1 ml-64 p-8">
+      <div className="flex-1 pl-64 p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
