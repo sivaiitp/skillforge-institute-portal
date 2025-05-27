@@ -87,143 +87,82 @@ export const useStudentSearch = () => {
   };
 
   const handleSearchStudent = async () => {
-    if (!searchName.trim()) {
-      toast.error('Please enter a student name');
-      return;
-    }
-
     setIsSearching(true);
-    const searchTerm = searchName.trim().toLowerCase();
-    console.log('Searching for students with name (case-insensitive partial match):', searchTerm);
+    console.log('Fetching ALL users from database without any filters...');
     
     try {
-      // First, let's see ALL profiles to understand what data we have
-      const { data: allProfiles, error: allError } = await supabase
+      // Fetch ALL users without any filtering whatsoever
+      const { data: allUsers, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role');
 
-      console.log('ALL PROFILES IN DATABASE:', { allProfiles, allError });
-
-      // Search for students with more flexible matching
-      const { data: students, error } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, role')
-        .eq('role', 'student');
-
-      console.log('STUDENTS ONLY:', { students, error });
+      console.log('ALL USERS IN DATABASE (no filters):', { allUsers, error, count: allUsers?.length });
 
       if (error) {
-        console.error('Error fetching students:', error);
-        toast.error('Error searching for students');
+        console.error('Error fetching all users:', error);
+        toast.error('Error fetching users from database');
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
-      // If no students with role 'student', let's try without role filter
-      if (!students || students.length === 0) {
-        console.log('No students with role=student found. Trying all profiles...');
-        
-        const { data: allUsers, error: allUsersError } = await supabase
-          .from('profiles')
-          .select('id, full_name, email, role');
+      if (!allUsers || allUsers.length === 0) {
+        console.log('Database returned no users at all');
+        toast.error('No users found in database');
+        setSelectedStudent(null);
+        setEnrolledCourses([]);
+        return;
+      }
 
-        console.log('ALL USERS FOR SEARCH:', { allUsers, allUsersError });
+      // Show all users found
+      console.log('Users found:', allUsers.map(u => ({ 
+        id: u.id, 
+        name: u.full_name, 
+        email: u.email, 
+        role: u.role 
+      })));
 
-        if (allUsersError) {
-          console.error('Error fetching all users:', allUsersError);
-          toast.error('Error searching for users');
-          setSelectedStudent(null);
-          setEnrolledCourses([]);
-          return;
-        }
-
-        if (!allUsers || allUsers.length === 0) {
-          console.log('No users found in database at all');
-          toast.error('No users found in database');
-          setSelectedStudent(null);
-          setEnrolledCourses([]);
-          return;
-        }
-
-        // Filter all users client-side for matching
-        const matchingUsers = allUsers.filter(user => {
+      // If search name is provided, filter by it, otherwise just pick the first user
+      let matchingUsers = allUsers;
+      
+      if (searchName.trim()) {
+        const searchTerm = searchName.trim().toLowerCase();
+        matchingUsers = allUsers.filter(user => {
           const fullName = (user.full_name || '').toLowerCase();
           const email = (user.email || '').toLowerCase();
           return fullName.includes(searchTerm) || email.includes(searchTerm);
         });
-
-        console.log('Matching users found (any role):', { matchingUsers, searchTerm });
-
-        if (matchingUsers.length === 0) {
-          console.log('No user found matching search term:', searchTerm);
-          toast.error(`No user found with name or email containing "${searchName.trim()}"`);
-          setSelectedStudent(null);
-          setEnrolledCourses([]);
-          return;
-        }
-
-        // Use the first matching user
-        const foundUser = matchingUsers[0];
-        console.log('Selected user (any role):', foundUser);
-
-        if (matchingUsers.length > 1) {
-          console.log(`Found ${matchingUsers.length} users matching "${searchTerm}", selecting first one:`, foundUser);
-          toast.info(`Found ${matchingUsers.length} matches, selected: ${foundUser.full_name || foundUser.email}`);
-        }
-
-        // Set as selected student even if not explicitly role 'student'
-        setSelectedStudent({
-          id: foundUser.id,
-          full_name: foundUser.full_name || foundUser.email || 'Unknown',
-          email: foundUser.email || ''
-        });
         
-        await fetchStudentEnrollments(foundUser.id);
-        toast.success(`Found user: ${foundUser.full_name || foundUser.email} (Role: ${foundUser.role || 'unknown'})`);
-        
-        return;
+        console.log(`Filtered by "${searchTerm}":`, matchingUsers);
       }
 
-      // Filter students client-side for more flexible matching
-      const matchingStudents = students.filter(student => {
-        const fullName = (student.full_name || '').toLowerCase();
-        const email = (student.email || '').toLowerCase();
-        return fullName.includes(searchTerm) || email.includes(searchTerm);
-      });
-
-      console.log('Matching students found:', { matchingStudents, searchTerm });
-
-      if (matchingStudents.length === 0) {
-        console.log('No student found matching search term:', searchTerm);
-        toast.error(`No student found with name or email containing "${searchName.trim()}"`);
+      if (matchingUsers.length === 0) {
+        toast.error(`No user found matching "${searchName.trim()}"`);
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
-      // If multiple results, take the first one
-      const foundStudent = matchingStudents[0];
-      console.log('Selected student:', foundStudent);
+      // Use the first matching user
+      const selectedUser = matchingUsers[0];
+      console.log('Selected user:', selectedUser);
 
-      if (matchingStudents.length > 1) {
-        console.log(`Found ${matchingStudents.length} students matching "${searchTerm}", selecting first one:`, foundStudent);
-        toast.info(`Found ${matchingStudents.length} matches, selected: ${foundStudent.full_name || foundStudent.email}`);
+      if (matchingUsers.length > 1) {
+        toast.info(`Found ${matchingUsers.length} matches, selected: ${selectedUser.full_name || selectedUser.email}`);
       }
 
-      // Student found - set as selected student
       setSelectedStudent({
-        id: foundStudent.id,
-        full_name: foundStudent.full_name || foundStudent.email || 'Unknown',
-        email: foundStudent.email || ''
+        id: selectedUser.id,
+        full_name: selectedUser.full_name || selectedUser.email || 'Unknown',
+        email: selectedUser.email || ''
       });
       
-      await fetchStudentEnrollments(foundStudent.id);
-      toast.success(`Found student: ${foundStudent.full_name || foundStudent.email}`);
+      await fetchStudentEnrollments(selectedUser.id);
+      toast.success(`Selected user: ${selectedUser.full_name || selectedUser.email} (Role: ${selectedUser.role || 'unknown'})`);
       
     } catch (error) {
-      console.error('Error searching student:', error);
-      toast.error('Error searching for student');
+      console.error('Error in search:', error);
+      toast.error('Error searching for users');
       setSelectedStudent(null);
       setEnrolledCourses([]);
     } finally {
