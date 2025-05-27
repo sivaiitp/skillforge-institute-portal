@@ -18,7 +18,7 @@ const AdminSidebar = () => {
   const { signOut } = useAuth();
 
   const menuItems = [
-    { path: "/admin", label: "Dashboard", icon: LayoutDashboard },
+    { path: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { path: "/admin/courses", label: "Courses", icon: BookOpen },
     { path: "/admin/study-materials", label: "Study Materials", icon: FileText },
     { path: "/admin/students", label: "Students", icon: Users },
@@ -56,6 +56,7 @@ const AdminSidebar = () => {
             <li key={item.path}>
               <NavLink
                 to={item.path}
+                end={item.exact}
                 className={({ isActive }) =>
                   `group flex items-center p-3 rounded-lg transition-all duration-200 ${
                     isActive
