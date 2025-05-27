@@ -54,34 +54,38 @@ const AdminSidebar = () => {
         </div>
       </div>
       
-      <nav className="p-4 flex-1 overflow-y-auto">
-        <ul className="space-y-1">
+      <nav className="p-3 flex-1 overflow-y-auto">
+        <ul className="space-y-0.5">
           {menuItems.map((item) => (
             <li key={item.path}>
               <NavLink
                 to={item.path}
                 end={item.exact}
                 className={({ isActive }) =>
-                  `group flex items-center p-3 rounded-lg transition-all duration-200 ${
+                  `group flex items-center p-2.5 rounded-lg transition-all duration-200 ${
                     isActive
                       ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
                   }`
                 }
               >
-                <div className={`p-2 rounded-lg transition-colors duration-200 ${
-                  ({ isActive }) => isActive ? "bg-white/20" : "bg-gray-200"
-                }`}>
-                  <item.icon className="h-4 w-4" />
-                </div>
-                <span className="ml-3 font-medium text-sm">{item.label}</span>
+                {({ isActive }) => (
+                  <>
+                    <div className={`p-1.5 rounded-lg transition-colors duration-200 ${
+                      isActive ? "bg-white/20" : "bg-gray-200"
+                    }`}>
+                      <item.icon className="h-4 w-4" />
+                    </div>
+                    <span className="ml-3 font-medium text-sm">{item.label}</span>
+                  </>
+                )}
               </NavLink>
             </li>
           ))}
         </ul>
       </nav>
       
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-3 border-t border-gray-200">
         <Button
           onClick={handleLogout}
           variant="outline"
