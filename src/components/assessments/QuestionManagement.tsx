@@ -15,6 +15,7 @@ interface Question {
   explanation: string | null;
   points: number;
   sort_order: number;
+  difficulty_level: string;
 }
 
 interface QuestionManagementProps {
@@ -33,7 +34,8 @@ const QuestionManagement = ({ assessmentId, assessmentTitle }: QuestionManagemen
     options: ['', '', '', ''],
     correct_answer: '',
     explanation: '',
-    points: 1
+    points: 1,
+    difficulty_level: 'medium'
   });
 
   useEffect(() => {
@@ -59,7 +61,8 @@ const QuestionManagement = ({ assessmentId, assessmentTitle }: QuestionManagemen
         correct_answer: q.correct_answer,
         explanation: q.explanation,
         points: q.points,
-        sort_order: q.sort_order
+        sort_order: q.sort_order,
+        difficulty_level: q.difficulty_level || 'medium'
       }));
       
       setQuestions(transformedQuestions);
@@ -94,6 +97,7 @@ const QuestionManagement = ({ assessmentId, assessmentTitle }: QuestionManagemen
         correct_answer: formData.correct_answer,
         explanation: formData.explanation || null,
         points: formData.points,
+        difficulty_level: formData.difficulty_level,
         sort_order: editingQuestion ? editingQuestion.sort_order : questions.length
       };
 
@@ -132,7 +136,8 @@ const QuestionManagement = ({ assessmentId, assessmentTitle }: QuestionManagemen
       options: question.options || ['', '', '', ''],
       correct_answer: question.correct_answer,
       explanation: question.explanation || '',
-      points: question.points
+      points: question.points,
+      difficulty_level: question.difficulty_level || 'medium'
     });
     setShowForm(true);
   };
@@ -164,7 +169,8 @@ const QuestionManagement = ({ assessmentId, assessmentTitle }: QuestionManagemen
       options: ['', '', '', ''],
       correct_answer: '',
       explanation: '',
-      points: 1
+      points: 1,
+      difficulty_level: 'medium'
     });
   };
 
