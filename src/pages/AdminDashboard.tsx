@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,27 +29,6 @@ const AdminDashboard = () => {
     fetchDashboardStats();
     fetchRecentActivities();
   }, [userRole, navigate]);
-
-  const calculateStats = () => {
-    const totalRevenue = enrollments.reduce((sum, enrollment) => {
-      return sum + (enrollment.courses?.price || 0);
-    }, 0);
-
-    const activeEnrollments = enrollments.filter(e => e.status === 'active').length;
-    const completedEnrollments = enrollments.filter(e => e.status === 'completed').length;
-    const activeCourses = courses.filter(c => c.is_active).length;
-
-    return {
-      totalRevenue,
-      totalEnrollments: enrollments.length,
-      activeEnrollments,
-      completedEnrollments,
-      totalStudents: students.length,
-      totalCourses: courses.length,
-      activeCourses,
-      totalCertificates: certificates.length
-    };
-  };
 
   const fetchRecentActivities = async () => {
     try {
@@ -94,7 +74,7 @@ const AdminDashboard = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <AdminSidebar />
-        <div className="flex-1 ml-64 p-8">
+        <div className="flex-1 pl-64 p-8">
           <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
             <p className="text-gray-600">You don't have permission to access this page.</p>
