@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import Navigation from "@/components/Navigation";
@@ -9,6 +10,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { useEnrollment } from "@/hooks/useEnrollment";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { CheckCircle, Clock, Users, Award, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 
@@ -16,7 +18,7 @@ const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { enrollInCourse, checkEnrollment } = useEnrollment();
+  const { enrollInCourse, checkEnrollmentStatus, goToCourse, loading } = useEnrollment();
 
   const { data: course, isLoading: courseLoading } = useQuery({
     queryKey: ['course', id],
@@ -32,11 +34,28 @@ const CourseDetails = () => {
     }
   });
 
-  const { data: isEnrolled, isLoading: enrollmentLoading } = useQuery({
+  const { data: isEnrolled, isLoading: enrollmentLoading, refetch: refetchEnrollment } = useQuery({
     queryKey: ['enrollment', id, user?.id],
-    queryFn: () => checkEnrollment(id!),
+    queryFn: () => checkEnrollmentStatus(id!),
     enabled: !!user && !!id
   });
+
+  const handleEnroll = async () => {
+    if (!user) {
+      toast.error('Please log in to enroll in courses');
+      navigate('/auth');
+      return;
+    }
+
+    const success = await enrollInCourse(id!);
+    if (success) {
+      refetchEnrollment();
+    }
+  };
+
+  const handleGoToCourse = () => {
+    goToCourse(id!);
+  };
 
   const handleDownloadBrochure = () => {
     if (course?.brochure_url) {
@@ -104,17 +123,16 @@ const CourseDetails = () => {
       <CourseHero 
         course={course} 
         onDownloadBrochure={handleDownloadBrochure}
+        isEnrolled={isEnrolled}
+        onEnroll={handleEnroll}
+        onGoToCourse={handleGoToCourse}
+        loading={loading}
       />
 
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-8">
-              <CourseSidebar 
-                course={course} 
-                onDownloadBrochure={handleDownloadBrochure}
-              />
-              
               {/* Course Description */}
               <Card>
                 <CardHeader>
@@ -171,6 +189,17 @@ const CourseDetails = () => {
                   </div>
                 </CardContent>
               </Card>
+            </div>
+
+            <div>
+              <CourseSidebar 
+                course={course} 
+                onDownloadBrochure={handleDownloadBrochure}
+                isEnrolled={isEnrolled}
+                onEnroll={handleEnroll}
+                onGoToCourse={handleGoToCourse}
+                loading={loading}
+              />
             </div>
           </div>
         </div>

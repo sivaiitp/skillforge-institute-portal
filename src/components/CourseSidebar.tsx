@@ -17,9 +17,20 @@ interface Course {
 interface CourseSidebarProps {
   course: Course;
   onDownloadBrochure: () => void;
+  isEnrolled?: boolean;
+  onEnroll: () => void;
+  onGoToCourse: () => void;
+  loading: boolean;
 }
 
-const CourseSidebar = ({ course, onDownloadBrochure }: CourseSidebarProps) => {
+const CourseSidebar = ({ 
+  course, 
+  onDownloadBrochure, 
+  isEnrolled, 
+  onEnroll, 
+  onGoToCourse, 
+  loading 
+}: CourseSidebarProps) => {
   return (
     <div className="space-y-6">
       {/* Course Price Display */}
@@ -33,6 +44,25 @@ const CourseSidebar = ({ course, onDownloadBrochure }: CourseSidebarProps) => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {isEnrolled ? (
+            <Button 
+              className="w-full bg-green-600 hover:bg-green-700" 
+              size="lg" 
+              onClick={onGoToCourse}
+            >
+              Go to Course
+            </Button>
+          ) : (
+            <Button 
+              className="w-full bg-blue-600 hover:bg-blue-700" 
+              size="lg" 
+              onClick={onEnroll}
+              disabled={loading}
+            >
+              {loading ? 'Enrolling...' : 'Enroll Now'}
+            </Button>
+          )}
+          
           <Button 
             variant="outline" 
             className="w-full" 
@@ -43,6 +73,7 @@ const CourseSidebar = ({ course, onDownloadBrochure }: CourseSidebarProps) => {
             <Download className="w-4 h-4 mr-2" />
             {course.brochure_url ? 'Download Brochure' : 'Brochure Not Available'}
           </Button>
+          
           <div className="space-y-3 text-sm">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-gray-500" />

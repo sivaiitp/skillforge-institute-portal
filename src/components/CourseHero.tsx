@@ -18,9 +18,20 @@ interface Course {
 interface CourseHeroProps {
   course: Course;
   onDownloadBrochure: () => void;
+  isEnrolled?: boolean;
+  onEnroll: () => void;
+  onGoToCourse: () => void;
+  loading: boolean;
 }
 
-const CourseHero = ({ course, onDownloadBrochure }: CourseHeroProps) => {
+const CourseHero = ({ 
+  course, 
+  onDownloadBrochure, 
+  isEnrolled, 
+  onEnroll, 
+  onGoToCourse, 
+  loading 
+}: CourseHeroProps) => {
   return (
     <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
       <div className="container mx-auto px-4">
@@ -58,6 +69,25 @@ const CourseHero = ({ course, onDownloadBrochure }: CourseHeroProps) => {
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
+              {isEnrolled ? (
+                <Button 
+                  size="lg" 
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={onGoToCourse}
+                >
+                  Go to Course
+                </Button>
+              ) : (
+                <Button 
+                  size="lg" 
+                  className="bg-white text-blue-600 hover:bg-gray-100"
+                  onClick={onEnroll}
+                  disabled={loading}
+                >
+                  {loading ? 'Enrolling...' : 'Enroll Now'}
+                </Button>
+              )}
+              
               <Button 
                 size="lg" 
                 variant="outline" 
