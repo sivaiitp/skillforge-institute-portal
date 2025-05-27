@@ -15,6 +15,7 @@ const CertificationManagement = () => {
   const [certifiedStudents, setCertifiedStudents] = useState(0);
 
   useEffect(() => {
+    console.log('CertificationManagement mounted, userRole:', userRole);
     if (userRole === 'admin') {
       fetchCertificateStats();
     }
@@ -22,6 +23,7 @@ const CertificationManagement = () => {
 
   const fetchCertificateStats = async () => {
     try {
+      console.log('Fetching certificate stats...');
       const { data: certificatesData, error } = await supabase
         .from('certificates')
         .select('id, is_valid, user_id');
@@ -31,6 +33,7 @@ const CertificationManagement = () => {
         return;
       }
 
+      console.log('Certificate stats data:', certificatesData);
       setTotalCertificates(certificatesData?.length || 0);
       setValidCertificates(certificatesData?.filter(c => c.is_valid).length || 0);
       setCertifiedStudents(new Set(certificatesData?.map(c => c.user_id)).size || 0);
@@ -40,10 +43,14 @@ const CertificationManagement = () => {
   };
 
   const handleCertificateIssued = () => {
+    console.log('Certificate issued, refreshing stats...');
     fetchCertificateStats();
   };
 
+  console.log('Rendering CertificationManagement, userRole:', userRole);
+
   if (userRole !== 'admin') {
+    console.log('User is not admin, showing access denied');
     return (
       <div className="min-h-screen bg-gray-50">
         <AdminSidebar />
@@ -59,6 +66,8 @@ const CertificationManagement = () => {
       </div>
     );
   }
+
+  console.log('Rendering main content');
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -11,6 +11,8 @@ interface NewIssueCertificateFormProps {
 }
 
 const NewIssueCertificateForm = ({ onCertificateIssued }: NewIssueCertificateFormProps) => {
+  console.log('NewIssueCertificateForm rendering...');
+  
   const {
     searchName,
     setSearchName,
@@ -26,8 +28,18 @@ const NewIssueCertificateForm = ({ onCertificateIssued }: NewIssueCertificateFor
     clearForm,
   } = useCertificateIssuing();
 
+  console.log('Hook state:', {
+    selectedUser,
+    enrolledCourses,
+    selectedCourse,
+    isSearching,
+    loadingEnrollments,
+    isIssuingCertificate
+  });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted');
     const success = await issueCertificate();
     if (success) {
       onCertificateIssued();
@@ -36,6 +48,13 @@ const NewIssueCertificateForm = ({ onCertificateIssued }: NewIssueCertificateFor
 
   const availableCourses = enrolledCourses.filter(course => !course.has_certificate);
   const isFormValid = selectedUser && selectedCourse && availableCourses.length > 0;
+
+  console.log('Form validation:', {
+    selectedUser: !!selectedUser,
+    selectedCourse: !!selectedCourse,
+    availableCoursesCount: availableCourses.length,
+    isFormValid
+  });
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
