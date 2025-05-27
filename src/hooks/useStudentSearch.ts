@@ -18,6 +18,7 @@ interface EnrolledCourse {
 
 export const useStudentSearch = () => {
   const [searchName, setSearchName] = useState('');
+  const [searchResults, setSearchResults] = useState<Student[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
@@ -93,6 +94,9 @@ export const useStudentSearch = () => {
     }
 
     setIsSearching(true);
+    setSearchResults([]);
+    setSelectedStudent(null);
+    setEnrolledCourses([]);
     console.log('Searching for student:', searchName);
     
     try {
@@ -110,59 +114,55 @@ export const useStudentSearch = () => {
       if (error) {
         console.error('Error searching students:', error);
         toast.error('Error searching for students');
-        setSelectedStudent(null);
-        setEnrolledCourses([]);
         return;
       }
 
       if (!students || students.length === 0) {
-        toast.error(`No student found matching "${searchName.trim()}"`);
-        setSelectedStudent(null);
-        setEnrolledCourses([]);
+        toast.error(`No students found matching "${searchName.trim()}"`);
         return;
       }
 
-      // Use the first matching student
-      const selectedUser = students[0];
-      console.log('Selected student:', selectedUser);
+      const formattedStudents: Student[] = students.map(student => ({
+        id: student.id,
+        full_name: student.full_name || student.email || 'Unknown',
+        email: student.email || ''
+      }));
 
-      if (students.length > 1) {
-        toast.info(`Found ${students.length} matches, selected: ${selectedUser.full_name || selectedUser.email}`);
-      }
-
-      setSelectedStudent({
-        id: selectedUser.id,
-        full_name: selectedUser.full_name || selectedUser.email || 'Unknown',
-        email: selectedUser.email || ''
-      });
-      
-      await fetchStudentEnrollments(selectedUser.id);
-      toast.success(`Selected student: ${selectedUser.full_name || selectedUser.email}`);
+      setSearchResults(formattedStudents);
+      toast.success(`Found ${formattedStudents.length} student(s) matching "${searchName.trim()}"`);
       
     } catch (error) {
       console.error('Error in search:', error);
       toast.error('Error searching for students');
-      setSelectedStudent(null);
-      setEnrolledCourses([]);
     } finally {
       setIsSearching(false);
     }
   };
 
+  const handleSelectStudent = async (student: Student) => {
+    setSelectedStudent(student);
+    setSearchResults([]);
+    await fetchStudentEnrollments(student.id);
+    toast.success(`Selected student: ${student.full_name}`);
+  };
+
   const handleClearStudent = () => {
     setSelectedStudent(null);
     setSearchName('');
+    setSearchResults([]);
     setEnrolledCourses([]);
   };
 
   return {
     searchName,
     setSearchName,
+    searchResults,
     selectedStudent,
     isSearching,
     enrolledCourses,
     loadingEnrollments,
     handleSearchStudent,
+    handleSelectStudent,
     handleClearStudent,
   };
 };

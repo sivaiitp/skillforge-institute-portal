@@ -36,9 +36,11 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
   const {
     searchName,
     setSearchName,
+    searchResults,
     selectedStudent,
     isSearching,
     handleSearchStudent,
+    handleSelectStudent,
     handleClearStudent
   } = useStudentSearch();
 
@@ -95,7 +97,7 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
               >
                 <Search className="w-4 h-4" />
               </Button>
-              {selectedStudent && (
+              {(selectedStudent || searchResults.length > 0) && (
                 <Button 
                   onClick={handleClear}
                   variant="outline"
@@ -106,18 +108,49 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
               )}
             </div>
             
+            {/* Search Results */}
+            {searchResults.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Found {searchResults.length} student(s). Select one:
+                </p>
+                {searchResults.map((student) => (
+                  <div 
+                    key={student.id}
+                    className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg cursor-pointer hover:from-blue-100 hover:to-indigo-100 transition-colors"
+                    onClick={() => handleSelectStudent(student)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <User className="w-4 h-4 text-blue-600" />
+                      <div className="flex-1">
+                        <p className="font-semibold text-blue-800">{student.full_name}</p>
+                        <p className="text-sm text-blue-600">{student.email}</p>
+                      </div>
+                      <Button 
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Select
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Selected Student */}
             {selectedStudent && (
-              <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+              <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl">
                 <div className="flex items-start gap-3">
-                  <User className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <User className="w-5 h-5 text-green-600 mt-0.5" />
                   <div className="flex-1">
-                    <p className="font-semibold text-blue-800">{selectedStudent.full_name}</p>
-                    <p className="text-sm text-blue-600">{selectedStudent.email}</p>
+                    <p className="font-semibold text-green-800">{selectedStudent.full_name}</p>
+                    <p className="text-sm text-green-600">{selectedStudent.email}</p>
                   </div>
                   <Button 
                     onClick={handleSearchCertificates}
                     disabled={loading}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                     size="sm"
                   >
                     <Search className="w-4 h-4 mr-2" />
