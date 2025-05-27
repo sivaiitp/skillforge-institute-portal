@@ -11,6 +11,7 @@ interface CourseLearningNavigationProps {
   onPrevious: () => void;
   currentIndex: number;
   totalMaterials: number;
+  completedCount: number;
 }
 
 const CourseLearningNavigation = ({
@@ -20,8 +21,11 @@ const CourseLearningNavigation = ({
   onNext,
   onPrevious,
   currentIndex,
-  totalMaterials
+  totalMaterials,
+  completedCount
 }: CourseLearningNavigationProps) => {
+  const progressPercentage = totalMaterials > 0 ? Math.round((completedCount / totalMaterials) * 100) : 0;
+
   return (
     <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-200">
       <Button
@@ -38,6 +42,9 @@ const CourseLearningNavigation = ({
         <span>
           Chapter {currentIndex + 1} of {totalMaterials}
         </span>
+        <span className="text-blue-600 font-medium">
+          Progress: {progressPercentage}% ({completedCount}/{totalMaterials})
+        </span>
         {isCompleted && (
           <div className="flex items-center gap-1 text-green-600">
             <CheckCircle className="w-4 h-4" />
@@ -48,7 +55,7 @@ const CourseLearningNavigation = ({
 
       <Button
         onClick={onNext}
-        disabled={!hasNext || !isCompleted}
+        disabled={!hasNext}
         className={`flex items-center gap-2 ${
           isCompleted ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400'
         }`}

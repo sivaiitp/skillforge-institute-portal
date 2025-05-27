@@ -25,6 +25,8 @@ interface MaterialContentAreaProps {
   onPrevious: () => void;
   hasNext: boolean;
   hasPrevious: boolean;
+  currentIndex: number;
+  totalMaterials: number;
 }
 
 export const MaterialContentArea = ({
@@ -36,7 +38,9 @@ export const MaterialContentArea = ({
   onNext,
   onPrevious,
   hasNext,
-  hasPrevious
+  hasPrevious,
+  currentIndex,
+  totalMaterials
 }: MaterialContentAreaProps) => {
   
   const getMaterialProgress = (materialId: string) => {
@@ -46,6 +50,8 @@ export const MaterialContentArea = ({
   const isCompleted = selectedMaterial ? 
     getMaterialProgress(selectedMaterial.id)?.completed || false : false;
 
+  const completedCount = progressData.filter(p => p.completed).length;
+
   if (!selectedMaterial) {
     return (
       <Card className="text-center py-16 border-0 bg-white/80 backdrop-blur-sm shadow-xl">
@@ -54,9 +60,14 @@ export const MaterialContentArea = ({
             <FileText className="h-16 w-16 text-gray-400" />
           </div>
           <h3 className="text-2xl font-semibold mb-4 text-gray-800">Welcome to Course Learning</h3>
-          <p className="text-gray-600 mb-8 text-lg">
+          <p className="text-gray-600 mb-4 text-lg">
             Select a material from the sidebar to begin your studies.
           </p>
+          <div className="bg-blue-50 p-4 rounded-lg inline-block">
+            <p className="text-blue-700 font-medium">
+              Progress: {Math.round((completedCount / totalMaterials) * 100)}% ({completedCount}/{totalMaterials} completed)
+            </p>
+          </div>
         </CardContent>
       </Card>
     );
@@ -73,6 +84,14 @@ export const MaterialContentArea = ({
           {selectedMaterial.description && (
             <p className="text-gray-600 mt-2">{selectedMaterial.description}</p>
           )}
+          <div className="mt-3 flex items-center gap-4 text-sm">
+            <span className="text-gray-500">
+              Chapter {currentIndex + 1} of {totalMaterials}
+            </span>
+            <span className="text-blue-600 font-medium">
+              Course Progress: {Math.round((completedCount / totalMaterials) * 100)}%
+            </span>
+          </div>
         </CardHeader>
         
         <CardContent className="p-8">
@@ -116,8 +135,11 @@ export const MaterialContentArea = ({
               Previous
             </Button>
             
-            <div className="text-sm text-gray-500">
-              Navigation between materials
+            <div className="text-sm text-gray-500 text-center">
+              <div>Navigation between materials</div>
+              <div className="mt-1 font-medium text-blue-600">
+                {completedCount}/{totalMaterials} materials completed
+              </div>
             </div>
             
             <Button

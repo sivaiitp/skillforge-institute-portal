@@ -43,7 +43,8 @@ const StudentCourseLearning = () => {
     hasPreviousMaterial,
     goToNext,
     goToPrevious,
-    handleMaterialSelect
+    handleMaterialSelect,
+    getCurrentMaterialIndex
   } = useCourseLearningNavigation({
     studyMaterials,
     assessments: [], // No assessments for now
@@ -128,6 +129,7 @@ const StudentCourseLearning = () => {
     if (courseId) {
       const courseProgress = await getStudyProgress(courseId);
       setProgressData(courseProgress);
+      console.log('Progress data loaded:', courseProgress);
     }
   };
 
@@ -146,13 +148,18 @@ const StudentCourseLearning = () => {
     const currentProgress = progressData.find(p => p.study_material_id === materialId);
     const currentStatus = currentProgress?.completed || false;
     
+    console.log('Toggling completion for:', materialId, 'Current status:', currentStatus);
+    
     const success = await toggleMaterialCompletion(materialId, courseId, currentStatus);
     if (success) {
-      await loadProgress();
+      await loadProgress(); // Refresh progress data immediately
     }
   };
 
   if (!user || isLoading) return null;
+
+  const currentIndex = getCurrentMaterialIndex();
+  const completedCount = progressData.filter(p => p.completed).length;
 
   return (
     <SidebarProvider>
@@ -181,6 +188,8 @@ const StudentCourseLearning = () => {
                   onPrevious={goToPrevious}
                   hasNext={hasNextMaterial()}
                   hasPrevious={hasPreviousMaterial()}
+                  currentIndex={currentIndex}
+                  totalMaterials={studyMaterials.length}
                 />
               </div>
             </main>
