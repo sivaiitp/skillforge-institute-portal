@@ -4,22 +4,18 @@ import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import AdminSidebar from '@/components/AdminSidebar';
-import IssueCertificateForm from '@/components/certification/IssueCertificateForm';
+import NewIssueCertificateForm from '@/components/certification/NewIssueCertificateForm';
 import StudentCertificatesSearch from '@/components/certification/StudentCertificatesSearch';
 import { Award, Shield, CheckCircle, Users, TrendingUp } from 'lucide-react';
 
 const CertificationManagement = () => {
   const { userRole } = useAuth();
-  const [students, setStudents] = useState([]);
-  const [courses, setCourses] = useState([]);
   const [totalCertificates, setTotalCertificates] = useState(0);
   const [validCertificates, setValidCertificates] = useState(0);
   const [certifiedStudents, setCertifiedStudents] = useState(0);
 
   useEffect(() => {
     if (userRole === 'admin') {
-      fetchStudents();
-      fetchCourses();
       fetchCertificateStats();
     }
   }, [userRole]);
@@ -40,46 +36,6 @@ const CertificationManagement = () => {
       setCertifiedStudents(new Set(certificatesData?.map(c => c.user_id)).size || 0);
     } catch (error) {
       console.error('Error fetching certificate stats:', error);
-    }
-  };
-
-  const fetchStudents = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('id, full_name, email')
-        .eq('role', 'student')
-        .order('full_name');
-      
-      if (error) {
-        console.error('Error fetching students:', error);
-        toast.error('Error fetching students');
-        return;
-      }
-      setStudents(data || []);
-    } catch (error) {
-      console.error('Error fetching students:', error);
-      toast.error('Error fetching students');
-    }
-  };
-
-  const fetchCourses = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('courses')
-        .select('id, title, certification')
-        .eq('is_active', true)
-        .order('title');
-      
-      if (error) {
-        console.error('Error fetching courses:', error);
-        toast.error('Error fetching courses');
-        return;
-      }
-      setCourses(data || []);
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-      toast.error('Error fetching courses');
     }
   };
 
@@ -187,14 +143,10 @@ const CertificationManagement = () => {
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900">Issue New Certificate</h2>
-                  <p className="text-gray-600 text-sm">Award certificates to students</p>
+                  <p className="text-gray-600 text-sm">Award certificates to users</p>
                 </div>
               </div>
-              <IssueCertificateForm
-                students={students}
-                courses={courses}
-                onCertificateIssued={handleCertificateIssued}
-              />
+              <NewIssueCertificateForm onCertificateIssued={handleCertificateIssued} />
             </div>
             
             {/* Student Certificates Search Section */}
@@ -205,7 +157,7 @@ const CertificationManagement = () => {
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900">Manage Certificates</h2>
-                  <p className="text-gray-600 text-sm">Search and manage student certificates</p>
+                  <p className="text-gray-600 text-sm">Search and manage user certificates</p>
                 </div>
               </div>
               <StudentCertificatesSearch />
