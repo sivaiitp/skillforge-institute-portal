@@ -146,76 +146,80 @@ const StudentCourses = () => {
                     </CardContent>
                   </Card>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {enrollments.map((enrollment) => {
-                      const courseProgress = getEnrollmentProgress(enrollment.courses?.id);
-                      
-                      return (
-                        <Card key={enrollment.id} className="group overflow-hidden border-0 bg-white/80 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105">
-                          <div className="relative h-56 overflow-hidden">
-                            <img 
-                              src={enrollment.courses?.image_url || `https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80`}
-                              alt={enrollment.courses?.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                            <div className="absolute top-4 left-4">
-                              <Badge 
-                                variant={enrollment.status === 'active' ? 'default' : 'secondary'}
-                                className={enrollment.status === 'active' ? 'bg-emerald-500 hover:bg-emerald-600 text-white' : ''}
-                              >
-                                {enrollment.status}
-                              </Badge>
-                            </div>
-                            <div className="absolute bottom-4 left-4 right-4">
-                              <h3 className="text-white font-bold text-lg mb-2">{enrollment.courses?.title}</h3>
+                  <div className="bg-white rounded-xl shadow-sm border">
+                    <div className="p-6 border-b border-gray-200">
+                      <h3 className="text-xl font-semibold text-gray-800">Enrolled Courses ({enrollments.length})</h3>
+                    </div>
+                    <div className="divide-y divide-gray-200">
+                      {enrollments.map((enrollment) => {
+                        const courseProgress = getEnrollmentProgress(enrollment.courses?.id);
+                        
+                        return (
+                          <div key={enrollment.id} className="p-6 hover:bg-gray-50 transition-colors">
+                            <div className="flex items-center space-x-6">
+                              <div className="flex-shrink-0">
+                                <img 
+                                  src={enrollment.courses?.image_url || `https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80`}
+                                  alt={enrollment.courses?.title}
+                                  className="w-20 h-20 rounded-lg object-cover"
+                                />
+                              </div>
+                              
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="text-lg font-semibold text-gray-900 mb-2">{enrollment.courses?.title}</h4>
+                                    <p className="text-gray-600 mb-3 line-clamp-2">{enrollment.courses?.description}</p>
+                                    
+                                    <div className="flex items-center gap-4 mb-3">
+                                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                                        <Clock className="w-4 h-4 text-blue-500" />
+                                        <span>{enrollment.courses?.duration}</span>
+                                      </div>
+                                      <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50">
+                                        {enrollment.courses?.level}
+                                      </Badge>
+                                      <Badge 
+                                        variant={enrollment.status === 'active' ? 'default' : 'secondary'}
+                                        className={enrollment.status === 'active' ? 'bg-emerald-500 hover:bg-emerald-600 text-white' : ''}
+                                      >
+                                        {enrollment.status}
+                                      </Badge>
+                                    </div>
+                                    
+                                    <div className="space-y-2">
+                                      <div className="flex justify-between text-sm font-medium">
+                                        <span className="text-gray-700">Progress</span>
+                                        <span className="text-blue-600">{courseProgress}%</span>
+                                      </div>
+                                      <Progress 
+                                        value={courseProgress} 
+                                        className="w-full h-2 bg-gray-100"
+                                      />
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="flex flex-col gap-2 ml-6">
+                                    <Button 
+                                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                                      onClick={() => navigate(`/learn/${enrollment.courses?.id}`)}
+                                    >
+                                      <Play className="w-4 h-4 mr-2" />
+                                      Continue Learning
+                                    </Button>
+                                    
+                                    <div className="text-xs text-gray-500 flex items-center gap-1">
+                                      <Calendar className="h-3 w-3" />
+                                      Enrolled: {new Date(enrollment.enrollment_date).toLocaleDateString()}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                          
-                          <CardContent className="p-6 space-y-4">
-                            <CardDescription className="text-gray-600 line-clamp-2">
-                              {enrollment.courses?.description}
-                            </CardDescription>
-                            
-                            <div className="flex items-center gap-4 text-sm text-gray-600">
-                              <div className="flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-blue-500" />
-                                <span>{enrollment.courses?.duration}</span>
-                              </div>
-                              <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50">
-                                {enrollment.courses?.level}
-                              </Badge>
-                            </div>
-                            
-                            <div className="space-y-3">
-                              <div className="flex justify-between text-sm font-medium">
-                                <span className="text-gray-700">Progress</span>
-                                <span className="text-blue-600">{courseProgress}%</span>
-                              </div>
-                              <Progress 
-                                value={courseProgress} 
-                                className="w-full h-2 bg-gray-100"
-                              />
-                            </div>
-                            
-                            <div className="flex gap-2 pt-2">
-                              <Button 
-                                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                                onClick={() => navigate(`/learn/${enrollment.courses?.id}`)}
-                              >
-                                <Play className="w-4 h-4 mr-2" />
-                                Continue Learning
-                              </Button>
-                            </div>
-                            
-                            <div className="text-xs text-gray-500 flex items-center gap-1 pt-2 border-t">
-                              <Calendar className="h-3 w-3" />
-                              Enrolled: {new Date(enrollment.enrollment_date).toLocaleDateString()}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
