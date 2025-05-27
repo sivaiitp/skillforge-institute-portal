@@ -64,16 +64,16 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           position: absolute;
           top: 0;
           right: 0;
-          width: 320px;
-          height: 320px;
+          width: 256px;
+          height: 256px;
         }
         
         .bottom-left-curve {
           position: absolute;
           bottom: 0;
           left: 0;
-          width: 384px;
-          height: 384px;
+          width: 288px;
+          height: 288px;
         }
         
         .watermark {
@@ -82,11 +82,11 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           display: flex;
           align-items: center;
           justify-content: center;
-          opacity: 0.05;
+          opacity: 0.03;
           transform: rotate(-12deg);
-          font-size: 120px;
+          font-size: 100px;
           font-weight: 800;
-          color: #64748b;
+          color: #9ca3af;
           pointer-events: none;
         }
         
@@ -130,18 +130,21 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           font-weight: 700;
           color: #1f2937;
           margin: 0;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .brand-text p {
           font-size: 12px;
           color: #6b7280;
           margin: 2px 0 0 0;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .year {
           font-size: 32px;
           font-weight: 700;
           color: #2563eb;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .certificate-title {
@@ -155,6 +158,7 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           color: #2563eb;
           margin: 0 0 8px 0;
           letter-spacing: 4px;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .certificate-title h2 {
@@ -163,6 +167,7 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           color: #2563eb;
           margin: 0;
           letter-spacing: 4px;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .certificate-body {
@@ -179,6 +184,7 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           color: #374151;
           font-weight: 500;
           margin: 0;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .recipient-section {
@@ -190,6 +196,7 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           font-weight: 700;
           color: #1f2937;
           margin: 0 0 16px 0;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .name-underline {
@@ -203,6 +210,7 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           font-size: 18px;
           color: #374151;
           margin: 8px 0;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .course-name {
@@ -211,18 +219,21 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           color: #2563eb;
           margin: 8px 0;
           padding: 8px 24px;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .conducted-text {
           font-size: 18px;
           color: #374151;
           margin: 8px 0;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .date-text {
           font-size: 18px;
           color: #374151;
           margin: 8px 0;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .signatures {
@@ -248,12 +259,14 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           font-weight: 600;
           color: #374151;
           margin: 0;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .signature-subtitle {
           font-size: 12px;
           color: #6b7280;
           margin: 2px 0 0 0;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .certificate-footer {
@@ -265,6 +278,7 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           font-size: 12px;
           color: #9ca3af;
           margin: 0;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .status-valid {
@@ -294,13 +308,13 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
       <div class="certificate">
         <div class="background-design">
           <div class="top-right-curve">
-            <svg viewBox="0 0 320 320" style="width: 100%; height: 100%;">
-              <path d="M320,0 L320,200 Q200,320 0,320 L0,0 Z" fill="#2563eb" opacity="0.9"/>
+            <svg viewBox="0 0 256 256" style="width: 100%; height: 100%;">
+              <path d="M256,0 L256,128 Q128,256 0,256 L0,0 Z" fill="#2563eb" opacity="0.15"/>
             </svg>
           </div>
           <div class="bottom-left-curve">
-            <svg viewBox="0 0 384 384" style="width: 100%; height: 100%;">
-              <path d="M0,384 L0,184 Q120,64 320,64 L384,64 L384,384 Z" fill="#2563eb" opacity="0.9"/>
+            <svg viewBox="0 0 288 288" style="width: 100%; height: 100%;">
+              <path d="M0,288 L0,144 Q72,72 216,72 L288,72 L288,288 Z" fill="#2563eb" opacity="0.15"/>
             </svg>
           </div>
           <div class="watermark">RaceCoding</div>

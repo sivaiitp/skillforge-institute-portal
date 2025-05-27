@@ -44,23 +44,23 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
         <div className="mt-6">
           {/* Certificate Design */}
           <div className="relative bg-white border rounded-2xl p-0 text-center overflow-hidden shadow-2xl" style={{ aspectRatio: '1414/1000' }}>
-            {/* Blue curved background design */}
+            {/* Blue curved background design with reduced opacity */}
             <div className="absolute inset-0">
               {/* Top right curved element */}
-              <div className="absolute top-0 right-0 w-80 h-80">
-                <svg viewBox="0 0 320 320" className="w-full h-full">
-                  <path d="M320,0 L320,200 Q200,320 0,320 L0,0 Z" fill="#2563eb" opacity="0.9"/>
+              <div className="absolute top-0 right-0 w-64 h-64">
+                <svg viewBox="0 0 256 256" className="w-full h-full">
+                  <path d="M256,0 L256,128 Q128,256 0,256 L0,0 Z" fill="#2563eb" opacity="0.15"/>
                 </svg>
               </div>
               {/* Bottom left curved element */}
-              <div className="absolute bottom-0 left-0 w-96 h-96">
-                <svg viewBox="0 0 384 384" className="w-full h-full">
-                  <path d="M0,384 L0,184 Q120,64 320,64 L384,64 L384,384 Z" fill="#2563eb" opacity="0.9"/>
+              <div className="absolute bottom-0 left-0 w-72 h-72">
+                <svg viewBox="0 0 288 288" className="w-full h-full">
+                  <path d="M0,288 L0,144 Q72,72 216,72 L288,72 L288,288 Z" fill="#2563eb" opacity="0.15"/>
                 </svg>
               </div>
-              {/* Large watermark background */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-5">
-                <div className="text-9xl font-bold text-gray-600 transform -rotate-12">RaceCoding</div>
+              {/* Large watermark background with very low opacity */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-3">
+                <div className="text-8xl font-bold text-gray-400 transform -rotate-12">RaceCoding</div>
               </div>
             </div>
             
@@ -83,32 +83,32 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
               
               {/* Certificate Title */}
               <div className="mb-8">
-                <h1 className="text-5xl font-bold text-blue-700 mb-2 tracking-wider">
+                <h1 className="text-5xl font-bold text-blue-700 mb-2 tracking-wider drop-shadow-sm">
                   CERTIFICATE
                 </h1>
-                <h2 className="text-4xl font-bold text-blue-700 tracking-wider">
+                <h2 className="text-4xl font-bold text-blue-700 tracking-wider drop-shadow-sm">
                   OF COMPLETION
                 </h2>
               </div>
               
               {/* Certificate Content */}
               <div className="flex-1 flex flex-col justify-center space-y-6">
-                <p className="text-lg text-gray-700 font-medium">
+                <p className="text-lg text-gray-700 font-medium drop-shadow-sm">
                   This certificate is proudly presented to
                 </p>
                 
                 <div className="my-8">
-                  <h2 className="text-4xl font-bold text-gray-800 mb-4">{certificate.profiles.full_name}</h2>
+                  <h2 className="text-4xl font-bold text-gray-800 mb-4 drop-shadow-sm">{certificate.profiles.full_name}</h2>
                   <div className="w-32 h-0.5 bg-gray-400 mx-auto"></div>
                 </div>
                 
                 <div className="space-y-2">
-                  <p className="text-lg text-gray-700">has successfully completed the course on</p>
-                  <h3 className="text-2xl font-bold text-blue-700 px-6 py-2">
+                  <p className="text-lg text-gray-700 drop-shadow-sm">has successfully completed the course on</p>
+                  <h3 className="text-2xl font-bold text-blue-700 px-6 py-2 drop-shadow-sm">
                     {certificate.courses.title}
                   </h3>
-                  <p className="text-lg text-gray-700">Conducted by RaceCoding Institute</p>
-                  <p className="text-lg text-gray-700">
+                  <p className="text-lg text-gray-700 drop-shadow-sm">Conducted by RaceCoding Institute</p>
+                  <p className="text-lg text-gray-700 drop-shadow-sm">
                     on {new Date(certificate.issued_date).toLocaleDateString('en-US', { 
                       year: 'numeric', 
                       month: 'long', 
@@ -122,24 +122,24 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
               <div className="mt-8 grid grid-cols-3 gap-8 text-sm">
                 <div className="text-center">
                   <div className="w-24 h-px bg-gray-400 mx-auto mb-2"></div>
-                  <p className="font-semibold text-gray-700">Technical Director</p>
-                  <p className="text-gray-600">RaceCoding</p>
+                  <p className="font-semibold text-gray-700 drop-shadow-sm">Technical Director</p>
+                  <p className="text-gray-600 drop-shadow-sm">RaceCoding</p>
                 </div>
                 <div className="text-center">
                   <div className="w-24 h-px bg-gray-400 mx-auto mb-2"></div>
-                  <p className="font-semibold text-gray-700">Overall Head</p>
-                  <p className="text-gray-600">RaceCoding Institute</p>
+                  <p className="font-semibold text-gray-700 drop-shadow-sm">Overall Head</p>
+                  <p className="text-gray-600 drop-shadow-sm">RaceCoding Institute</p>
                 </div>
                 <div className="text-center">
                   <div className="w-24 h-px bg-gray-400 mx-auto mb-2"></div>
-                  <p className="font-semibold text-gray-700">Business Head</p>
-                  <p className="text-gray-600">RaceCoding</p>
+                  <p className="font-semibold text-gray-700 drop-shadow-sm">Business Head</p>
+                  <p className="text-gray-600 drop-shadow-sm">RaceCoding</p>
                 </div>
               </div>
               
               {/* Certificate ID */}
               <div className="mt-6 text-center">
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 drop-shadow-sm">
                   Certificate ID: {certificate.certificate_number} | 
                   Status: <span className={certificate.is_valid ? 'text-green-600' : 'text-red-600'}>
                     {certificate.is_valid ? 'Valid' : 'Revoked'}
