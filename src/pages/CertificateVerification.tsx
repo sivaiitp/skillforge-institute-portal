@@ -109,7 +109,7 @@ const CertificateVerification = () => {
       
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4 text-center">
+        <div className="max-w-3xl mx-auto px-4 text-center">
           <Award className="mx-auto h-16 w-16 mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Certificate Verification
@@ -123,7 +123,7 @@ const CertificateVerification = () => {
 
       {/* Verification Section */}
       <section className="py-20 flex-1">
-        <div className="container mx-auto px-4 max-w-2xl">
+        <div className="max-w-2xl mx-auto px-4">
           <Card className="shadow-lg">
             <CardHeader className="text-center">
               <CardTitle className="flex items-center justify-center gap-2 text-2xl">

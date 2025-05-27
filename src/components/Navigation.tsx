@@ -34,7 +34,7 @@ const Navigation = () => {
     { path: "/about", label: "About" },
     { path: "/courses", label: "Courses" },
     { path: "/events", label: "Events" },
-    { path: "/career", label: "Career" },
+    { path: "/career", label: "Career Guidance" },
     { path: "/verify-certificate", label: "Verify Certificate" },
     { path: "/contact", label: "Contact" },
   ];
