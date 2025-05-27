@@ -10,8 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, FileText, Clock, GraduationCap, CheckCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, FileText, Clock, GraduationCap, CheckCircle, Settings, Users } from 'lucide-react';
 import AdminSidebar from '@/components/AdminSidebar';
+import QuestionManagement from '@/components/assessments/QuestionManagement';
 
 const AssessmentManagement = () => {
   const { userRole } = useAuth();
@@ -19,6 +20,7 @@ const AssessmentManagement = () => {
   const [courses, setCourses] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingAssessment, setEditingAssessment] = useState(null);
+  const [selectedAssessment, setSelectedAssessment] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -124,7 +126,7 @@ const AssessmentManagement = () => {
   };
 
   const handleDelete = async (assessmentId) => {
-    if (!confirm('Are you sure you want to delete this assessment?')) return;
+    if (!confirm('Are you sure you want to delete this assessment? This will also delete all questions and attempts.')) return;
 
     const { error } = await supabase
       .from('assessments')
@@ -140,6 +142,10 @@ const AssessmentManagement = () => {
     fetchAssessments();
   };
 
+  const handleManageQuestions = (assessment) => {
+    setSelectedAssessment(assessment);
+  };
+
   if (userRole !== 'admin') {
     return (
       <div className="min-h-screen bg-gray-50 flex">
@@ -148,6 +154,31 @@ const AssessmentManagement = () => {
           <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
             <p className="text-gray-600">You don't have permission to access this page.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (selectedAssessment) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex">
+        <AdminSidebar />
+        <div className="flex-1 ml-64 p-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-6">
+              <Button 
+                variant="outline" 
+                onClick={() => setSelectedAssessment(null)}
+                className="mb-4"
+              >
+                ← Back to Assessments
+              </Button>
+            </div>
+            <QuestionManagement 
+              assessmentId={selectedAssessment.id} 
+              assessmentTitle={selectedAssessment.title}
+            />
           </div>
         </div>
       </div>
@@ -359,6 +390,15 @@ const AssessmentManagement = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleManageQuestions(assessment)}
+                              className="border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
+                              title="Manage Questions"
+                            >
+                              <Settings className="w-4 h-4" />
+                            </Button>
                             <Button
                               variant="outline"
                               size="sm"

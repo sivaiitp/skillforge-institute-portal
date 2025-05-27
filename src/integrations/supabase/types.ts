@@ -9,6 +9,109 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      assessment_attempts: {
+        Row: {
+          answers: Json | null
+          assessment_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          passed: boolean
+          score: number
+          started_at: string
+          status: string
+          time_spent: number | null
+          total_marks: number
+          user_id: string
+        }
+        Insert: {
+          answers?: Json | null
+          assessment_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          passed?: boolean
+          score?: number
+          started_at?: string
+          status?: string
+          time_spent?: number | null
+          total_marks: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json | null
+          assessment_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          passed?: boolean
+          score?: number
+          started_at?: string
+          status?: string
+          time_spent?: number | null
+          total_marks?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_attempts_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assessment_questions: {
+        Row: {
+          assessment_id: string
+          correct_answer: string
+          created_at: string
+          explanation: string | null
+          id: string
+          options: Json | null
+          points: number
+          question_text: string
+          question_type: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          assessment_id: string
+          correct_answer: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          options?: Json | null
+          points?: number
+          question_text: string
+          question_type?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          assessment_id?: string
+          correct_answer?: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          options?: Json | null
+          points?: number
+          question_text?: string
+          question_type?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_questions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessment_results: {
         Row: {
           assessment_id: string | null
