@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { TabsContent } from '@/components/ui/tabs';
 import QuestionImporter from './QuestionImporter';
 
 interface BulkQuestionTabProps {
@@ -10,18 +9,16 @@ interface BulkQuestionTabProps {
 
 const BulkQuestionTab = ({ assessmentId, onImportComplete }: BulkQuestionTabProps) => {
   return (
-    <TabsContent value="bulk" className="space-y-4">
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Import Bulk Questions</h3>
-          <p className="text-sm text-gray-600">Upload multiple questions at once using CSV format</p>
-        </div>
-        <QuestionImporter
-          assessmentId={assessmentId}
-          onImportComplete={onImportComplete}
-        />
+    <div className="bg-white rounded-xl shadow-sm border p-6">
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">Import Bulk Questions</h3>
+        <p className="text-sm text-gray-600">Upload multiple questions at once using CSV format</p>
       </div>
-    </TabsContent>
+      <QuestionImporter
+        assessmentId={assessmentId}
+        onImportComplete={onImportComplete}
+      />
+    </div>
   );
 };
 

@@ -63,20 +63,24 @@ const EnhancedQuestionManagement = ({ assessmentId, assessmentTitle }: EnhancedQ
           />
         </TabsContent>
 
-        <SingleQuestionTab
-          editingQuestion={editingQuestion}
-          formData={formData}
-          loading={loading}
-          onSubmit={handleSubmit}
-          onCancel={resetForm}
-          onFormDataChange={setFormData}
-          onActiveTabChange={setActiveTab}
-        />
+        <TabsContent value="single" className="space-y-4">
+          <SingleQuestionTab
+            editingQuestion={editingQuestion}
+            formData={formData}
+            loading={loading}
+            onSubmit={handleSubmit}
+            onCancel={resetForm}
+            onFormDataChange={setFormData}
+            onActiveTabChange={setActiveTab}
+          />
+        </TabsContent>
 
-        <BulkQuestionTab
-          assessmentId={assessmentId}
-          onImportComplete={fetchQuestions}
-        />
+        <TabsContent value="bulk" className="space-y-4">
+          <BulkQuestionTab
+            assessmentId={assessmentId}
+            onImportComplete={fetchQuestions}
+          />
+        </TabsContent>
 
         <TabsContent value="assign" className="space-y-4">
           <QuestionAssignment

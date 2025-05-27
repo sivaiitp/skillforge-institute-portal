@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { TabsContent } from '@/components/ui/tabs';
 import { ArrowLeft } from 'lucide-react';
 import QuestionForm from './QuestionForm';
 
@@ -49,28 +48,26 @@ const SingleQuestionTab = ({
   };
 
   return (
-    <TabsContent value="single" className="space-y-4">
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Add Single Question</h3>
-          <p className="text-sm text-gray-600">Create individual questions one at a time</p>
-        </div>
-        {editingQuestion && (
-          <div className="flex items-center gap-2 mb-4 text-sm text-blue-600">
-            <ArrowLeft className="w-4 h-4" />
-            Editing question: {editingQuestion.question_text.substring(0, 50)}...
-          </div>
-        )}
-        <QuestionForm
-          editingQuestion={editingQuestion}
-          formData={formData}
-          loading={loading}
-          onSubmit={handleSubmit}
-          onCancel={onCancel}
-          onFormDataChange={onFormDataChange}
-        />
+    <div className="bg-white rounded-xl shadow-sm border p-6">
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">Add Single Question</h3>
+        <p className="text-sm text-gray-600">Create individual questions one at a time</p>
       </div>
-    </TabsContent>
+      {editingQuestion && (
+        <div className="flex items-center gap-2 mb-4 text-sm text-blue-600">
+          <ArrowLeft className="w-4 h-4" />
+          Editing question: {editingQuestion.question_text.substring(0, 50)}...
+        </div>
+      )}
+      <QuestionForm
+        editingQuestion={editingQuestion}
+        formData={formData}
+        loading={loading}
+        onSubmit={handleSubmit}
+        onCancel={onCancel}
+        onFormDataChange={onFormDataChange}
+      />
+    </div>
   );
 };
 
