@@ -1,4 +1,3 @@
-
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -199,7 +198,12 @@ const Courses = () => {
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Take our free career assessment to find the perfect program for your goals.
           </p>
-          <Button size="lg" variant="secondary" className="text-blue-600 hover:bg-gray-100">
+          <Button 
+            size="lg" 
+            variant="secondary" 
+            className="text-blue-600 hover:bg-gray-100"
+            onClick={() => navigate('/free-assessment')}
+          >
             Take Free Assessment
           </Button>
         </div>
