@@ -16,6 +16,8 @@ import CertificateVerification from "./pages/CertificateVerification";
 import NotFound from "./pages/NotFound";
 import CourseLearning from "./pages/CourseLearning";
 import FreeAssessment from "./pages/FreeAssessment";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 // Admin pages
 import AdminDashboard from "./pages/AdminDashboard";
@@ -57,6 +59,8 @@ function App() {
               <Route path="/events" element={<Events />} />
               <Route path="/verify-certificate" element={<CertificateVerification />} />
               <Route path="/free-assessment" element={<FreeAssessment />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
               
               {/* Admin routes */}
               <Route path="/admin" element={<AdminDashboard />} />
