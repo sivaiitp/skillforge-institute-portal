@@ -57,14 +57,14 @@ const AdminSidebar = () => {
       </div>
       
       <nav className="p-3 flex-1 overflow-y-auto">
-        <ul className="space-y-1">
+        <ul className="space-y-0.5">
           {menuItems.map((item) => (
             <li key={item.path}>
               <NavLink
                 to={item.path}
                 end={item.exact}
                 className={({ isActive }) =>
-                  `group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium ${
+                  `group flex items-center px-3 py-2 rounded-lg transition-all duration-200 text-sm font-medium ${
                     isActive
                       ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"

@@ -15,7 +15,7 @@ interface Question {
   sort_order: number;
 }
 
-interface QuestionFormTabProps {
+interface SingleQuestionTabProps {
   editingQuestion: Question | null;
   formData: {
     question_text: string;
@@ -32,7 +32,7 @@ interface QuestionFormTabProps {
   onActiveTabChange: (tab: string) => void;
 }
 
-const QuestionFormTab = ({
+const SingleQuestionTab = ({
   editingQuestion,
   formData,
   loading,
@@ -40,7 +40,7 @@ const QuestionFormTab = ({
   onCancel,
   onFormDataChange,
   onActiveTabChange
-}: QuestionFormTabProps) => {
+}: SingleQuestionTabProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     const success = await onSubmit(e);
     if (success) {
@@ -49,8 +49,12 @@ const QuestionFormTab = ({
   };
 
   return (
-    <TabsContent value="add" className="space-y-4">
+    <TabsContent value="single" className="space-y-4">
       <div className="bg-white rounded-xl shadow-sm border p-6">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">Add Single Question</h3>
+          <p className="text-sm text-gray-600">Create individual questions one at a time</p>
+        </div>
         {editingQuestion && (
           <div className="flex items-center gap-2 mb-4 text-sm text-blue-600">
             <ArrowLeft className="w-4 h-4" />
@@ -70,4 +74,4 @@ const QuestionFormTab = ({
   );
 };
 
-export default QuestionFormTab;
+export default SingleQuestionTab;

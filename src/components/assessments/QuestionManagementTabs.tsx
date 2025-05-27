@@ -16,13 +16,13 @@ const QuestionManagementTabs = ({ activeTab, onTabChange }: QuestionManagementTa
           <FileText className="w-4 h-4" />
           Questions
         </TabsTrigger>
-        <TabsTrigger value="add" className="flex items-center gap-2">
+        <TabsTrigger value="single" className="flex items-center gap-2">
           <Plus className="w-4 h-4" />
-          Add New
+          Single Question
         </TabsTrigger>
-        <TabsTrigger value="import" className="flex items-center gap-2">
+        <TabsTrigger value="bulk" className="flex items-center gap-2">
           <Upload className="w-4 h-4" />
-          Import CSV
+          Bulk Questions
         </TabsTrigger>
         <TabsTrigger value="assign" className="flex items-center gap-2">
           <Users className="w-4 h-4" />

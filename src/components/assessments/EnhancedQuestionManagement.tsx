@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import QuestionImporter from './QuestionImporter';
 import QuestionAssignment from './QuestionAssignment';
 import QuestionBank from './QuestionBank';
 import QuestionManagementHeader from './QuestionManagementHeader';
 import QuestionManagementStats from './QuestionManagementStats';
 import QuestionManagementTabs from './QuestionManagementTabs';
-import QuestionFormTab from './QuestionFormTab';
+import SingleQuestionTab from './SingleQuestionTab';
+import BulkQuestionTab from './BulkQuestionTab';
 import QuestionsList from './QuestionsList';
 import { useQuestionManagement } from '@/hooks/useQuestionManagement';
 
@@ -34,12 +34,12 @@ const EnhancedQuestionManagement = ({ assessmentId, assessmentTitle }: EnhancedQ
 
   const handleAddQuestion = () => {
     resetForm();
-    setActiveTab('add');
+    setActiveTab('single');
   };
 
   const handleEditQuestion = (question: any) => {
     handleEdit(question);
-    setActiveTab('add');
+    setActiveTab('single');
   };
 
   return (
@@ -63,7 +63,7 @@ const EnhancedQuestionManagement = ({ assessmentId, assessmentTitle }: EnhancedQ
           />
         </TabsContent>
 
-        <QuestionFormTab
+        <SingleQuestionTab
           editingQuestion={editingQuestion}
           formData={formData}
           loading={loading}
@@ -73,12 +73,10 @@ const EnhancedQuestionManagement = ({ assessmentId, assessmentTitle }: EnhancedQ
           onActiveTabChange={setActiveTab}
         />
 
-        <TabsContent value="import" className="space-y-4">
-          <QuestionImporter
-            assessmentId={assessmentId}
-            onImportComplete={fetchQuestions}
-          />
-        </TabsContent>
+        <BulkQuestionTab
+          assessmentId={assessmentId}
+          onImportComplete={fetchQuestions}
+        />
 
         <TabsContent value="assign" className="space-y-4">
           <QuestionAssignment
