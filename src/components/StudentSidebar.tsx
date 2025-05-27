@@ -44,9 +44,9 @@ const items = [
   },
   {
     title: "Certificates",
-    url: "/dashboard/certificates",
+    url: "/verify-certificate",
     icon: Award,
-    description: "View earned certificates"
+    description: "Verify certificates"
   },
   {
     title: "Payments",
