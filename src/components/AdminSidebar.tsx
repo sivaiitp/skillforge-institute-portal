@@ -1,3 +1,4 @@
+
 import {
   BookOpen,
   Calendar,
@@ -14,10 +15,12 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminSidebar = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const menuItems = [
     { path: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -34,12 +37,31 @@ const AdminSidebar = () => {
 
   const handleLogout = async () => {
     try {
+      console.log('Admin logout initiated');
       await signOut();
-      navigate('/');
+      console.log('Admin signOut completed');
+      
+      // Show success message
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of the admin panel.",
+      });
+      
+      // Navigate to home page
+      navigate('/', { replace: true });
+      console.log('Admin navigation to home completed');
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('Error during admin logout:', error);
+      
+      // Show error message
+      toast({
+        title: "Logout Error",
+        description: "There was an issue logging out. Please try again.",
+        variant: "destructive",
+      });
+      
       // Force navigation to home even if signOut fails
-      navigate('/');
+      navigate('/', { replace: true });
     }
   };
 

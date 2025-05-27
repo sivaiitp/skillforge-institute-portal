@@ -61,6 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await fetchUserRole(session.user.id);
           }, 0);
         } else {
+          // Clear user role when no session
           setUserRole(null);
         }
         
@@ -117,8 +118,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    console.log('Starting signOut process');
+    
+    // Clear local state immediately
+    setUser(null);
+    setSession(null);
+    setUserRole(null);
+    
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Supabase signOut error:', error);
+        throw error;
+      }
+      console.log('Supabase signOut successful');
+    } catch (error) {
+      console.error('Error during signOut:', error);
+      // Don't throw the error, as we've already cleared local state
+      // This ensures the user appears logged out even if there's a network issue
+    }
   };
 
   const value = {
