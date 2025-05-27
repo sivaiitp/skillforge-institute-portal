@@ -95,68 +95,51 @@ export const useStudentSearch = () => {
     console.log('Searching for student with email:', searchEmail.trim());
     
     try {
-      // First, let's check all profiles to see what exists
+      // First check if there are any profiles at all
       const { data: allProfiles, error: allError } = await supabase
         .from('profiles')
-        .select('id, full_name, email, role');
+        .select('*');
 
-      console.log('All profiles in database:', allProfiles);
+      console.log('Total profiles in database:', allProfiles?.length || 0, allProfiles);
 
-      // Search with multiple methods to find the user
-      const searchMethods = [
-        // Exact match
-        () => supabase
-          .from('profiles')
-          .select('id, full_name, email, role')
-          .eq('email', searchEmail.trim()),
-        
-        // Case insensitive match
-        () => supabase
-          .from('profiles')
-          .select('id, full_name, email, role')
-          .ilike('email', searchEmail.trim()),
-        
-        // Lowercase exact match
-        () => supabase
-          .from('profiles')
-          .select('id, full_name, email, role')
-          .eq('email', searchEmail.trim().toLowerCase()),
-          
-        // Contains match
-        () => supabase
-          .from('profiles')
-          .select('id, full_name, email, role')
-          .ilike('email', `%${searchEmail.trim()}%`)
-      ];
-
-      let foundUser = null;
-      
-      for (let i = 0; i < searchMethods.length; i++) {
-        const { data: users, error } = await searchMethods[i]();
-        console.log(`Search method ${i + 1} result:`, { users, error });
-        
-        if (error) {
-          console.error(`Error in search method ${i + 1}:`, error);
-          continue;
-        }
-        
-        if (users && users.length > 0) {
-          foundUser = users[0];
-          console.log(`Found user with method ${i + 1}:`, foundUser);
-          break;
-        }
+      if (allError) {
+        console.error('Error fetching all profiles:', allError);
       }
 
-      if (!foundUser) {
-        // Let's also check auth.users to see if user exists there but not in profiles
-        console.log('No user found in profiles, this might indicate the user exists in auth but not in profiles table');
-        toast.error('No user found with this email address. The user might need to complete their profile setup.');
+      // Search for the user with various methods
+      const { data: users, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, role')
+        .ilike('email', searchEmail.trim());
+
+      console.log('Search results:', { users, error, searchEmail: searchEmail.trim() });
+
+      if (error) {
+        console.error('Error searching student:', error);
+        toast.error('Error searching for student');
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
-      // Check if the user has a role, if not, assume they need to be set as student
+      if (!users || users.length === 0) {
+        // If no profile found, let's check if we can create one from auth.users
+        console.log('No profile found, checking if user exists in auth...');
+        
+        // Try to get current user info to see if we can access auth data
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        console.log('Current auth user:', currentUser);
+
+        toast.error(`No student profile found for ${searchEmail.trim()}. The user may need to complete their profile setup or contact admin.`);
+        setSelectedStudent(null);
+        setEnrolledCourses([]);
+        return;
+      }
+
+      const foundUser = users[0];
+      console.log('Found user:', foundUser);
+
+      // Check if the user has a role, if not, we can't determine if they're a student
       if (!foundUser.role) {
         console.log('User found but has no role assigned');
         toast.error('User found but has no role assigned. Please contact admin to set up the user role.');
