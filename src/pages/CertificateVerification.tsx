@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,19 +15,18 @@ const CertificateVerification = () => {
   const [certificate, setCertificate] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<any>(null);
+  const [foundButInvalid, setFoundButInvalid] = useState(false);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSearching(true);
     setHasSearched(true);
-    setDebugInfo(null);
+    setFoundButInvalid(false);
 
     try {
       console.log('Searching for certificate:', certificateNumber);
       
       // First, let's search for the certificate regardless of validity status
-      // Fix the ambiguous relationship by specifying which profiles relationship to use
       const { data: allCerts, error: allCertsError } = await (supabase as any)
         .from('certificates')
         .select(`
@@ -68,15 +68,6 @@ const CertificateVerification = () => {
 
       console.log('Valid certificate query result:', { data, error });
 
-      // Set debug information
-      setDebugInfo({
-        searchTerm: certificateNumber.trim(),
-        allCertificates: allCerts,
-        validCertificate: data,
-        totalFound: allCerts?.length || 0,
-        foundButInvalid: allCerts && allCerts.length > 0 && !data
-      });
-
       if (error) {
         console.error('Error fetching certificate:', error);
         setCertificate(null);
@@ -94,6 +85,7 @@ const CertificateVerification = () => {
       if (!data) {
         setCertificate(null);
         if (allCerts && allCerts.length > 0) {
+          setFoundButInvalid(true);
           toast.error('Certificate found but is not valid (revoked).');
         } else {
           toast.error('Certificate not found.');
@@ -180,16 +172,6 @@ const CertificateVerification = () => {
                 </Button>
               </form>
 
-              {/* Debug Information (only in development) */}
-              {debugInfo && process.env.NODE_ENV === 'development' && (
-                <div className="mt-4 p-4 bg-gray-100 rounded-lg">
-                  <h4 className="font-semibold text-sm text-gray-800 mb-2">Debug Information:</h4>
-                  <pre className="text-xs text-gray-600 overflow-auto">
-                    {JSON.stringify(debugInfo, null, 2)}
-                  </pre>
-                </div>
-              )}
-
               {/* Results */}
               {hasSearched && (
                 <div className="mt-8 pt-8 border-t">
@@ -211,7 +193,7 @@ const CertificateVerification = () => {
                               <User className="w-5 h-5 text-gray-600" />
                               <Label className="text-sm font-semibold text-gray-600">Student Name</Label>
                             </div>
-                            <p className="text-lg font-medium">{certificate.profiles?.full_name || 'N/A'}</p>
+                            <p className="text-lg font-medium">{certificate.profiles?.full_name || 'Name not available'}</p>
                           </div>
                           
                           <div>
@@ -262,10 +244,10 @@ const CertificateVerification = () => {
                         <XCircle size={32} />
                         <div>
                           <h3 className="text-xl font-bold">
-                            {debugInfo?.foundButInvalid ? 'Certificate Revoked' : 'Certificate Not Found'}
+                            {foundButInvalid ? 'Certificate Revoked' : 'Certificate Not Found'}
                           </h3>
                           <p className="text-red-700">
-                            {debugInfo?.foundButInvalid 
+                            {foundButInvalid 
                               ? 'This certificate exists but has been revoked'
                               : 'Unable to verify this certificate'
                             }
@@ -275,9 +257,9 @@ const CertificateVerification = () => {
                       
                       <div className="bg-red-50 border border-red-200 rounded-lg p-6">
                         <h4 className="font-semibold text-red-800 mb-2">
-                          {debugInfo?.foundButInvalid ? 'Certificate Status:' : 'Possible reasons:'}
+                          {foundButInvalid ? 'Certificate Status:' : 'Possible reasons:'}
                         </h4>
-                        {debugInfo?.foundButInvalid ? (
+                        {foundButInvalid ? (
                           <ul className="text-red-700 space-y-1">
                             <li>• This certificate has been revoked by the institution</li>
                             <li>• The certificate is no longer valid</li>
