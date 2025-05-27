@@ -73,7 +73,7 @@ export const useCertificateManagement = () => {
   const issueCertificate = async (selectedStudent: any, selectedCourse: string) => {
     if (!selectedStudent || !selectedCourse) {
       toast.error('Please select both a student and a course');
-      return false;
+      return null;
     }
 
     try {
@@ -92,16 +92,17 @@ export const useCertificateManagement = () => {
           *,
           courses (title),
           profiles!certificates_user_id_fkey (full_name, email)
-        `);
+        `)
+        .single();
 
       if (error) throw error;
 
       toast.success('Certificate issued successfully!');
-      return true;
+      return data;
     } catch (error) {
       toast.error('Error issuing certificate');
       console.error('Error:', error);
-      return false;
+      return null;
     } finally {
       setLoading(false);
     }
