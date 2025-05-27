@@ -42,9 +42,9 @@ const About = () => {
       
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4 text-center">
+        <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">About RaceCodingInstitute</h1>
-          <p className="text-xl max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl max-w-2xl mx-auto leading-relaxed">
             Transforming careers through world-class technology education and industry-focused training programs.
           </p>
         </div>
@@ -52,7 +52,7 @@ const About = () => {
 
       {/* Mission & Vision */}
       <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="max-w-5xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12">
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
@@ -85,7 +85,7 @@ const About = () => {
 
       {/* Faculty Section */}
       <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
               Meet Our Expert Faculty
@@ -119,7 +119,7 @@ const About = () => {
 
       {/* Industry Affiliations */}
       <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="max-w-5xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
               Industry Affiliations
