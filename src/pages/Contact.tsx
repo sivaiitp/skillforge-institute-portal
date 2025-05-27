@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Navigation from "@/components/Navigation";
@@ -70,6 +70,7 @@ const Contact = () => {
           }}
         ></div>
         <div className="w-full max-w-[85%] mx-auto px-4 text-center relative z-10">
+          <MessageSquare className="mx-auto h-16 w-16 mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Get in Touch
           </h1>

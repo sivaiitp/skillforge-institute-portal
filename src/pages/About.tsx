@@ -3,6 +3,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Users } from "lucide-react";
 import { useAboutContent, useFacultyMembers, useSiteSettings } from "@/hooks/useSiteSettings";
 
 const About = () => {
@@ -38,8 +39,16 @@ const About = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 text-center">
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-20"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')`
+          }}
+        ></div>
+        <div className="w-full max-w-[85%] mx-auto px-4 text-center relative z-10">
+          <Users className="mx-auto h-16 w-16 mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold mb-6">About {instituteName}</h1>
           <p className="text-xl max-w-2xl mx-auto leading-relaxed">
             Transforming careers through world-class technology education and industry-focused training programs.

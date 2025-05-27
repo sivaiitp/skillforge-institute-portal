@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, MapPin, Users } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, CalendarDays } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navigation from "@/components/Navigation";
@@ -52,6 +52,7 @@ const Events = () => {
           }}
         ></div>
         <div className="w-full max-w-[85%] mx-auto px-4 text-center relative z-10">
+          <CalendarDays className="mx-auto h-16 w-16 mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Upcoming Events & Workshops
           </h1>
