@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { User, EnrolledCourse } from '@/types/certificateIssuing';
@@ -7,13 +7,13 @@ import type { User, EnrolledCourse } from '@/types/certificateIssuing';
 export const useCertificateGeneration = () => {
   const [isIssuingCertificate, setIsIssuingCertificate] = useState(false);
 
-  const generateCertificateNumber = () => {
+  const generateCertificateNumber = useCallback(() => {
     const year = new Date().getFullYear();
     const timestamp = Date.now();
     return `CERT-${year}-${timestamp.toString().slice(-6)}`;
-  };
+  }, []);
 
-  const issueCertificate = async (
+  const issueCertificate = useCallback(async (
     selectedUser: User | null,
     selectedCourse: string,
     enrolledCourses: EnrolledCourse[]
@@ -59,7 +59,7 @@ export const useCertificateGeneration = () => {
     } finally {
       setIsIssuingCertificate(false);
     }
-  };
+  }, [generateCertificateNumber]);
 
   return {
     isIssuingCertificate,

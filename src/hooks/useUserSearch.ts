@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { User } from '@/types/certificateIssuing';
@@ -9,7 +9,7 @@ export const useUserSearch = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
-  const searchUsers = async () => {
+  const searchUsers = useCallback(async () => {
     if (!searchName.trim()) {
       toast.error('Please enter a user name');
       return;
@@ -58,12 +58,12 @@ export const useUserSearch = () => {
     } finally {
       setIsSearching(false);
     }
-  };
+  }, [searchName]);
 
-  const clearUser = () => {
+  const clearUser = useCallback(() => {
     setSelectedUser(null);
     setSearchName('');
-  };
+  }, []);
 
   return {
     searchName,
