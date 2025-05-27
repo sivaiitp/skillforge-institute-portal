@@ -34,6 +34,7 @@ import StudentCertificates from "./pages/StudentCertificates";
 import Career from "./pages/Career";
 import Events from "./pages/Events";
 import FreeAssessment from "./pages/FreeAssessment";
+import PersonalizedAssessment from "./pages/PersonalizedAssessment";
 import NotFound from "./pages/NotFound";
 import TakeAssessment from "./pages/TakeAssessment";
 import AssessmentResult from "./pages/AssessmentResult";
@@ -60,6 +61,7 @@ function App() {
               <Route path="/career" element={<Career />} />
               <Route path="/events" element={<Events />} />
               <Route path="/free-assessment" element={<FreeAssessment />} />
+              <Route path="/personalized-assessment" element={<PersonalizedAssessment />} />
               <Route path="/verify-certificate" element={<CertificateVerification />} />
               
               {/* Course Routes */}
