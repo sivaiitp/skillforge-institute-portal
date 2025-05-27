@@ -77,7 +77,7 @@ const StudentCertificates = () => {
     toast.info('Certificate download feature coming soon!');
   };
 
-  const handleVerify = (certificateNumber: string) => {
+  const handleViewCertificate = (certificateNumber: string) => {
     navigate(`/verify-certificate?cert=${certificateNumber}`);
   };
 
@@ -126,66 +126,69 @@ const StudentCertificates = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {certificates.map((certificate) => (
-                      <Card key={certificate.id} className="hover:shadow-lg transition-all duration-200 border-0 shadow-md">
-                        <CardHeader className="pb-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
-                                <CheckCircle className="w-6 h-6 text-white" />
-                              </div>
-                              <div>
-                                <CardTitle className="text-lg font-bold text-gray-800">
-                                  {certificate.courses?.certification || 'Certificate'}
-                                </CardTitle>
-                                <CardDescription className="text-sm text-gray-600">
-                                  {certificate.courses?.title}
-                                </CardDescription>
-                              </div>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        
-                        <CardContent className="space-y-4">
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <Calendar className="w-4 h-4" />
-                              <span>Issued: {new Date(certificate.issued_date).toLocaleDateString()}</span>
-                            </div>
-                            
-                            <div className="p-3 bg-gray-50 rounded-lg">
-                              <p className="text-xs text-gray-500 mb-1">Certificate Number</p>
-                              <p className="font-mono text-sm font-medium text-gray-800">
-                                {certificate.certificate_number}
-                              </p>
-                            </div>
+                <div className="space-y-4">
+                  {certificates.map((certificate) => (
+                    <div key={certificate.id} className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4 flex-1">
+                          <div className="p-3 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
+                            <CheckCircle className="w-6 h-6 text-white" />
                           </div>
                           
-                          <div className="flex gap-2 pt-2">
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              className="flex-1"
-                              onClick={() => handleVerify(certificate.certificate_number)}
-                            >
-                              <Eye className="w-4 h-4 mr-2" />
-                              Verify
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-                              onClick={() => handleDownload(certificate)}
-                            >
-                              <Download className="w-4 h-4 mr-2" />
-                              Download
-                            </Button>
+                          <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Certificate</label>
+                              <p className="text-sm font-semibold text-gray-800 mt-1">{certificate.courses?.certification || 'Certificate'}</p>
+                              <p className="text-xs text-gray-600">{certificate.courses?.title}</p>
+                            </div>
+                            
+                            <div>
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Certificate Number</label>
+                              <p className="font-mono text-sm font-medium text-gray-800 mt-1">{certificate.certificate_number}</p>
+                            </div>
+                            
+                            <div>
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Issued Date</label>
+                              <p className="text-sm font-medium text-gray-800 mt-1 flex items-center gap-1">
+                                <Calendar className="w-4 h-4 text-gray-400" />
+                                {new Date(certificate.issued_date).toLocaleDateString()}
+                              </p>
+                            </div>
+                            
+                            <div>
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</label>
+                              <div className="mt-1">
+                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                                  <CheckCircle className="w-3 h-3" />
+                                  Valid
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
+                        </div>
+                        
+                        <div className="flex gap-2 ml-6">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="hover:bg-blue-50 hover:border-blue-300"
+                            onClick={() => handleViewCertificate(certificate.certificate_number)}
+                          >
+                            <Eye className="w-4 h-4 mr-2" />
+                            View
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                            onClick={() => handleDownload(certificate)}
+                          >
+                            <Download className="w-4 h-4 mr-2" />
+                            Download
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
