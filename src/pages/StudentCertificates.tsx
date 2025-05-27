@@ -9,15 +9,22 @@ import { Button } from '@/components/ui/button';
 import { Award, Download, Eye, Calendar, BookOpen, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import CertificateViewModal from '@/components/certificates/CertificateViewModal';
 
 interface Certificate {
   id: string;
   certificate_number: string;
   issued_date: string;
   is_valid: boolean;
+  user_id: string;
+  course_id: string;
   courses: {
     title: string;
     certification: string;
+  };
+  profiles: {
+    full_name: string;
+    email: string;
   };
 }
 
@@ -26,6 +33,8 @@ const StudentCertificates = () => {
   const navigate = useNavigate();
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -51,6 +60,10 @@ const StudentCertificates = () => {
           courses (
             title,
             certification
+          ),
+          profiles (
+            full_name,
+            email
           )
         `)
         .eq('user_id', user?.id)
@@ -77,8 +90,14 @@ const StudentCertificates = () => {
     toast.info('Certificate download feature coming soon!');
   };
 
-  const handleViewCertificate = (certificateNumber: string) => {
-    navigate(`/verify-certificate?cert=${certificateNumber}`);
+  const handleViewCertificate = (certificate: Certificate) => {
+    setSelectedCertificate(certificate);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedCertificate(null);
   };
 
   if (!user) return null;
@@ -172,7 +191,7 @@ const StudentCertificates = () => {
                             size="sm" 
                             variant="outline" 
                             className="hover:bg-blue-50 hover:border-blue-300"
-                            onClick={() => handleViewCertificate(certificate.certificate_number)}
+                            onClick={() => handleViewCertificate(certificate)}
                           >
                             <Eye className="w-4 h-4 mr-2" />
                             View
@@ -195,6 +214,13 @@ const StudentCertificates = () => {
           </div>
         </div>
       </div>
+
+      <CertificateViewModal
+        certificate={selectedCertificate}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onDownload={handleDownload}
+      />
     </SidebarProvider>
   );
 };
