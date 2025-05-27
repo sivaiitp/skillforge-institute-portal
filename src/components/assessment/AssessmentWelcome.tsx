@@ -14,18 +14,18 @@ const AssessmentWelcome = ({ onStart }: AssessmentWelcomeProps) => {
         Free Skill Assessment
       </h1>
       <p className="text-xl text-gray-600 mb-8">
-        Discover your current skill level and get personalized course recommendations
+        Discover your current skill level with our randomized assessment covering multiple tech domains
       </p>
       
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Assessment Details</CardTitle>
-          <CardDescription>What to expect from this assessment</CardDescription>
+          <CardDescription>What to expect from this randomized assessment</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <span>Number of Questions:</span>
-            <Badge variant="secondary">15 Questions</Badge>
+            <Badge variant="secondary">15 Questions (Randomized)</Badge>
           </div>
           <div className="flex items-center justify-between">
             <span>Time Limit:</span>
@@ -36,11 +36,22 @@ const AssessmentWelcome = ({ onStart }: AssessmentWelcomeProps) => {
             <Badge variant="secondary">Web Dev, Data Science, Cloud, DSA</Badge>
           </div>
           <div className="flex items-center justify-between">
+            <span>Question Selection:</span>
+            <Badge variant="secondary">Random from 100+ Questions</Badge>
+          </div>
+          <div className="flex items-center justify-between">
             <span>Difficulty Level:</span>
             <Badge variant="secondary">Beginner to Intermediate</Badge>
           </div>
         </CardContent>
       </Card>
+
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-sm text-blue-800">
+          <strong>New:</strong> Each assessment now features a unique set of randomly selected questions 
+          from our expanded question bank, ensuring a fresh experience every time!
+        </p>
+      </div>
 
       <Button 
         size="lg" 

@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import AssessmentWelcome from "@/components/assessment/AssessmentWelcome";
 import AssessmentQuestion from "@/components/assessment/AssessmentQuestion";
 import AssessmentResults from "@/components/assessment/AssessmentResults";
-import { sampleQuestions } from "@/data/sampleQuestions";
-import { AssessmentResults as ResultsType, CategoryScore } from "@/types/assessmentTypes";
+import { getRandomQuestions } from "@/data/sampleQuestions";
+import { AssessmentResults as ResultsType, CategoryScore, Question } from "@/types/assessmentTypes";
 
 const FreeAssessment = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -15,6 +15,16 @@ const FreeAssessment = () => {
   const [showResults, setShowResults] = useState(false);
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
   const [assessmentStarted, setAssessmentStarted] = useState(false);
+  const [questions, setQuestions] = useState<Question[]>([]);
+
+  // Generate random questions when assessment starts
+  useEffect(() => {
+    if (assessmentStarted && questions.length === 0) {
+      const randomQuestions = getRandomQuestions(15);
+      setQuestions(randomQuestions);
+      console.log('Generated random questions:', randomQuestions.map(q => ({ category: q.category, question: q.question.substring(0, 50) + '...' })));
+    }
+  }, [assessmentStarted, questions.length]);
 
   useEffect(() => {
     if (assessmentStarted && timeLeft > 0 && !showResults) {
@@ -39,7 +49,7 @@ const FreeAssessment = () => {
       newAnswers[currentQuestion] = selectedAnswer;
       setAnswers(newAnswers);
       
-      if (currentQuestion < sampleQuestions.length - 1) {
+      if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
         setSelectedAnswer(null);
       } else {
@@ -69,8 +79,8 @@ const FreeAssessment = () => {
     const categoryScores: { [key: string]: CategoryScore } = {};
 
     answers.forEach((answer, index) => {
-      if (index < sampleQuestions.length) {
-        const question = sampleQuestions[index];
+      if (index < questions.length) {
+        const question = questions[index];
         const category = question.category;
         
         if (!categoryScores[category]) {
@@ -86,7 +96,7 @@ const FreeAssessment = () => {
       }
     });
 
-    const totalQuestions = Math.min(answers.length, sampleQuestions.length);
+    const totalQuestions = Math.min(answers.length, questions.length);
     const percentage = Math.round((correctAnswers / totalQuestions) * 100);
 
     return { correctAnswers, totalQuestions, percentage, categoryScores };
@@ -102,12 +112,22 @@ const FreeAssessment = () => {
       return <AssessmentResults results={results} />;
     }
 
-    const question = sampleQuestions[currentQuestion];
+    // Show loading if questions haven't been generated yet
+    if (questions.length === 0) {
+      return (
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Preparing your personalized assessment...</p>
+        </div>
+      );
+    }
+
+    const question = questions[currentQuestion];
     return (
       <AssessmentQuestion
         question={question}
         currentQuestion={currentQuestion}
-        totalQuestions={sampleQuestions.length}
+        totalQuestions={questions.length}
         selectedAnswer={selectedAnswer}
         timeLeft={timeLeft}
         onAnswerSelect={handleAnswerSelect}
