@@ -65,7 +65,7 @@ const AdminSidebar = () => {
     {
       title: 'Certification Management',
       icon: Award,
-      href: '/admin/certifications',
+      href: '/admin/certificates',
       description: 'Issue and validate certificates'
     },
     {
