@@ -34,7 +34,7 @@ const Hero = () => {
   ];
 
   return (
-    <section className="relative pt-6 pb-10 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-[80vh] flex items-center">
+    <section className="relative pt-16 pb-10 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-[80vh] flex items-center">
       {/* Background Pattern */}
       <div 
         className="absolute inset-0 opacity-30"
