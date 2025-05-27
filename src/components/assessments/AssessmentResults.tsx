@@ -1,14 +1,22 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { TrendingUp, History } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface AssessmentResultsProps {
   results: any[];
 }
 
 export const AssessmentResults = ({ results }: AssessmentResultsProps) => {
+  const navigate = useNavigate();
+
   if (results.length === 0) return null;
+
+  const handleViewHistory = (assessmentId: string) => {
+    navigate(`/assessment-history/${assessmentId}`);
+  };
 
   return (
     <section>
@@ -34,16 +42,27 @@ export const AssessmentResults = ({ results }: AssessmentResultsProps) => {
                     Taken on: {new Date(result.taken_at).toLocaleDateString()}
                   </p>
                 </div>
-                <div className="text-right space-y-1">
-                  <div className="font-medium">
-                    {result.score}/{result.total_marks}
+                <div className="flex items-center gap-4">
+                  <div className="text-right space-y-1">
+                    <div className="font-medium">
+                      {result.score}/{result.total_marks}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {Math.round((result.score / result.total_marks) * 100)}%
+                    </div>
+                    <Badge variant={result.passed ? "default" : "destructive"}>
+                      {result.passed ? "Passed" : "Failed"}
+                    </Badge>
                   </div>
-                  <div className="text-sm text-gray-600">
-                    {Math.round((result.score / result.total_marks) * 100)}%
-                  </div>
-                  <Badge variant={result.passed ? "default" : "destructive"}>
-                    {result.passed ? "Passed" : "Failed"}
-                  </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleViewHistory(result.assessment_id)}
+                    className="flex items-center gap-2"
+                  >
+                    <History className="h-4 w-4" />
+                    View History
+                  </Button>
                 </div>
               </div>
             ))}
