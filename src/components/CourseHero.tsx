@@ -33,8 +33,15 @@ const CourseHero = ({
   loading 
 }: CourseHeroProps) => {
   return (
-    <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-      <div className="container mx-auto px-4">
+    <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
+      <div className="absolute inset-0 bg-black/20"></div>
+      <div 
+        className="absolute inset-0 bg-cover bg-center opacity-20"
+        style={{
+          backgroundImage: `url('${course.image_url || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'}')`
+        }}
+      ></div>
+      <div className="w-full max-w-[85%] mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <div className="flex items-center gap-3 mb-4">

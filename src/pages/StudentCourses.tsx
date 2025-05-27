@@ -114,7 +114,7 @@ const StudentCourses = () => {
             </header>
             
             <div className="flex justify-center">
-              <div className="p-8 space-y-8 max-w-7xl w-full">
+              <div className="p-8 space-y-8 w-full max-w-[85%]">
                 <div className="text-center space-y-4">
                   <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     My Enrolled Courses
