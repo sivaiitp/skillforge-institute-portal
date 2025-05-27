@@ -43,72 +43,110 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
         
         <div className="mt-6">
           {/* Certificate Design */}
-          <div className="relative bg-white border rounded-2xl p-0 text-center overflow-hidden shadow-2xl" style={{ aspectRatio: '1414/1000' }}>
-            {/* Blue curved background design with reduced opacity */}
-            <div className="absolute inset-0">
-              {/* Top right curved element */}
-              <div className="absolute top-0 right-0 w-64 h-64">
-                <svg viewBox="0 0 256 256" className="w-full h-full">
-                  <path d="M256,0 L256,128 Q128,256 0,256 L0,0 Z" fill="#2563eb" opacity="0.15"/>
+          <div className="relative bg-white rounded-3xl p-0 text-center overflow-hidden shadow-2xl border-8 border-gradient-to-r from-blue-200 via-purple-200 to-blue-200" style={{ aspectRatio: '1414/1000' }}>
+            {/* Elegant Border Design */}
+            <div className="absolute inset-4 border-4 border-double border-blue-300 rounded-2xl"></div>
+            <div className="absolute inset-6 border-2 border-gold-300 rounded-xl opacity-60"></div>
+            
+            {/* Subtle background pattern */}
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute top-0 right-0 w-48 h-48">
+                <svg viewBox="0 0 200 200" className="w-full h-full">
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#2563eb" strokeWidth="2" opacity="0.3"/>
+                  <circle cx="100" cy="100" r="60" fill="none" stroke="#2563eb" strokeWidth="1" opacity="0.2"/>
+                  <circle cx="100" cy="100" r="40" fill="none" stroke="#2563eb" strokeWidth="1" opacity="0.1"/>
                 </svg>
               </div>
-              {/* Bottom left curved element */}
-              <div className="absolute bottom-0 left-0 w-72 h-72">
-                <svg viewBox="0 0 288 288" className="w-full h-full">
-                  <path d="M0,288 L0,144 Q72,72 216,72 L288,72 L288,288 Z" fill="#2563eb" opacity="0.15"/>
+              <div className="absolute bottom-0 left-0 w-48 h-48">
+                <svg viewBox="0 0 200 200" className="w-full h-full">
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#2563eb" strokeWidth="2" opacity="0.3"/>
+                  <circle cx="100" cy="100" r="60" fill="none" stroke="#2563eb" strokeWidth="1" opacity="0.2"/>
+                  <circle cx="100" cy="100" r="40" fill="none" stroke="#2563eb" strokeWidth="1" opacity="0.1"/>
                 </svg>
-              </div>
-              {/* Large watermark background with very low opacity */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-3">
-                <div className="text-8xl font-bold text-gray-400 transform -rotate-12">RaceCoding</div>
               </div>
             </div>
             
+            {/* Decorative corner elements */}
+            <div className="absolute top-8 left-8 w-16 h-16">
+              <svg viewBox="0 0 64 64" className="w-full h-full">
+                <path d="M8,8 L56,8 L56,16 L16,16 L16,56 L8,56 Z" fill="#d4af37" opacity="0.7"/>
+                <path d="M12,12 L52,12 L52,20 L20,20 L20,52 L12,52 Z" fill="#f4e6a1" opacity="0.5"/>
+              </svg>
+            </div>
+            <div className="absolute top-8 right-8 w-16 h-16 transform rotate-90">
+              <svg viewBox="0 0 64 64" className="w-full h-full">
+                <path d="M8,8 L56,8 L56,16 L16,16 L16,56 L8,56 Z" fill="#d4af37" opacity="0.7"/>
+                <path d="M12,12 L52,12 L52,20 L20,20 L20,52 L12,52 Z" fill="#f4e6a1" opacity="0.5"/>
+              </svg>
+            </div>
+            <div className="absolute bottom-8 left-8 w-16 h-16 transform rotate-270">
+              <svg viewBox="0 0 64 64" className="w-full h-full">
+                <path d="M8,8 L56,8 L56,16 L16,16 L16,56 L8,56 Z" fill="#d4af37" opacity="0.7"/>
+                <path d="M12,12 L52,12 L52,20 L20,20 L20,52 L12,52 Z" fill="#f4e6a1" opacity="0.5"/>
+              </svg>
+            </div>
+            <div className="absolute bottom-8 right-8 w-16 h-16 transform rotate-180">
+              <svg viewBox="0 0 64 64" className="w-full h-full">
+                <path d="M8,8 L56,8 L56,16 L16,16 L16,56 L8,56 Z" fill="#d4af37" opacity="0.7"/>
+                <path d="M12,12 L52,12 L52,20 L20,20 L20,52 L12,52 Z" fill="#f4e6a1" opacity="0.5"/>
+              </svg>
+            </div>
+            
             <div className="relative z-10 p-12 h-full flex flex-col">
-              {/* Header with logos */}
-              <div className="flex justify-between items-start mb-8">
+              {/* Header with enhanced styling */}
+              <div className="flex justify-between items-start mb-10">
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-                    <GraduationCap className="w-8 h-8 text-white" />
+                  <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center shadow-lg border-4 border-white">
+                    <GraduationCap className="w-10 h-10 text-white" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-lg font-bold text-gray-800">RaceCoding</h3>
-                    <p className="text-xs text-gray-600">Excellence in Digital Education</p>
+                    <h3 className="text-2xl font-bold text-gray-800 tracking-wide">RaceCoding</h3>
+                    <p className="text-sm text-gray-600 font-medium">Excellence in Digital Education</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-700">2024</div>
+                <div className="text-right bg-gradient-to-br from-blue-100 to-purple-100 px-6 py-3 rounded-2xl border-2 border-blue-200">
+                  <div className="text-3xl font-bold text-blue-700 tracking-wider">2024</div>
                 </div>
               </div>
               
-              {/* Certificate Title */}
-              <div className="mb-8">
-                <h1 className="text-5xl font-bold text-blue-700 mb-2 tracking-wider drop-shadow-sm">
-                  CERTIFICATE
-                </h1>
-                <h2 className="text-4xl font-bold text-blue-700 tracking-wider drop-shadow-sm">
-                  OF COMPLETION
-                </h2>
+              {/* Certificate Title with enhanced styling */}
+              <div className="mb-10 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-50 to-transparent rounded-xl opacity-50"></div>
+                <div className="relative py-4">
+                  <h1 className="text-5xl font-bold text-transparent bg-gradient-to-r from-blue-700 via-purple-600 to-blue-700 bg-clip-text mb-2 tracking-wider">
+                    CERTIFICATE
+                  </h1>
+                  <h2 className="text-4xl font-bold text-transparent bg-gradient-to-r from-blue-600 via-purple-500 to-blue-600 bg-clip-text tracking-wider">
+                    OF COMPLETION
+                  </h2>
+                </div>
               </div>
               
-              {/* Certificate Content */}
-              <div className="flex-1 flex flex-col justify-center space-y-6">
-                <p className="text-lg text-gray-700 font-medium drop-shadow-sm">
+              {/* Certificate Content with enhanced styling */}
+              <div className="flex-1 flex flex-col justify-center space-y-8">
+                <p className="text-xl text-gray-700 font-medium">
                   This certificate is proudly presented to
                 </p>
                 
-                <div className="my-8">
-                  <h2 className="text-4xl font-bold text-gray-800 mb-4 drop-shadow-sm">{certificate.profiles.full_name}</h2>
-                  <div className="w-32 h-0.5 bg-gray-400 mx-auto"></div>
+                <div className="my-10 relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-50 to-transparent rounded-xl"></div>
+                  <div className="relative py-6">
+                    <h2 className="text-4xl font-bold text-gray-800 mb-6 tracking-wide">{certificate.profiles.full_name}</h2>
+                    <div className="flex justify-center">
+                      <div className="w-48 h-1 bg-gradient-to-r from-transparent via-gold-400 to-transparent rounded-full"></div>
+                    </div>
+                  </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <p className="text-lg text-gray-700 drop-shadow-sm">has successfully completed the course on</p>
-                  <h3 className="text-2xl font-bold text-blue-700 px-6 py-2 drop-shadow-sm">
-                    {certificate.courses.title}
-                  </h3>
-                  <p className="text-lg text-gray-700 drop-shadow-sm">Conducted by RaceCoding Institute</p>
-                  <p className="text-lg text-gray-700 drop-shadow-sm">
+                <div className="space-y-4">
+                  <p className="text-xl text-gray-700">has successfully completed the course on</p>
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-8 py-4 rounded-2xl border-2 border-blue-200">
+                    <h3 className="text-3xl font-bold text-blue-700 tracking-wide">
+                      {certificate.courses.title}
+                    </h3>
+                  </div>
+                  <p className="text-xl text-gray-700 mt-4">Conducted by RaceCoding Institute</p>
+                  <p className="text-lg text-gray-600 font-medium">
                     on {new Date(certificate.issued_date).toLocaleDateString('en-US', { 
                       year: 'numeric', 
                       month: 'long', 
@@ -118,30 +156,35 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
                 </div>
               </div>
               
-              {/* Footer with signatures */}
-              <div className="mt-8 grid grid-cols-3 gap-8 text-sm">
-                <div className="text-center">
-                  <div className="w-24 h-px bg-gray-400 mx-auto mb-2"></div>
-                  <p className="font-semibold text-gray-700 drop-shadow-sm">Technical Director</p>
-                  <p className="text-gray-600 drop-shadow-sm">RaceCoding</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-24 h-px bg-gray-400 mx-auto mb-2"></div>
-                  <p className="font-semibold text-gray-700 drop-shadow-sm">Overall Head</p>
-                  <p className="text-gray-600 drop-shadow-sm">RaceCoding Institute</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-24 h-px bg-gray-400 mx-auto mb-2"></div>
-                  <p className="font-semibold text-gray-700 drop-shadow-sm">Business Head</p>
-                  <p className="text-gray-600 drop-shadow-sm">RaceCoding</p>
+              {/* Enhanced signatures section */}
+              <div className="mt-12 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-50 to-transparent rounded-xl"></div>
+                <div className="relative py-6">
+                  <div className="grid grid-cols-3 gap-12 text-sm">
+                    <div className="text-center">
+                      <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-3"></div>
+                      <p className="font-bold text-gray-700 text-base">Technical Director</p>
+                      <p className="text-gray-600 mt-1">RaceCoding</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-3"></div>
+                      <p className="font-bold text-gray-700 text-base">Overall Head</p>
+                      <p className="text-gray-600 mt-1">RaceCoding Institute</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mb-3"></div>
+                      <p className="font-bold text-gray-700 text-base">Business Head</p>
+                      <p className="text-gray-600 mt-1">RaceCoding</p>
+                    </div>
+                  </div>
                 </div>
               </div>
               
-              {/* Certificate ID */}
-              <div className="mt-6 text-center">
-                <p className="text-xs text-gray-500 drop-shadow-sm">
-                  Certificate ID: {certificate.certificate_number} | 
-                  Status: <span className={certificate.is_valid ? 'text-green-600' : 'text-red-600'}>
+              {/* Enhanced certificate ID */}
+              <div className="mt-8 text-center bg-gray-50 py-3 rounded-xl border border-gray-200">
+                <p className="text-sm text-gray-600 font-medium">
+                  Certificate ID: <span className="font-mono font-bold text-gray-800">{certificate.certificate_number}</span> | 
+                  Status: <span className={`font-bold ${certificate.is_valid ? 'text-green-600' : 'text-red-600'}`}>
                     {certificate.is_valid ? 'Valid' : 'Revoked'}
                   </span>
                 </p>
