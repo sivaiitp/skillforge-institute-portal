@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -75,6 +74,8 @@ const EnhancedCourseLearning = ({
     if (materialType?.includes('video')) return Video;
     return FileText;
   };
+
+  const completedCount = progressData.filter(p => p.completed).length;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -180,6 +181,7 @@ const EnhancedCourseLearning = ({
                     onPrevious={goToPrevious}
                     currentIndex={currentMaterialIndex}
                     totalMaterials={studyMaterials.length}
+                    completedCount={completedCount}
                   />
                 </CardContent>
               </Card>

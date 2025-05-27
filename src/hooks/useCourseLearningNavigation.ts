@@ -39,6 +39,10 @@ export const useCourseLearningNavigation = ({
     return currentMaterialIndex > 0;
   };
 
+  const getCurrentMaterialIndex = () => {
+    return currentMaterialIndex;
+  };
+
   const getLastAccessedMaterial = () => {
     // Find the last incomplete material
     for (let i = 0; i < studyMaterials.length; i++) {
@@ -121,6 +125,7 @@ export const useCourseLearningNavigation = ({
     goToNext,
     goToPrevious,
     handleMaterialSelect,
-    handleAssessmentSelect
+    handleAssessmentSelect,
+    getCurrentMaterialIndex
   };
 };
