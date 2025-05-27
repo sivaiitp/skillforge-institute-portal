@@ -20,9 +20,19 @@ const CourseDetails = () => {
   const { user } = useAuth();
   const { enrollInCourse, checkEnrollmentStatus, goToCourse, loading } = useEnrollment();
 
-  const { data: course, isLoading: courseLoading } = useQuery({
+  // Validate UUID format
+  const isValidUUID = (uuid: string) => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+  };
+
+  const { data: course, isLoading: courseLoading, error: courseError } = useQuery({
     queryKey: ['course', id],
     queryFn: async () => {
+      if (!id || !isValidUUID(id)) {
+        throw new Error('Invalid course ID format');
+      }
+
       const { data, error } = await supabase
         .from('courses')
         .select('*')
@@ -31,13 +41,14 @@ const CourseDetails = () => {
       
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!id
   });
 
   const { data: isEnrolled, isLoading: enrollmentLoading, refetch: refetchEnrollment } = useQuery({
     queryKey: ['enrollment', id, user?.id],
     queryFn: () => checkEnrollmentStatus(id!),
-    enabled: !!user && !!id
+    enabled: !!user && !!id && isValidUUID(id || '')
   });
 
   const handleEnroll = async () => {
@@ -78,19 +89,24 @@ const CourseDetails = () => {
     );
   }
 
-  if (!course) {
+  if (courseError || !course || (id && !isValidUUID(id))) {
+    console.error('Course error:', courseError);
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
         <div className="container mx-auto px-4 py-20 text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Course Not Found</h1>
-          <p className="text-gray-600 mb-8">The course you're looking for doesn't exist.</p>
-          <button 
+          <p className="text-gray-600 mb-8">
+            {id && !isValidUUID(id) 
+              ? 'Invalid course ID format. Please check the URL.' 
+              : 'The course you\'re looking for doesn\'t exist or has been removed.'}
+          </p>
+          <Button 
             onClick={() => navigate('/courses')}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 hover:bg-blue-700"
           >
             Back to Courses
-          </button>
+          </Button>
         </div>
         <Footer />
       </div>
