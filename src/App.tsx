@@ -30,6 +30,7 @@ import CourseLearning from "./pages/CourseLearning";
 import StudentCourseLearning from "./pages/StudentCourseLearning";
 import CourseMaterialsDetail from "./pages/CourseMaterialsDetail";
 import CertificateVerification from "./pages/CertificateVerification";
+import StudentCertificates from "./pages/StudentCertificates";
 import Career from "./pages/Career";
 import Events from "./pages/Events";
 import FreeAssessment from "./pages/FreeAssessment";
@@ -82,6 +83,7 @@ function App() {
               <Route path="/profile" element={<StudentProfile />} />
               <Route path="/payments" element={<StudentPayments />} />
               <Route path="/assessments" element={<StudentAssessments />} />
+              <Route path="/student-certificates" element={<StudentCertificates />} />
               <Route path="/study-materials" element={<StudentStudyMaterials />} />
               <Route path="/learn/:courseId" element={<StudentCourseLearning />} />
               

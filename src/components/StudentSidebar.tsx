@@ -1,3 +1,4 @@
+
 import {
   Sidebar,
   SidebarContent,
@@ -44,9 +45,9 @@ const items = [
   },
   {
     title: "Certificates",
-    url: "/verify-certificate",
+    url: "/student-certificates",
     icon: Award,
-    description: "Verify certificates"
+    description: "View your certificates"
   },
   {
     title: "Payments",
