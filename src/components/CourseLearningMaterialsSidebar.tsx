@@ -106,9 +106,6 @@ export function CourseLearningMaterialsSidebar({
                   const isSelected = selectedMaterialId === material.id;
                   const isCompleted = getMaterialProgress(material.id)?.completed;
                   const cleanTitle = getCleanTitle(material.title);
-                  const shortDescription = material.description && material.description.length > 60 
-                    ? material.description.substring(0, 60) + '...'
-                    : material.description;
                   
                   return (
                     <SidebarMenuItem key={material.id}>
@@ -136,8 +133,8 @@ export function CourseLearningMaterialsSidebar({
                               </div>
                               
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between gap-2 mb-2">
-                                  <div className={`text-base font-medium leading-tight ${
+                                <div className="flex items-center justify-between gap-2 mb-1">
+                                  <div className={`text-sm font-medium leading-tight ${
                                     isSelected ? 'text-blue-900' : 
                                     isCompleted ? 'text-green-800' : 'text-gray-800'
                                   }`}>
@@ -154,15 +151,6 @@ export function CourseLearningMaterialsSidebar({
                                     )}
                                   </div>
                                 </div>
-                                
-                                {shortDescription && (
-                                  <div className={`text-sm leading-relaxed ${
-                                    isSelected ? 'text-blue-700' : 
-                                    isCompleted ? 'text-green-700' : 'text-gray-600'
-                                  }`}>
-                                    {shortDescription}
-                                  </div>
-                                )}
                               </div>
                             </div>
                           </SidebarMenuButton>
