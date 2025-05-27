@@ -36,6 +36,7 @@ import FreeAssessment from "./pages/FreeAssessment";
 import NotFound from "./pages/NotFound";
 import TakeAssessment from "./pages/TakeAssessment";
 import AssessmentResult from "./pages/AssessmentResult";
+import QuestionManagementSystem from "./pages/QuestionManagementSystem";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ function App() {
               <Route path="/career" element={<Career />} />
               <Route path="/events" element={<Events />} />
               <Route path="/free-assessment" element={<FreeAssessment />} />
+              <Route path="/verify-certificate" element={<CertificateVerification />} />
               
               {/* Course Routes */}
               <Route path="/course/:id" element={<CourseDetails />} />
@@ -67,6 +69,7 @@ function App() {
               <Route path="/admin/courses" element={<CourseManagement />} />
               <Route path="/admin/students" element={<StudentManagement />} />
               <Route path="/admin/assessments" element={<AssessmentManagement />} />
+              <Route path="/admin/question-management" element={<QuestionManagementSystem />} />
               <Route path="/admin/certificates" element={<CertificateManagement />} />
               <Route path="/admin/events" element={<EventManagement />} />
               <Route path="/admin/payments" element={<PaymentReports />} />

@@ -9,6 +9,8 @@ import {
   Award,
   Users,
   LogOut,
+  Home,
+  HelpCircle,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/components/AuthProvider";
@@ -19,10 +21,12 @@ const AdminSidebar = () => {
 
   const menuItems = [
     { path: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+    { path: "/", label: "Home Page", icon: Home },
     { path: "/admin/courses", label: "Courses", icon: BookOpen },
     { path: "/admin/study-materials", label: "Study Materials", icon: FileText },
     { path: "/admin/students", label: "Students", icon: Users },
     { path: "/admin/assessments", label: "Assessments", icon: ClipboardCheck },
+    { path: "/admin/question-management", label: "Question Management", icon: HelpCircle },
     { path: "/admin/certificates", label: "Certificates", icon: Award },
     { path: "/admin/events", label: "Events", icon: Calendar },
     { path: "/admin/payments", label: "Payment Reports", icon: CreditCard },
