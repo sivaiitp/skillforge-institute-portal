@@ -59,7 +59,7 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
                 <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
                   <GraduationCap className="w-10 h-10 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-1">EduTech Institute</h3>
+                <h3 className="text-2xl font-bold text-gray-800 mb-1">RaceCoding Institute</h3>
                 <p className="text-sm text-gray-600 font-medium tracking-wider">Excellence in Digital Education</p>
               </div>
               
@@ -117,7 +117,7 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
                 <p className="text-sm font-semibold text-gray-700">Authorized Signature</p>
                 <p className="text-xs text-gray-500 max-w-2xl mx-auto leading-relaxed">
                   This certificate can be verified at our official website using Certificate ID: {certificate.certificate_number}<br/>
-                  Issued by EduTech Institute | Digital Learning Excellence
+                  Issued by RaceCoding Institute | Digital Learning Excellence
                 </p>
               </div>
             </div>

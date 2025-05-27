@@ -288,8 +288,8 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
         
         <div class="content">
           <div class="header">
-            <div class="institute-logo">EDU</div>
-            <div class="institute-name">EduTech Institute</div>
+            <div class="institute-logo">RC</div>
+            <div class="institute-name">RaceCoding Institute</div>
             <div class="institute-tagline">Excellence in Digital Education</div>
           </div>
           
@@ -328,7 +328,7 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
             <div class="signature-title">Authorized Signature</div>
             <div class="verification-note">
               This certificate can be verified at our official website using Certificate ID: ${certificate.certificate_number}<br>
-              Issued by EduTech Institute | Digital Learning Excellence
+              Issued by RaceCoding Institute | Digital Learning Excellence
             </div>
           </div>
         </div>
