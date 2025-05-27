@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,7 @@ const CertificateVerification = () => {
       console.log('Searching for certificate:', certificateNumber);
       
       // First, let's search for the certificate regardless of validity status
+      // Fix the ambiguous relationship by specifying which profiles relationship to use
       const { data: allCerts, error: allCertsError } = await (supabase as any)
         .from('certificates')
         .select(`
@@ -36,7 +36,7 @@ const CertificateVerification = () => {
             title,
             certification
           ),
-          profiles (
+          profiles!certificates_user_id_fkey (
             id,
             full_name,
             email
@@ -56,7 +56,7 @@ const CertificateVerification = () => {
             title,
             certification
           ),
-          profiles (
+          profiles!certificates_user_id_fkey (
             id,
             full_name,
             email
@@ -79,6 +79,13 @@ const CertificateVerification = () => {
 
       if (error) {
         console.error('Error fetching certificate:', error);
+        setCertificate(null);
+        toast.error('Error searching for certificate.');
+        return;
+      }
+
+      if (allCertsError) {
+        console.error('Error fetching all certificates:', allCertsError);
         setCertificate(null);
         toast.error('Error searching for certificate.');
         return;
