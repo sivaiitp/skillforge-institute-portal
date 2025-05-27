@@ -1,15 +1,15 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, FileText, Upload, Users, BookOpen, BarChart3 } from 'lucide-react';
+import { Plus, FileText, Upload, Users, BookOpen, BarChart3, ArrowLeft } from 'lucide-react';
 import QuestionForm from './QuestionForm';
 import QuestionsList from './QuestionsList';
 import QuestionBank from './QuestionBank';
 import QuestionImporter from './QuestionImporter';
 import QuestionAssignment from './QuestionAssignment';
+import QuestionManagementHeader from './QuestionManagementHeader';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -201,7 +201,7 @@ const EnhancedQuestionManagement = ({ assessmentId, assessmentTitle }: EnhancedQ
   };
 
   const handleAddQuestion = () => {
-    setShowForm(true);
+    resetForm();
     setActiveTab('add');
   };
 
@@ -216,64 +216,53 @@ const EnhancedQuestionManagement = ({ assessmentId, assessmentTitle }: EnhancedQ
 
   return (
     <div className="space-y-6">
-      {/* Header with Stats */}
-      <div className="bg-white rounded-xl shadow-sm border p-6">
-        <div className="flex justify-between items-start mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Question Management</h1>
-            <p className="text-gray-600">{assessmentTitle}</p>
+      {/* Header */}
+      <QuestionManagementHeader 
+        assessmentTitle={assessmentTitle}
+        onAddQuestion={handleAddQuestion}
+      />
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <FileText className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Total Questions</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalQuestions}</p>
+            </div>
           </div>
-          <Button 
-            onClick={handleAddQuestion}
-            className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Question
-          </Button>
-        </div>
+        </Card>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <FileText className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Total Questions</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalQuestions}</p>
-              </div>
+        <Card className="p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <BarChart3 className="w-5 h-5 text-green-600" />
             </div>
-          </Card>
+            <div>
+              <p className="text-sm text-gray-600">Total Points</p>
+              <p className="text-2xl font-bold text-gray-900">{stats.totalPoints}</p>
+            </div>
+          </div>
+        </Card>
 
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <BarChart3 className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Total Points</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalPoints}</p>
-              </div>
+        <Card className="p-4 md:col-span-2">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <BookOpen className="w-5 h-5 text-purple-600" />
             </div>
-          </Card>
-
-          <Card className="p-4 md:col-span-2">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <BookOpen className="w-5 h-5 text-purple-600" />
-              </div>
-              <p className="text-sm text-gray-600">Question Types</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(stats.questionTypes).map(([type, count]) => (
-                <Badge key={type} className={getTypeColor(type)}>
-                  {type.replace('_', ' ')}: {count}
-                </Badge>
-              ))}
-            </div>
-          </Card>
-        </div>
+            <p className="text-sm text-gray-600">Question Types</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(stats.questionTypes).map(([type, count]) => (
+              <Badge key={type} className={getTypeColor(type)}>
+                {type.replace('_', ' ')}: {count}
+              </Badge>
+            ))}
+          </div>
+        </Card>
       </div>
 
       {/* Main Content Tabs */}
@@ -311,14 +300,22 @@ const EnhancedQuestionManagement = ({ assessmentId, assessmentTitle }: EnhancedQ
         </TabsContent>
 
         <TabsContent value="add" className="space-y-4">
-          <QuestionForm
-            editingQuestion={editingQuestion}
-            formData={formData}
-            loading={loading}
-            onSubmit={handleSubmit}
-            onCancel={resetForm}
-            onFormDataChange={setFormData}
-          />
+          <div className="bg-white rounded-xl shadow-sm border p-6">
+            {editingQuestion && (
+              <div className="flex items-center gap-2 mb-4 text-sm text-blue-600">
+                <ArrowLeft className="w-4 h-4" />
+                Editing question: {editingQuestion.question_text.substring(0, 50)}...
+              </div>
+            )}
+            <QuestionForm
+              editingQuestion={editingQuestion}
+              formData={formData}
+              loading={loading}
+              onSubmit={handleSubmit}
+              onCancel={resetForm}
+              onFormDataChange={setFormData}
+            />
+          </div>
         </TabsContent>
 
         <TabsContent value="import" className="space-y-4">

@@ -57,14 +57,14 @@ const AdminSidebar = () => {
       </div>
       
       <nav className="p-3 flex-1 overflow-y-auto">
-        <ul className="space-y-0.5">
+        <ul className="space-y-1">
           {menuItems.map((item) => (
             <li key={item.path}>
               <NavLink
                 to={item.path}
                 end={item.exact}
                 className={({ isActive }) =>
-                  `group flex items-center p-2.5 rounded-lg transition-all duration-200 ${
+                  `group flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium ${
                     isActive
                       ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md"
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
@@ -78,7 +78,7 @@ const AdminSidebar = () => {
                     }`}>
                       <item.icon className="h-4 w-4" />
                     </div>
-                    <span className="ml-3 font-medium text-sm">{item.label}</span>
+                    <span className="ml-3">{item.label}</span>
                   </>
                 )}
               </NavLink>
@@ -91,12 +91,12 @@ const AdminSidebar = () => {
         <Button
           onClick={handleLogout}
           variant="outline"
-          className="w-full flex items-center justify-start text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-200"
+          className="w-full flex items-center justify-start text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-200 text-sm"
         >
           <div className="p-1.5 rounded-lg bg-gray-100 mr-3 transition-colors duration-200">
             <LogOut className="h-4 w-4" />
           </div>
-          <span className="font-medium text-sm">Logout</span>
+          <span className="font-medium">Logout</span>
         </Button>
       </div>
     </div>
