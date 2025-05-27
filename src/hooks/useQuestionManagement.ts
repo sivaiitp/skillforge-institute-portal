@@ -12,6 +12,7 @@ interface Question {
   explanation: string | null;
   points: number;
   sort_order: number;
+  difficulty_level: string;
 }
 
 interface FormData {
@@ -21,6 +22,7 @@ interface FormData {
   correct_answer: string;
   explanation: string;
   points: number;
+  difficulty_level: string;
 }
 
 export const useQuestionManagement = (assessmentId: string) => {
@@ -33,7 +35,8 @@ export const useQuestionManagement = (assessmentId: string) => {
     options: ['', '', '', ''],
     correct_answer: '',
     explanation: '',
-    points: 1
+    points: 1,
+    difficulty_level: 'medium'
   });
 
   const fetchQuestions = async () => {
@@ -61,7 +64,8 @@ export const useQuestionManagement = (assessmentId: string) => {
         correct_answer: q.correct_answer,
         explanation: q.explanation,
         points: q.points,
-        sort_order: q.sort_order
+        sort_order: q.sort_order,
+        difficulty_level: q.difficulty_level || 'medium'
       }));
       
       setQuestions(transformedQuestions);
@@ -96,6 +100,7 @@ export const useQuestionManagement = (assessmentId: string) => {
         correct_answer: formData.correct_answer,
         explanation: formData.explanation || null,
         points: formData.points,
+        difficulty_level: formData.difficulty_level,
         sort_order: editingQuestion ? editingQuestion.sort_order : questions.length
       };
 
@@ -136,7 +141,8 @@ export const useQuestionManagement = (assessmentId: string) => {
       options: question.options || ['', '', '', ''],
       correct_answer: question.correct_answer,
       explanation: question.explanation || '',
-      points: question.points
+      points: question.points,
+      difficulty_level: question.difficulty_level || 'medium'
     });
   };
 
@@ -166,7 +172,8 @@ export const useQuestionManagement = (assessmentId: string) => {
       options: ['', '', '', ''],
       correct_answer: '',
       explanation: '',
-      points: 1
+      points: 1,
+      difficulty_level: 'medium'
     });
   };
 

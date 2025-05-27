@@ -26,11 +26,11 @@ const QuestionImporter = ({ assessmentId, onImportComplete }: QuestionImporterPr
 
   const downloadSampleCsv = () => {
     const sampleData = [
-      'question_text,question_type,option1,option2,option3,option4,correct_answer,explanation,points',
-      '"What is 2+2?",multiple_choice,"2","3","4","5","4","Basic addition problem",1',
-      '"JavaScript is a programming language",true_false,"","","","","true","JavaScript is indeed a programming language",1',
-      '"What is the capital of France?",short_answer,"","","","","Paris","The capital city of France",2',
-      '"Which of the following are programming languages?",multiple_choice,"Python","HTML","CSS","All of the above","Python","Python is a programming language while HTML and CSS are markup languages",3'
+      'question_text,question_type,option1,option2,option3,option4,correct_answer,explanation,points,difficulty_level',
+      '"What is 2+2?",multiple_choice,"2","3","4","5","4","Basic addition problem",1,easy',
+      '"JavaScript is a programming language",true_false,"","","","","true","JavaScript is indeed a programming language",1,medium',
+      '"What is the capital of France?",short_answer,"","","","","Paris","The capital city of France",2,medium',
+      '"Which of the following are programming languages?",multiple_choice,"Python","HTML","CSS","All of the above","Python","Python is a programming language while HTML and CSS are markup languages",3,hard'
     ];
     
     const blob = new Blob([sampleData.join('\n')], { type: 'text/csv' });
@@ -52,8 +52,8 @@ const QuestionImporter = ({ assessmentId, onImportComplete }: QuestionImporterPr
     for (let i = 1; i < lines.length; i++) {
       try {
         const values = parseCSVLine(lines[i]);
-        if (values.length < 9) {
-          errors.push(`Line ${i + 1}: Insufficient columns (expected 9, got ${values.length})`);
+        if (values.length < 10) {
+          errors.push(`Line ${i + 1}: Insufficient columns (expected 10, got ${values.length})`);
           continue;
         }
 
@@ -66,7 +66,8 @@ const QuestionImporter = ({ assessmentId, onImportComplete }: QuestionImporterPr
           option4: values[5]?.trim(),
           correct_answer: values[6]?.trim(),
           explanation: values[7]?.trim(),
-          points: parseInt(values[8]) || 1
+          points: parseInt(values[8]) || 1,
+          difficulty_level: values[9]?.trim() || 'medium'
         };
 
         if (!question.question_text) {
@@ -76,6 +77,11 @@ const QuestionImporter = ({ assessmentId, onImportComplete }: QuestionImporterPr
 
         if (!question.correct_answer) {
           errors.push(`Line ${i + 1}: Correct answer is required`);
+          continue;
+        }
+
+        if (!['easy', 'medium', 'hard'].includes(question.difficulty_level)) {
+          errors.push(`Line ${i + 1}: Invalid difficulty level. Must be 'easy', 'medium', or 'hard'`);
           continue;
         }
 
@@ -145,6 +151,7 @@ const QuestionImporter = ({ assessmentId, onImportComplete }: QuestionImporterPr
         correct_answer: q.correct_answer,
         explanation: q.explanation || null,
         points: q.points,
+        difficulty_level: q.difficulty_level,
         sort_order: index
       }));
 
@@ -196,7 +203,7 @@ const QuestionImporter = ({ assessmentId, onImportComplete }: QuestionImporterPr
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Upload a CSV file with questions. The file should have columns: question_text, question_type, option1-4, correct_answer, explanation, points.
+            Upload a CSV file with questions. The file should have columns: question_text, question_type, option1-4, correct_answer, explanation, points, difficulty_level.
           </AlertDescription>
         </Alert>
 

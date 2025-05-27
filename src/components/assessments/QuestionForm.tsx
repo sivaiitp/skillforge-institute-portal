@@ -17,6 +17,7 @@ interface Question {
   explanation: string | null;
   points: number;
   sort_order: number;
+  difficulty_level: string;
 }
 
 interface QuestionFormProps {
@@ -28,6 +29,7 @@ interface QuestionFormProps {
     correct_answer: string;
     explanation: string;
     points: number;
+    difficulty_level: string;
   };
   loading: boolean;
   onSubmit: (e: React.FormEvent) => void;
@@ -67,7 +69,7 @@ const QuestionForm = ({
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="question_type">Question Type</Label>
               <Select 
@@ -81,6 +83,23 @@ const QuestionForm = ({
                   <SelectItem value="multiple_choice">Multiple Choice</SelectItem>
                   <SelectItem value="true_false">True/False</SelectItem>
                   <SelectItem value="short_answer">Short Answer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="difficulty_level">Difficulty Level</Label>
+              <Select 
+                value={formData.difficulty_level} 
+                onValueChange={(value) => onFormDataChange({...formData, difficulty_level: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="easy">Easy</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="hard">Hard</SelectItem>
                 </SelectContent>
               </Select>
             </div>

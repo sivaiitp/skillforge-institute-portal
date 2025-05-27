@@ -12,6 +12,7 @@ interface Question {
   explanation: string | null;
   points: number;
   sort_order: number;
+  difficulty_level: string;
 }
 
 interface SingleQuestionTabProps {
@@ -23,6 +24,7 @@ interface SingleQuestionTabProps {
     correct_answer: string;
     explanation: string;
     points: number;
+    difficulty_level: string;
   };
   loading: boolean;
   onSubmit: (e: React.FormEvent) => Promise<boolean>;

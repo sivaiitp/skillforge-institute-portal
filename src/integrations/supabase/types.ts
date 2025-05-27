@@ -112,6 +112,7 @@ export type Database = {
           assessment_id: string
           correct_answer: string
           created_at: string
+          difficulty_level: string | null
           explanation: string | null
           id: string
           options: Json | null
@@ -125,6 +126,7 @@ export type Database = {
           assessment_id: string
           correct_answer: string
           created_at?: string
+          difficulty_level?: string | null
           explanation?: string | null
           id?: string
           options?: Json | null
@@ -138,6 +140,7 @@ export type Database = {
           assessment_id?: string
           correct_answer?: string
           created_at?: string
+          difficulty_level?: string | null
           explanation?: string | null
           id?: string
           options?: Json | null
