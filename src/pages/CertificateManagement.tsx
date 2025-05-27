@@ -5,19 +5,20 @@ import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '@/components/AdminSidebar';
 import CertificateManagementHeader from '@/components/certificates/CertificateManagementHeader';
 import CertificateIssueForm from '@/components/certificates/CertificateIssueForm';
-import CertificatesTable from '@/components/certificates/CertificatesTable';
+import CertificateSearchForm from '@/components/certificates/CertificateSearchForm';
 import { useCertificateManagement } from '@/hooks/useCertificateManagement';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const CertificateManagement = () => {
   const { user, userRole } = useAuth();
   const navigate = useNavigate();
-  const [showIssueForm, setShowIssueForm] = useState(false);
   
   const {
     certificates,
     loading,
     issueCertificate,
-    revokeCertificate
+    revokeCertificate,
+    searchCertificatesByUser
   } = useCertificateManagement();
 
   useEffect(() => {
@@ -32,19 +33,8 @@ const CertificateManagement = () => {
     }
   }, [user, userRole, navigate]);
 
-  const handleIssueClick = () => {
-    setShowIssueForm(true);
-  };
-
-  const handleIssueCancel = () => {
-    setShowIssueForm(false);
-  };
-
   const handleIssueCertificate = async (selectedStudent: any, selectedCourse: string) => {
     const success = await issueCertificate(selectedStudent, selectedCourse);
-    if (success) {
-      setShowIssueForm(false);
-    }
     return success;
   };
 
@@ -55,22 +45,34 @@ const CertificateManagement = () => {
       <AdminSidebar />
       
       <div className="ml-64 p-6">
-        <CertificateManagementHeader onIssueClick={handleIssueClick} />
+        <CertificateManagementHeader />
 
-        {showIssueForm && (
-          <CertificateIssueForm
-            onIssue={handleIssueCertificate}
-            onCancel={handleIssueCancel}
-            loading={loading}
-          />
-        )}
-
-        <CertificatesTable
-          certificates={certificates}
-          loading={loading}
-          onRevoke={revokeCertificate}
-          onShowIssueForm={handleIssueClick}
-        />
+        <Tabs defaultValue="issue" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="issue" className="text-sm font-medium">
+              Issue New Certificate
+            </TabsTrigger>
+            <TabsTrigger value="search" className="text-sm font-medium">
+              Search Certificates
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="issue">
+            <CertificateIssueForm
+              onIssue={handleIssueCertificate}
+              loading={loading}
+            />
+          </TabsContent>
+          
+          <TabsContent value="search">
+            <CertificateSearchForm
+              onSearch={searchCertificatesByUser}
+              certificates={certificates}
+              loading={loading}
+              onRevoke={revokeCertificate}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

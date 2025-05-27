@@ -47,6 +47,29 @@ export const useCertificateManagement = () => {
     }
   };
 
+  const searchCertificatesByUser = async (userId: string) => {
+    try {
+      setLoading(true);
+      const { data, error } = await (supabase as any)
+        .from('certificates')
+        .select(`
+          *,
+          courses (title),
+          profiles!certificates_user_id_fkey (full_name, email)
+        `)
+        .eq('user_id', userId)
+        .order('issued_date', { ascending: false });
+
+      if (error) throw error;
+      setCertificates(data || []);
+    } catch (error) {
+      toast.error('Error searching certificates');
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const issueCertificate = async (selectedStudent: any, selectedCourse: string) => {
     if (!selectedStudent || !selectedCourse) {
       toast.error('Please select both a student and a course');
@@ -74,7 +97,6 @@ export const useCertificateManagement = () => {
       if (error) throw error;
 
       toast.success('Certificate issued successfully!');
-      fetchCertificates();
       return true;
     } catch (error) {
       toast.error('Error issuing certificate');
@@ -95,21 +117,21 @@ export const useCertificateManagement = () => {
       if (error) throw error;
 
       toast.success('Certificate revoked successfully');
-      fetchCertificates();
+      // Refresh the current certificates list
+      setCertificates(prev => prev.map(cert => 
+        cert.id === certificateId ? { ...cert, is_valid: false } : cert
+      ));
     } catch (error) {
       toast.error('Error revoking certificate');
       console.error('Error:', error);
     }
   };
 
-  useEffect(() => {
-    fetchCertificates();
-  }, []);
-
   return {
     certificates,
     loading,
     fetchCertificates,
+    searchCertificatesByUser,
     issueCertificate,
     revokeCertificate
   };

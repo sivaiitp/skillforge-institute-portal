@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,11 +15,10 @@ interface Course {
 
 interface CertificateIssueFormProps {
   onIssue: (student: any, courseId: string) => Promise<boolean>;
-  onCancel: () => void;
   loading: boolean;
 }
 
-const CertificateIssueForm = ({ onIssue, onCancel, loading }: CertificateIssueFormProps) => {
+const CertificateIssueForm = ({ onIssue, loading }: CertificateIssueFormProps) => {
   const [availableCourses, setAvailableCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState('');
   
@@ -86,14 +84,8 @@ const CertificateIssueForm = ({ onIssue, onCancel, loading }: CertificateIssueFo
     }
   };
 
-  const handleCancel = () => {
-    onCancel();
-    handleClearStudent();
-    setSelectedCourse('');
-  };
-
   return (
-    <Card className="mb-6">
+    <Card>
       <CardHeader>
         <CardTitle>Issue New Certificate</CardTitle>
         <CardDescription>
@@ -169,12 +161,6 @@ const CertificateIssueForm = ({ onIssue, onCancel, loading }: CertificateIssueFo
           >
             <Award className="w-4 h-4 mr-2" />
             Issue Certificate
-          </Button>
-          <Button 
-            onClick={handleCancel}
-            variant="outline"
-          >
-            Cancel
           </Button>
         </div>
       </CardContent>
