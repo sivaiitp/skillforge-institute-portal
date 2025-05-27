@@ -95,73 +95,91 @@ export const useStudentSearch = () => {
     console.log('Searching for student with email:', searchEmail.trim());
     
     try {
-      // Search for student directly in profiles table
-      const { data: student, error } = await supabase
+      // First, let's check all profiles to see what exists
+      const { data: allProfiles, error: allError } = await supabase
         .from('profiles')
-        .select('id, full_name, email, role')
-        .eq('email', searchEmail.trim().toLowerCase())
-        .maybeSingle();
+        .select('id, full_name, email, role');
 
-      console.log('Direct student search result:', { student, error });
+      console.log('All profiles in database:', allProfiles);
 
-      if (error) {
-        console.error('Error searching student:', error);
-        toast.error('Error searching for student');
+      // Search with multiple methods to find the user
+      const searchMethods = [
+        // Exact match
+        () => supabase
+          .from('profiles')
+          .select('id, full_name, email, role')
+          .eq('email', searchEmail.trim()),
+        
+        // Case insensitive match
+        () => supabase
+          .from('profiles')
+          .select('id, full_name, email, role')
+          .ilike('email', searchEmail.trim()),
+        
+        // Lowercase exact match
+        () => supabase
+          .from('profiles')
+          .select('id, full_name, email, role')
+          .eq('email', searchEmail.trim().toLowerCase()),
+          
+        // Contains match
+        () => supabase
+          .from('profiles')
+          .select('id, full_name, email, role')
+          .ilike('email', `%${searchEmail.trim()}%`)
+      ];
+
+      let foundUser = null;
+      
+      for (let i = 0; i < searchMethods.length; i++) {
+        const { data: users, error } = await searchMethods[i]();
+        console.log(`Search method ${i + 1} result:`, { users, error });
+        
+        if (error) {
+          console.error(`Error in search method ${i + 1}:`, error);
+          continue;
+        }
+        
+        if (users && users.length > 0) {
+          foundUser = users[0];
+          console.log(`Found user with method ${i + 1}:`, foundUser);
+          break;
+        }
+      }
+
+      if (!foundUser) {
+        // Let's also check auth.users to see if user exists there but not in profiles
+        console.log('No user found in profiles, this might indicate the user exists in auth but not in profiles table');
+        toast.error('No user found with this email address. The user might need to complete their profile setup.');
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
-      if (!student) {
-        // Let's also try a case-insensitive search with ilike
-        const { data: studentIlike, error: errorIlike } = await supabase
-          .from('profiles')
-          .select('id, full_name, email, role')
-          .ilike('email', searchEmail.trim())
-          .maybeSingle();
-
-        console.log('Case-insensitive search result:', { studentIlike, errorIlike });
-
-        if (!studentIlike) {
-          toast.error('No user found with this email address');
-          setSelectedStudent(null);
-          setEnrolledCourses([]);
-          return;
-        }
-
-        // Use the result from ilike search
-        if (studentIlike.role !== 'student') {
-          toast.error(`User found but they are registered as ${studentIlike.role}, not a student`);
-          setSelectedStudent(null);
-          setEnrolledCourses([]);
-          return;
-        }
-
-        setSelectedStudent({
-          id: studentIlike.id,
-          full_name: studentIlike.full_name || 'Unknown',
-          email: studentIlike.email || ''
-        });
-        await fetchStudentEnrollments(studentIlike.id);
-        toast.success(`Found student: ${studentIlike.full_name || studentIlike.email}`);
+      // Check if the user has a role, if not, assume they need to be set as student
+      if (!foundUser.role) {
+        console.log('User found but has no role assigned');
+        toast.error('User found but has no role assigned. Please contact admin to set up the user role.');
+        setSelectedStudent(null);
+        setEnrolledCourses([]);
         return;
       }
 
       // Check if the user is a student
-      if (student.role !== 'student') {
-        toast.error(`User found but they are registered as ${student.role}, not a student`);
+      if (foundUser.role !== 'student') {
+        toast.error(`User found but they are registered as ${foundUser.role}, not a student`);
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
       setSelectedStudent({
-        id: student.id,
-        full_name: student.full_name || 'Unknown',
-        email: student.email || ''
+        id: foundUser.id,
+        full_name: foundUser.full_name || 'Unknown',
+        email: foundUser.email || ''
       });
-      await fetchStudentEnrollments(student.id);
-      toast.success(`Found student: ${student.full_name || student.email}`);
+      await fetchStudentEnrollments(foundUser.id);
+      toast.success(`Found student: ${foundUser.full_name || foundUser.email}`);
     } catch (error) {
       console.error('Error searching student:', error);
       toast.error('Error searching for student');
