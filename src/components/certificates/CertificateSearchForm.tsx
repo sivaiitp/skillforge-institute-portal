@@ -45,20 +45,23 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
   } = useStudentSearch();
 
   const handleSearch = async () => {
+    console.log('Starting search for:', searchName);
     await handleSearchStudent();
     setHasSearched(true);
   };
 
-  const handleSearchCertificates = async () => {
-    if (selectedStudent) {
-      await onSearch(selectedStudent.id);
-    }
+  const handleSelectAndSearch = async (student: any) => {
+    console.log('Student selected:', student);
+    await handleSelectStudent(student);
+    await onSearch(student.id);
   };
 
   const handleClear = () => {
     handleClearStudent();
     setHasSearched(false);
   };
+
+  console.log('Current state:', { searchResults, selectedStudent, searchName, isSearching });
 
   return (
     <div className="space-y-8">
@@ -87,15 +90,16 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
                   onChange={(e) => setSearchName(e.target.value)}
                   placeholder="Enter student name to search certificates..."
                   className="border-gray-200 focus:border-purple-400 focus:ring-purple-400 transition-colors"
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
               </div>
               <Button 
                 onClick={handleSearch}
-                disabled={isSearching}
+                disabled={isSearching || !searchName.trim()}
                 variant="outline"
                 className="px-4 border-gray-200 hover:bg-purple-50 hover:border-purple-300 transition-colors"
               >
-                <Search className="w-4 h-4" />
+                {isSearching ? 'Searching...' : <Search className="w-4 h-4" />}
               </Button>
               {(selectedStudent || searchResults.length > 0) && (
                 <Button 
@@ -109,32 +113,38 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
             </div>
             
             {/* Search Results */}
-            {searchResults.length > 0 && (
+            {searchResults.length > 0 && !selectedStudent && (
               <div className="mt-4 space-y-2">
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   Found {searchResults.length} student(s). Select one:
                 </p>
-                {searchResults.map((student) => (
-                  <div 
-                    key={student.id}
-                    className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg cursor-pointer hover:from-blue-100 hover:to-indigo-100 transition-colors"
-                    onClick={() => handleSelectStudent(student)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <User className="w-4 h-4 text-blue-600" />
-                      <div className="flex-1">
-                        <p className="font-semibold text-blue-800">{student.full_name}</p>
-                        <p className="text-sm text-blue-600">{student.email}</p>
+                <div className="max-h-60 overflow-y-auto space-y-2">
+                  {searchResults.map((student) => (
+                    <div 
+                      key={student.id}
+                      className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg cursor-pointer hover:from-blue-100 hover:to-indigo-100 transition-colors"
+                      onClick={() => handleSelectAndSearch(student)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <User className="w-4 h-4 text-blue-600" />
+                        <div className="flex-1">
+                          <p className="font-semibold text-blue-800">{student.full_name}</p>
+                          <p className="text-sm text-blue-600">{student.email}</p>
+                        </div>
+                        <Button 
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectAndSearch(student);
+                          }}
+                        >
+                          Select
+                        </Button>
                       </div>
-                      <Button 
-                        size="sm"
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
-                      >
-                        Select
-                      </Button>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
 
@@ -148,13 +158,13 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
                     <p className="text-sm text-green-600">{selectedStudent.email}</p>
                   </div>
                   <Button 
-                    onClick={handleSearchCertificates}
+                    onClick={() => onSearch(selectedStudent.id)}
                     disabled={loading}
                     className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                     size="sm"
                   >
                     <Search className="w-4 h-4 mr-2" />
-                    View Certificates
+                    {loading ? 'Loading...' : 'View Certificates'}
                   </Button>
                 </div>
               </div>
@@ -163,7 +173,8 @@ const CertificateSearchForm = ({ onSearch, certificates, loading, onRevoke }: Ce
         </CardContent>
       </Card>
 
-      {hasSearched && selectedStudent && (
+      {/* Certificates Display */}
+      {selectedStudent && (
         <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50">
           <CardHeader className="pb-6">
             <CardTitle className="flex items-center gap-3 text-xl font-bold text-gray-800">

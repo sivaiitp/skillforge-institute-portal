@@ -140,8 +140,9 @@ export const useStudentSearch = () => {
   };
 
   const handleSelectStudent = async (student: Student) => {
+    console.log('Selecting student:', student);
     setSelectedStudent(student);
-    setSearchResults([]);
+    setSearchResults([]); // Clear search results after selection
     await fetchStudentEnrollments(student.id);
     toast.success(`Selected student: ${student.full_name}`);
   };
