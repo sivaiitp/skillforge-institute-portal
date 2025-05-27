@@ -2,34 +2,13 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
-interface Question {
-  id: string;
-  question_text: string;
-  question_type: string;
-  options: string[] | null;
-  correct_answer: string;
-  explanation: string | null;
-  points: number;
-  sort_order: number;
-  difficulty_level: string;
-}
-
-interface FormData {
-  question_text: string;
-  question_type: string;
-  options: string[];
-  correct_answer: string;
-  explanation: string;
-  points: number;
-  difficulty_level: string;
-}
+import { Question, QuestionFormData } from '@/types/questionTypes';
 
 export const useQuestionManagement = (assessmentId: string) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<QuestionFormData>({
     question_text: '',
     question_type: 'multiple_choice',
     options: ['', '', '', ''],

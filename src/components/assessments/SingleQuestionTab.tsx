@@ -2,34 +2,15 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import QuestionForm from './QuestionForm';
-
-interface Question {
-  id: string;
-  question_text: string;
-  question_type: string;
-  options: string[] | null;
-  correct_answer: string;
-  explanation: string | null;
-  points: number;
-  sort_order: number;
-  difficulty_level: string;
-}
+import { Question, QuestionFormData } from '@/types/questionTypes';
 
 interface SingleQuestionTabProps {
   editingQuestion: Question | null;
-  formData: {
-    question_text: string;
-    question_type: string;
-    options: string[];
-    correct_answer: string;
-    explanation: string;
-    points: number;
-    difficulty_level: string;
-  };
+  formData: QuestionFormData;
   loading: boolean;
   onSubmit: (e: React.FormEvent) => Promise<boolean>;
   onCancel: () => void;
-  onFormDataChange: (data: any) => void;
+  onFormDataChange: (data: QuestionFormData) => void;
   onActiveTabChange: (tab: string) => void;
 }
 

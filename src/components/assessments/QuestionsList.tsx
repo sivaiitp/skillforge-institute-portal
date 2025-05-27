@@ -5,17 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Edit, Trash2 } from 'lucide-react';
-
-interface Question {
-  id: string;
-  question_text: string;
-  question_type: string;
-  options: string[] | null;
-  correct_answer: string;
-  explanation: string | null;
-  points: number;
-  sort_order: number;
-}
+import { Question } from '@/types/questionTypes';
 
 interface QuestionsListProps {
   questions: Question[];
@@ -54,6 +44,7 @@ const QuestionsList = ({ questions, loading, onEdit, onDelete }: QuestionsListPr
               <TableRow>
                 <TableHead>Question</TableHead>
                 <TableHead>Type</TableHead>
+                <TableHead>Difficulty</TableHead>
                 <TableHead>Points</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -67,6 +58,11 @@ const QuestionsList = ({ questions, loading, onEdit, onDelete }: QuestionsListPr
                   <TableCell>
                     <Badge variant="outline">
                       {question.question_type.replace('_', ' ')}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">
+                      {question.difficulty_level}
                     </Badge>
                   </TableCell>
                   <TableCell>{question.points}</TableCell>
