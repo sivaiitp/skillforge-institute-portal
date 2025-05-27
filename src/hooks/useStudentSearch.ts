@@ -97,13 +97,20 @@ export const useStudentSearch = () => {
     console.log('Searching for students with name (case-insensitive partial match):', searchTerm);
     
     try {
+      // First, let's see ALL profiles to understand what data we have
+      const { data: allProfiles, error: allError } = await supabase
+        .from('profiles')
+        .select('id, full_name, email, role');
+
+      console.log('ALL PROFILES IN DATABASE:', { allProfiles, allError });
+
       // Search for students with more flexible matching
       const { data: students, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')
         .eq('role', 'student');
 
-      console.log('All students fetched:', { students, error });
+      console.log('STUDENTS ONLY:', { students, error });
 
       if (error) {
         console.error('Error fetching students:', error);
@@ -113,11 +120,68 @@ export const useStudentSearch = () => {
         return;
       }
 
+      // If no students with role 'student', let's try without role filter
       if (!students || students.length === 0) {
-        console.log('No students found in database');
-        toast.error('No students found in database');
-        setSelectedStudent(null);
-        setEnrolledCourses([]);
+        console.log('No students with role=student found. Trying all profiles...');
+        
+        const { data: allUsers, error: allUsersError } = await supabase
+          .from('profiles')
+          .select('id, full_name, email, role');
+
+        console.log('ALL USERS FOR SEARCH:', { allUsers, allUsersError });
+
+        if (allUsersError) {
+          console.error('Error fetching all users:', allUsersError);
+          toast.error('Error searching for users');
+          setSelectedStudent(null);
+          setEnrolledCourses([]);
+          return;
+        }
+
+        if (!allUsers || allUsers.length === 0) {
+          console.log('No users found in database at all');
+          toast.error('No users found in database');
+          setSelectedStudent(null);
+          setEnrolledCourses([]);
+          return;
+        }
+
+        // Filter all users client-side for matching
+        const matchingUsers = allUsers.filter(user => {
+          const fullName = (user.full_name || '').toLowerCase();
+          const email = (user.email || '').toLowerCase();
+          return fullName.includes(searchTerm) || email.includes(searchTerm);
+        });
+
+        console.log('Matching users found (any role):', { matchingUsers, searchTerm });
+
+        if (matchingUsers.length === 0) {
+          console.log('No user found matching search term:', searchTerm);
+          toast.error(`No user found with name or email containing "${searchName.trim()}"`);
+          setSelectedStudent(null);
+          setEnrolledCourses([]);
+          return;
+        }
+
+        // Use the first matching user
+        const foundUser = matchingUsers[0];
+        console.log('Selected user (any role):', foundUser);
+
+        if (matchingUsers.length > 1) {
+          console.log(`Found ${matchingUsers.length} users matching "${searchTerm}", selecting first one:`, foundUser);
+          toast.info(`Found ${matchingUsers.length} matches, selected: ${foundUser.full_name || foundUser.email}`);
+        }
+
+        // Set as selected student even if not explicitly role 'student'
+        setSelectedStudent({
+          id: foundUser.id,
+          full_name: foundUser.full_name || foundUser.email || 'Unknown',
+          email: foundUser.email || ''
+        });
+        
+        await fetchStudentEnrollments(foundUser.id);
+        toast.success(`Found user: ${foundUser.full_name || foundUser.email} (Role: ${foundUser.role || 'unknown'})`);
+        
         return;
       }
 
