@@ -55,7 +55,7 @@ export const MaterialContentArea = ({
   if (!selectedMaterial) {
     return (
       <div className="w-full max-w-none">
-        <Card className="text-center py-16 border-0 bg-white/80 backdrop-blur-sm shadow-xl mx-4 lg:mx-0">
+        <Card className="text-center py-16 border-0 bg-white/80 backdrop-blur-sm shadow-xl mx-8 lg:mx-12">
           <CardContent>
             <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full w-32 h-32 mx-auto mb-6 flex items-center justify-center">
               <FileText className="h-16 w-16 text-gray-400" />
@@ -77,7 +77,7 @@ export const MaterialContentArea = ({
 
   return (
     <div className="w-full max-w-none">
-      <div className="space-y-6 mx-4 lg:mx-0">
+      <div className="space-y-6 mx-8 lg:mx-12">
         <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl">
           <CardHeader className="border-b border-gray-100">
             <CardTitle className="flex items-center gap-3 text-xl">
