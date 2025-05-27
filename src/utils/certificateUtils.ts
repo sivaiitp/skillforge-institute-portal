@@ -1,4 +1,3 @@
-
 interface Certificate {
   id: string;
   certificate_number: string;
@@ -336,51 +335,36 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           font-size: 12px;
           font-weight: 700;
           color: #1f2937;
-          margin: 0 0 8px 0;
+          margin: 0 0 12px 0;
         }
         
         .authority-details {
           color: #6b7280;
-          line-height: 1.4;
+          line-height: 1.5;
+        }
+        
+        .authority-details p {
+          margin: 6px 0;
         }
         
         .authority-name {
           font-weight: 600;
           color: #2563eb;
-          margin-bottom: 4px;
+          margin-bottom: 6px;
         }
         
         .contact-info {
           display: flex;
           align-items: center;
           gap: 4px;
-          margin: 2px 0;
-        }
-        
-        .accreditation-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-        
-        .accreditation-list li {
-          margin: 2px 0;
-          padding-left: 8px;
-          position: relative;
-        }
-        
-        .accreditation-list li:before {
-          content: "•";
-          position: absolute;
-          left: 0;
-          color: #2563eb;
+          margin: 4px 0;
         }
         
         .license-number {
           font-size: 9px;
           color: #9ca3af;
-          margin-top: 8px;
-          font-style: italic;
+          margin-top: 12px;
+          font-weight: 500;
         }
         
         .signatures {
@@ -431,7 +415,7 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
         
         .certificate-id-section {
           background: #f9fafb;
-          padding: 8px 16px;
+          padding: 12px 16px;
           border-radius: 8px;
           border: 1px solid #e5e7eb;
           display: inline-block;
@@ -440,7 +424,14 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
         .certificate-id {
           font-size: 10px;
           color: #6b7280;
-          margin: 0;
+          margin: 0 0 4px 0;
+          font-weight: 500;
+        }
+        
+        .certificate-status {
+          font-size: 10px;
+          color: #6b7280;
+          margin: 4px 0 0 0;
           font-weight: 500;
         }
         
@@ -453,7 +444,7 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
         .verification-url {
           font-size: 9px;
           color: #9ca3af;
-          margin: 2px 0 0 0;
+          margin: 8px 0 0 0;
         }
         
         .status-valid {
@@ -541,7 +532,7 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
               <div class="authority-column">
                 <h4>Issuing Authority</h4>
                 <div class="authority-details">
-                  <div class="authority-name">RaceCoding Institute Pvt. Ltd.</div>
+                  <p class="authority-name">RaceCoding Institute Pvt. Ltd.</p>
                   <div class="contact-info">📍 123 Tech Park, Digital City, TC 560001</div>
                   <div class="contact-info">📞 +91-9876543210</div>
                   <div class="contact-info">✉️ certificates@racecoding.com</div>
@@ -551,13 +542,11 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
               <div class="authority-column">
                 <h4>Accreditation & Recognition</h4>
                 <div class="authority-details">
-                  <ul class="accreditation-list">
-                    <li>ISO 9001:2015 Certified Training Institute</li>
-                    <li>Approved by Ministry of Skill Development</li>
-                    <li>Recognized by Industry Skills Council</li>
-                    <li>Member of International Training Association</li>
-                  </ul>
-                  <div class="license-number">License No: EDU/CERT/2024/RC001</div>
+                  <p>ISO 9001:2015 Certified Training Institute</p>
+                  <p>Approved by Ministry of Skill Development</p>
+                  <p>Recognized by Industry Skills Council</p>
+                  <p>Member of International Training Association</p>
+                  <p class="license-number">License No: EDU/CERT/2024/RC001</p>
                 </div>
               </div>
             </div>
@@ -589,7 +578,9 @@ export const downloadCertificateAsPDF = (certificate: Certificate) => {
           <div class="certificate-footer">
             <div class="certificate-id-section">
               <p class="certificate-id">
-                Certificate ID: <span class="certificate-number">${certificate.certificate_number}</span> | 
+                Certificate ID: <span class="certificate-number">${certificate.certificate_number}</span>
+              </p>
+              <p class="certificate-status">
                 Status: <span class="${certificate.is_valid ? 'status-valid' : 'status-revoked'}">
                   ${certificate.is_valid ? 'Valid & Verified' : 'Revoked'}
                 </span>

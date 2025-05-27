@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Award, Calendar, User, BookOpen, Download, X, GraduationCap, MapPin, Phone, Mail, Globe } from 'lucide-react';
@@ -124,8 +123,8 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
               <div className="mt-8 bg-gradient-to-r from-gray-50 via-white to-gray-50 rounded-xl p-4 border border-gray-200">
                 <div className="grid grid-cols-2 gap-6 text-xs">
                   <div>
-                    <h4 className="font-bold text-gray-800 mb-2 text-sm">Issuing Authority</h4>
-                    <div className="space-y-1 text-gray-600">
+                    <h4 className="font-bold text-gray-800 mb-3 text-sm">Issuing Authority</h4>
+                    <div className="space-y-2 text-gray-600">
                       <p className="font-semibold text-blue-700">RaceCoding Institute Pvt. Ltd.</p>
                       <div className="flex items-center gap-1">
                         <MapPin className="w-3 h-3" />
@@ -146,13 +145,13 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-800 mb-2 text-sm">Accreditation & Recognition</h4>
-                    <div className="space-y-1 text-gray-600">
-                      <p>• ISO 9001:2015 Certified Training Institute</p>
-                      <p>• Approved by Ministry of Skill Development</p>
-                      <p>• Recognized by Industry Skills Council</p>
-                      <p>• Member of International Training Association</p>
-                      <p className="text-xs text-gray-500 mt-2">License No: EDU/CERT/2024/RC001</p>
+                    <h4 className="font-bold text-gray-800 mb-3 text-sm">Accreditation & Recognition</h4>
+                    <div className="space-y-2 text-gray-600">
+                      <p>ISO 9001:2015 Certified Training Institute</p>
+                      <p>Approved by Ministry of Skill Development</p>
+                      <p>Recognized by Industry Skills Council</p>
+                      <p>Member of International Training Association</p>
+                      <p className="text-xs text-gray-500 mt-3 font-medium">License No: EDU/CERT/2024/RC001</p>
                     </div>
                   </div>
                 </div>
@@ -183,14 +182,16 @@ const CertificateViewModal = ({ certificate, isOpen, onClose, onDownload }: Cert
               </div>
               
               {/* Certificate ID and Verification */}
-              <div className="mt-6 text-center bg-gray-50 py-2 rounded-lg border border-gray-200">
+              <div className="mt-6 text-center bg-gray-50 py-3 rounded-lg border border-gray-200">
                 <p className="text-xs text-gray-600 font-medium">
-                  Certificate ID: <span className="font-mono font-bold text-gray-800">{certificate.certificate_number}</span> | 
+                  Certificate ID: <span className="font-mono font-bold text-gray-800">{certificate.certificate_number}</span>
+                </p>
+                <p className="text-xs text-gray-600 font-medium mt-1">
                   Status: <span className={`font-bold ${certificate.is_valid ? 'text-green-600' : 'text-red-600'}`}>
                     {certificate.is_valid ? 'Valid & Verified' : 'Revoked'}
                   </span>
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 mt-2">
                   Verify this certificate at: www.racecoding.com/verify
                 </p>
               </div>
