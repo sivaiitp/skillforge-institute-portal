@@ -36,7 +36,7 @@ const CertificateVerification = () => {
             title,
             certification
           ),
-          profiles (
+          profiles!certificates_user_id_fkey (
             id,
             full_name,
             email
@@ -56,7 +56,7 @@ const CertificateVerification = () => {
             title,
             certification
           ),
-          profiles (
+          profiles!certificates_user_id_fkey (
             id,
             full_name,
             email
