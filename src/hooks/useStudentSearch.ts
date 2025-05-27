@@ -55,8 +55,8 @@ export const useStudentSearch = () => {
         return;
       }
 
-      // Check for certificates for this student
-      const { data: certificates, error: certError } = await supabase
+      // Check for certificates for this student using type assertion
+      const { data: certificates, error: certError } = await (supabase as any)
         .from('certificates')
         .select('course_id')
         .eq('user_id', studentId)
@@ -66,7 +66,7 @@ export const useStudentSearch = () => {
         console.error('Error fetching certificates:', certError);
       }
 
-      const certificatedCourseIds = new Set(certificates?.map(cert => cert.course_id) || []);
+      const certificatedCourseIds = new Set(certificates?.map((cert: any) => cert.course_id) || []);
 
       const formattedCourses: EnrolledCourse[] = enrollments
         .filter(enrollment => enrollment.courses)

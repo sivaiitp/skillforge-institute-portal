@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ const AdminDashboard = () => {
       const [studentsRes, coursesRes, certificatesRes, enrollmentsRes] = await Promise.all([
         supabase.from('profiles').select('id').eq('role', 'student'),
         supabase.from('courses').select('id'),
-        supabase.from('certificates').select('id'),
+        (supabase as any).from('certificates').select('id'),
         supabase.from('enrollments').select('id')
       ]);
 
@@ -50,18 +51,22 @@ const AdminDashboard = () => {
   };
 
   const fetchRecentActivities = async () => {
-    const { data, error } = await supabase
-      .from('certificates')
-      .select(`
-        *,
-        courses (title),
-        profiles (full_name)
-      `)
-      .order('issued_date', { ascending: false })
-      .limit(5);
-    
-    if (!error) {
-      setRecentActivities(data || []);
+    try {
+      const { data, error } = await (supabase as any)
+        .from('certificates')
+        .select(`
+          *,
+          courses (title),
+          profiles (full_name)
+        `)
+        .order('issued_date', { ascending: false })
+        .limit(5);
+      
+      if (!error) {
+        setRecentActivities(data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching recent activities:', error);
     }
   };
 
@@ -199,7 +204,7 @@ const AdminDashboard = () => {
             </div>
             <div className="p-6">
               <div className="space-y-4">
-                {recentActivities.map((activity) => (
+                {recentActivities.map((activity: any) => (
                   <div key={activity.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-blue-50 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-green-100 rounded-lg">

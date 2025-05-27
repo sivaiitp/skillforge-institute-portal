@@ -70,7 +70,7 @@ const CertificateManagement = () => {
   const fetchCertificates = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('certificates')
         .select(`
           *,
@@ -114,7 +114,7 @@ const CertificateManagement = () => {
       setLoading(true);
 
       // Check if certificate already exists
-      const { data: existingCert } = await supabase
+      const { data: existingCert } = await (supabase as any)
         .from('certificates')
         .select('id')
         .eq('user_id', selectedStudent.id)
@@ -126,7 +126,7 @@ const CertificateManagement = () => {
         return;
       }
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('certificates')
         .insert([
           {
@@ -158,7 +158,7 @@ const CertificateManagement = () => {
 
   const handleRevokeCertificate = async (certificateId: string) => {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('certificates')
         .update({ is_valid: false })
         .eq('id', certificateId);

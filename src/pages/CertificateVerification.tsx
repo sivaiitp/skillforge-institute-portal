@@ -12,7 +12,7 @@ import Footer from "@/components/Footer";
 
 const CertificateVerification = () => {
   const [certificateNumber, setCertificateNumber] = useState('');
-  const [certificate, setCertificate] = useState(null);
+  const [certificate, setCertificate] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -24,7 +24,7 @@ const CertificateVerification = () => {
     try {
       console.log('Searching for certificate:', certificateNumber);
       
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('certificates')
         .select(`
           *,
