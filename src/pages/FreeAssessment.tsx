@@ -87,6 +87,41 @@ const sampleQuestions: Question[] = [
     options: ["Waterfall", "Agile", "Sequential", "Linear"],
     correctAnswer: 1,
     category: "Project Management"
+  },
+  {
+    id: 11,
+    question: "What is the time complexity of accessing an element in an array by index?",
+    options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
+    correctAnswer: 0,
+    category: "Data Structures & Algorithms"
+  },
+  {
+    id: 12,
+    question: "Which data structure follows the Last In, First Out (LIFO) principle?",
+    options: ["Queue", "Stack", "Array", "Linked List"],
+    correctAnswer: 1,
+    category: "Data Structures & Algorithms"
+  },
+  {
+    id: 13,
+    question: "What is the worst-case time complexity of binary search?",
+    options: ["O(1)", "O(n)", "O(log n)", "O(n log n)"],
+    correctAnswer: 2,
+    category: "Data Structures & Algorithms"
+  },
+  {
+    id: 14,
+    question: "Which sorting algorithm has the best average-case time complexity?",
+    options: ["Bubble Sort", "Quick Sort", "Merge Sort", "Both Quick Sort and Merge Sort"],
+    correctAnswer: 3,
+    category: "Data Structures & Algorithms"
+  },
+  {
+    id: 15,
+    question: "Which data structure is most suitable for implementing a priority queue?",
+    options: ["Array", "Linked List", "Heap", "Stack"],
+    correctAnswer: 2,
+    category: "Data Structures & Algorithms"
   }
 ];
 
@@ -214,7 +249,7 @@ const FreeAssessment = () => {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span>Number of Questions:</span>
-                  <Badge variant="secondary">10 Questions</Badge>
+                  <Badge variant="secondary">15 Questions</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Time Limit:</span>
@@ -222,7 +257,7 @@ const FreeAssessment = () => {
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Topics Covered:</span>
-                  <Badge variant="secondary">Web Dev, Data Science, Cloud</Badge>
+                  <Badge variant="secondary">Web Dev, Data Science, Cloud, DSA</Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Difficulty Level:</span>
