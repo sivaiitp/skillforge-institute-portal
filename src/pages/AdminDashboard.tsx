@@ -74,7 +74,7 @@ const AdminDashboard = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <AdminSidebar />
-        <div className="flex-1 pl-64 p-8">
+        <div className="flex-1 ml-64 p-8">
           <div className="bg-white rounded-xl shadow-sm border p-8 text-center">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h2>
             <p className="text-gray-600">You don't have permission to access this page.</p>
@@ -88,7 +88,7 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gray-50 flex">
       <AdminSidebar />
       
-      <div className="flex-1 pl-64 p-6">
+      <div className="flex-1 ml-64 p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
