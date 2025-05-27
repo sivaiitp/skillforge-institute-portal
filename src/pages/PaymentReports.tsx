@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,7 +41,7 @@ const PaymentReports = () => {
         `),
         supabase.from('courses').select('*'),
         supabase.from('profiles').select('*').eq('role', 'student'),
-        supabase.from('certificates').select('*')
+        (supabase as any).from('certificates').select('*')
       ]);
 
       if (enrollmentsRes.error) throw enrollmentsRes.error;

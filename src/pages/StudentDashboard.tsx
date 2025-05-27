@@ -38,8 +38,8 @@ const StudentDashboard = () => {
     
     setLoading(true);
     try {
-      // Fetch certificates
-      const { data: certsData } = await supabase
+      // Fetch certificates using type assertion
+      const { data: certsData } = await (supabase as any)
         .from('certificates')
         .select(`
           *,
@@ -232,7 +232,7 @@ const StudentDashboard = () => {
                             </div>
                           ) : (
                             <div className="space-y-4">
-                              {certificates.map((cert) => (
+                              {certificates.map((cert: any) => (
                                 <div key={cert.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-all duration-200">
                                   <div className="flex items-center gap-4">
                                     <div className="p-2 bg-green-100 rounded-lg">
