@@ -114,7 +114,6 @@ const PersonalizedAssessment = () => {
 
       toast.success('Preferences saved! Generating your personalized roadmap...');
       
-      // Navigate to a personalized roadmap page or assessment
       navigate('/dashboard');
     } catch (error) {
       toast.error('Error saving preferences');
@@ -334,7 +333,6 @@ const PersonalizedAssessment = () => {
             <p className="text-xl text-gray-600">Tell us about yourself to get a custom learning roadmap</p>
           </div>
 
-          {/* Progress indicator */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
               {steps.map((step, index) => (
@@ -358,7 +356,6 @@ const PersonalizedAssessment = () => {
             </p>
           </div>
 
-          {/* Step content */}
           <Card className="mb-8">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -372,7 +369,6 @@ const PersonalizedAssessment = () => {
             </CardContent>
           </Card>
 
-          {/* Navigation */}
           <div className="flex justify-between">
             <Button
               variant="outline"
