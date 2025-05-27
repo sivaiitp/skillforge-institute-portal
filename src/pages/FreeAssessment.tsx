@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -7,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle, XCircle, Clock, ArrowRight, ArrowLeft } from "lucide-react";
+import { CheckCircle, XCircle, Clock, ArrowRight, ArrowLeft, User, UserCheck, Zap, Star } from "lucide-react";
+import { useAuth } from "@/components/AuthProvider";
 
 interface Question {
   id: number;
@@ -92,6 +92,8 @@ const sampleQuestions: Question[] = [
 
 const FreeAssessment = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [assessmentType, setAssessmentType] = useState<'basic' | 'personalized' | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -107,6 +109,20 @@ const FreeAssessment = () => {
       handleFinishAssessment();
     }
   }, [timeLeft, assessmentStarted, showResults]);
+
+  const handleAssessmentTypeSelection = (type: 'basic' | 'personalized') => {
+    if (type === 'personalized' && !user) {
+      navigate('/auth');
+      return;
+    }
+    
+    setAssessmentType(type);
+    if (type === 'personalized') {
+      // Navigate to personalized assessment flow
+      navigate('/personalized-assessment');
+      return;
+    }
+  };
 
   const handleStartAssessment = () => {
     setAssessmentStarted(true);
@@ -193,6 +209,121 @@ const FreeAssessment = () => {
     }
   };
 
+  // Assessment type selection screen
+  if (!assessmentType) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+        <Navigation />
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Choose Your Assessment Path
+            </h1>
+            <p className="text-xl text-gray-600 mb-12">
+              Select the assessment type that best fits your needs
+            </p>
+            
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              {/* Basic Assessment Option */}
+              <Card className="hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border-2 hover:border-blue-300" 
+                    onClick={() => handleAssessmentTypeSelection('basic')}>
+                <CardHeader className="text-center pb-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Zap className="w-8 h-8 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl">Quick Assessment</CardTitle>
+                  <CardDescription className="text-lg">No signup required • 5 minutes</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span>10 general questions</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span>Basic skill assessment</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span>General course recommendations</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span>Instant results</span>
+                    </div>
+                  </div>
+                  <Button className="w-full mt-6 bg-blue-600 hover:bg-blue-700">
+                    Start Quick Assessment
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Personalized Assessment Option */}
+              <Card className="hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 cursor-pointer border-2 hover:border-purple-300 relative" 
+                    onClick={() => handleAssessmentTypeSelection('personalized')}>
+                <div className="absolute -top-3 -right-3">
+                  <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1">
+                    <Star className="w-4 h-4 mr-1" />
+                    Recommended
+                  </Badge>
+                </div>
+                <CardHeader className="text-center pb-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <UserCheck className="w-8 h-8 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl">Personalized Path</CardTitle>
+                  <CardDescription className="text-lg">
+                    {user ? "Enhanced assessment • 10-15 minutes" : "Requires login • 10-15 minutes"}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span>Career-focused questions</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span>Custom learning roadmap</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span>Progress tracking</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span>Timeline estimation</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                      <span>Company-specific guidance</span>
+                    </div>
+                  </div>
+                  <Button className="w-full mt-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                    {user ? "Start Personalized Assessment" : "Login & Start Assessment"}
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="text-center">
+              <p className="text-gray-600 mb-4">
+                Not sure which to choose? Start with the quick assessment and upgrade anytime.
+              </p>
+              <div className="flex justify-center items-center gap-2 text-sm text-gray-500">
+                <User className="w-4 h-4" />
+                <span>Both assessments provide valuable insights into your learning path</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Basic assessment flow continues with existing code
   if (!assessmentStarted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -200,10 +331,10 @@ const FreeAssessment = () => {
         <div className="container mx-auto px-4 py-16">
           <div className="max-w-2xl mx-auto text-center">
             <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Free Skill Assessment
+              Quick Skill Assessment
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Discover your current skill level and get personalized course recommendations
+              Discover your current skill level and get course recommendations
             </p>
             
             <Card className="mb-8">
@@ -231,13 +362,21 @@ const FreeAssessment = () => {
               </CardContent>
             </Card>
 
-            <Button 
-              size="lg" 
-              onClick={handleStartAssessment}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-            >
-              Start Assessment
-            </Button>
+            <div className="flex gap-4 justify-center">
+              <Button 
+                variant="outline"
+                onClick={() => setAssessmentType(null)}
+              >
+                Back to Options
+              </Button>
+              <Button 
+                size="lg" 
+                onClick={handleStartAssessment}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                Start Assessment
+              </Button>
+            </div>
           </div>
         </div>
         <Footer />
@@ -245,6 +384,7 @@ const FreeAssessment = () => {
     );
   }
 
+  // Results screen
   if (showResults) {
     const results = calculateResults();
     const recommendedCourse = getRecommendedCourse(results.percentage, results.categoryScores);
@@ -318,6 +458,22 @@ const FreeAssessment = () => {
                     <p className="text-blue-800 text-lg font-medium">{recommendedCourse}</p>
                   </div>
                   
+                  <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                    <h4 className="font-semibold text-purple-900 mb-2 flex items-center gap-2">
+                      <Star className="w-5 h-5" />
+                      Want a Personalized Learning Path?
+                    </h4>
+                    <p className="text-purple-800 mb-3">
+                      Get a custom roadmap tailored to your career goals, experience level, and timeline.
+                    </p>
+                    <Button 
+                      onClick={() => navigate('/auth')}
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                    >
+                      {user ? "Create Personalized Path" : "Sign Up for Personalized Path"}
+                    </Button>
+                  </div>
+                  
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button 
                       onClick={() => navigate('/courses')}
@@ -333,11 +489,11 @@ const FreeAssessment = () => {
                       Get Career Guidance
                     </Button>
                     <Button 
-                      onClick={() => navigate('/auth')}
+                      onClick={() => setAssessmentType(null)}
                       variant="secondary"
                       className="flex-1"
                     >
-                      Create Account
+                      Take Another Assessment
                     </Button>
                   </div>
                 </div>
@@ -350,6 +506,7 @@ const FreeAssessment = () => {
     );
   }
 
+  // Question display (existing code)
   const progress = ((currentQuestion + 1) / sampleQuestions.length) * 100;
   const question = sampleQuestions[currentQuestion];
 
@@ -361,7 +518,7 @@ const FreeAssessment = () => {
           {/* Header */}
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-bold">Skill Assessment</h1>
+              <h1 className="text-2xl font-bold">Quick Skill Assessment</h1>
               <div className="flex items-center gap-2 text-lg font-semibold">
                 <Clock className="w-5 h-5" />
                 <span className={timeLeft < 60 ? "text-red-600" : "text-gray-700"}>
