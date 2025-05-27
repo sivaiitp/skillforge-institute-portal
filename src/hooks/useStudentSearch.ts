@@ -106,7 +106,7 @@ export const useStudentSearch = () => {
         console.error('Error fetching all profiles:', allError);
       }
 
-      // Search for the user with various methods
+      // Search for the user
       const { data: users, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')
@@ -123,13 +123,7 @@ export const useStudentSearch = () => {
       }
 
       if (!users || users.length === 0) {
-        // If no profile found, let's check if we can create one from auth.users
-        console.log('No profile found, checking if user exists in auth...');
-        
-        // Try to get current user info to see if we can access auth data
-        const { data: { user: currentUser } } = await supabase.auth.getUser();
-        console.log('Current auth user:', currentUser);
-
+        console.log('No profile found for email:', searchEmail.trim());
         toast.error(`No student profile found for ${searchEmail.trim()}. The user may need to complete their profile setup or contact admin.`);
         setSelectedStudent(null);
         setEnrolledCourses([]);
@@ -139,7 +133,7 @@ export const useStudentSearch = () => {
       const foundUser = users[0];
       console.log('Found user:', foundUser);
 
-      // Check if the user has a role, if not, we can't determine if they're a student
+      // Check if the user has a role assigned
       if (!foundUser.role) {
         console.log('User found but has no role assigned');
         toast.error('User found but has no role assigned. Please contact admin to set up the user role.');
@@ -148,21 +142,24 @@ export const useStudentSearch = () => {
         return;
       }
 
-      // Check if the user is a student
-      if (foundUser.role !== 'student') {
+      // Check if the user is a student (or allow admins too for testing)
+      if (foundUser.role !== 'student' && foundUser.role !== 'admin') {
         toast.error(`User found but they are registered as ${foundUser.role}, not a student`);
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
+      // User found and is valid - set as selected student
       setSelectedStudent({
         id: foundUser.id,
-        full_name: foundUser.full_name || 'Unknown',
-        email: foundUser.email || ''
+        full_name: foundUser.full_name || foundUser.email || 'Unknown',
+        email: foundUser.email || searchEmail.trim()
       });
+      
       await fetchStudentEnrollments(foundUser.id);
       toast.success(`Found student: ${foundUser.full_name || foundUser.email}`);
+      
     } catch (error) {
       console.error('Error searching student:', error);
       toast.error('Error searching for student');
