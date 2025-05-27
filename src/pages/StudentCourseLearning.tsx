@@ -176,8 +176,8 @@ const StudentCourseLearning = () => {
           <div className="flex flex-col min-h-screen">
             <CourseLearningHeader courseTitle={course?.title} />
             
-            <main className="flex-1 overflow-auto">
-              <div className="container mx-auto p-6 max-w-5xl">
+            <main className="flex-1 overflow-auto bg-gray-50">
+              <div className="w-full py-6">
                 <MaterialContentArea
                   selectedMaterial={selectedMaterial}
                   progressData={progressData}
