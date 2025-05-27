@@ -38,7 +38,7 @@ const CertificateManagement = () => {
   const { user, userRole } = useAuth();
   const navigate = useNavigate();
   const [certificates, setCertificates] = useState<Certificate[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [availableCourses, setAvailableCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
   const [showIssueForm, setShowIssueForm] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState('');
@@ -48,6 +48,7 @@ const CertificateManagement = () => {
     setSearchName,
     selectedStudent,
     isSearching,
+    enrolledCourses,
     handleSearchStudent,
     handleClearStudent
   } = useStudentSearch();
@@ -64,8 +65,51 @@ const CertificateManagement = () => {
     }
     
     fetchCertificates();
-    fetchCourses();
   }, [user, userRole, navigate]);
+
+  // Fetch available courses when a student is selected
+  useEffect(() => {
+    if (selectedStudent) {
+      fetchAvailableCoursesForStudent();
+    } else {
+      setAvailableCourses([]);
+      setSelectedCourse('');
+    }
+  }, [selectedStudent, enrolledCourses]);
+
+  const fetchAvailableCoursesForStudent = async () => {
+    if (!selectedStudent) return;
+
+    try {
+      // Get existing certificates for this student
+      const { data: existingCerts, error: certsError } = await (supabase as any)
+        .from('certificates')
+        .select('course_id')
+        .eq('user_id', selectedStudent.id);
+
+      if (certsError) {
+        console.error('Error fetching existing certificates:', certsError);
+        return;
+      }
+
+      // Get the course IDs that already have certificates
+      const certifiedCourseIds = new Set(existingCerts?.map((cert: any) => cert.course_id) || []);
+
+      // Filter enrolled courses to exclude those with existing certificates
+      const coursesWithoutCertificates = enrolledCourses.filter(
+        course => !certifiedCourseIds.has(course.id)
+      );
+
+      setAvailableCourses(coursesWithoutCertificates.map(course => ({
+        id: course.id,
+        title: course.title
+      })));
+
+      console.log('Available courses for certificate:', coursesWithoutCertificates);
+    } catch (error) {
+      console.error('Error fetching available courses:', error);
+    }
+  };
 
   const fetchCertificates = async () => {
     try {
@@ -75,7 +119,7 @@ const CertificateManagement = () => {
         .select(`
           *,
           courses (title),
-          profiles (full_name, email)
+          profiles!certificates_user_id_fkey (full_name, email)
         `)
         .order('issued_date', { ascending: false });
 
@@ -89,21 +133,6 @@ const CertificateManagement = () => {
     }
   };
 
-  const fetchCourses = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('courses')
-        .select('id, title')
-        .eq('is_active', true)
-        .order('title');
-
-      if (error) throw error;
-      setCourses(data || []);
-    } catch (error) {
-      console.error('Error fetching courses:', error);
-    }
-  };
-
   const handleIssueCertificate = async () => {
     if (!selectedStudent || !selectedCourse) {
       toast.error('Please select both a student and a course');
@@ -112,19 +141,6 @@ const CertificateManagement = () => {
 
     try {
       setLoading(true);
-
-      // Check if certificate already exists
-      const { data: existingCert } = await (supabase as any)
-        .from('certificates')
-        .select('id')
-        .eq('user_id', selectedStudent.id)
-        .eq('course_id', selectedCourse)
-        .single();
-
-      if (existingCert) {
-        toast.error('Certificate already exists for this student and course');
-        return;
-      }
 
       const { data, error } = await (supabase as any)
         .from('certificates')
@@ -138,7 +154,7 @@ const CertificateManagement = () => {
         .select(`
           *,
           courses (title),
-          profiles (full_name, email)
+          profiles!certificates_user_id_fkey (full_name, email)
         `);
 
       if (error) throw error;
@@ -209,7 +225,9 @@ const CertificateManagement = () => {
           <Card className="mb-6">
             <CardHeader>
               <CardTitle>Issue New Certificate</CardTitle>
-              <CardDescription>Select a student and course to issue a certificate</CardDescription>
+              <CardDescription>
+                Select a student and course to issue a certificate. Only enrolled courses without existing certificates are shown.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -230,27 +248,45 @@ const CertificateManagement = () => {
                     </Button>
                   </div>
                   {selectedStudent && (
-                    <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded">
+                    <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded">
                       <p className="font-medium">{selectedStudent.full_name}</p>
                       <p className="text-sm text-gray-600">{selectedStudent.email}</p>
+                      <p className="text-xs text-blue-600 mt-1">
+                        {enrolledCourses.length} enrolled courses, {availableCourses.length} available for certification
+                      </p>
                     </div>
                   )}
                 </div>
                 
                 <div>
-                  <Label>Course</Label>
-                  <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+                  <Label>Course (Enrolled & No Certificate)</Label>
+                  <Select 
+                    value={selectedCourse} 
+                    onValueChange={setSelectedCourse}
+                    disabled={!selectedStudent || availableCourses.length === 0}
+                  >
                     <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select a course" />
+                      <SelectValue placeholder={
+                        !selectedStudent 
+                          ? "Select a student first" 
+                          : availableCourses.length === 0 
+                          ? "No courses available for certification" 
+                          : "Select a course"
+                      } />
                     </SelectTrigger>
                     <SelectContent>
-                      {courses.map((course) => (
+                      {availableCourses.map((course) => (
                         <SelectItem key={course.id} value={course.id}>
                           {course.title}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
+                  {selectedStudent && availableCourses.length === 0 && (
+                    <p className="text-sm text-amber-600 mt-1">
+                      This student either has no enrollments or already has certificates for all enrolled courses.
+                    </p>
+                  )}
                 </div>
               </div>
               
