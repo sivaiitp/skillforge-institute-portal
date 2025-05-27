@@ -92,27 +92,17 @@ export const useStudentSearch = () => {
     }
 
     setIsSearching(true);
-    console.log('Searching for student with name:', searchName.trim());
+    const searchTerm = searchName.trim();
+    console.log('Searching for student with name (case-insensitive partial match):', searchTerm);
     
     try {
-      // First check if there are any profiles at all
-      const { data: allProfiles, error: allError } = await supabase
-        .from('profiles')
-        .select('*');
-
-      console.log('Total profiles in database:', allProfiles?.length || 0, allProfiles);
-
-      if (allError) {
-        console.error('Error fetching all profiles:', allError);
-      }
-
-      // Search for the user by name
+      // Search using ILIKE for case-insensitive partial matching
       const { data: users, error } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')
-        .ilike('full_name', `%${searchName.trim()}%`);
+        .ilike('full_name', `%${searchTerm}%`);
 
-      console.log('Search results:', { users, error, searchName: searchName.trim() });
+      console.log('Search results:', { users, error, searchTerm });
 
       if (error) {
         console.error('Error searching student:', error);
@@ -123,15 +113,21 @@ export const useStudentSearch = () => {
       }
 
       if (!users || users.length === 0) {
-        console.log('No profile found for name:', searchName.trim());
-        toast.error(`No student profile found with name "${searchName.trim()}".`);
+        console.log('No profile found for name (partial match):', searchTerm);
+        toast.error(`No student found with name containing "${searchTerm}"`);
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
+      // If multiple results, take the first one (you could enhance this to show a selection UI)
       const foundUser = users[0];
       console.log('Found user:', foundUser);
+
+      if (users.length > 1) {
+        console.log(`Found ${users.length} users matching "${searchTerm}", selecting first one:`, foundUser);
+        toast.info(`Found ${users.length} matches, selected: ${foundUser.full_name}`);
+      }
 
       // Check if the user has a role assigned
       if (!foundUser.role) {
