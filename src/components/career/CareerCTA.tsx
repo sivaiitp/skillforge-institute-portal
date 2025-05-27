@@ -7,7 +7,7 @@ const CareerCTA = () => {
 
   return (
     <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-      <div className="container mx-auto px-4 text-center">
+      <div className="w-full max-w-[85%] mx-auto px-4 text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Plan Your Career?</h2>
         <p className="text-xl mb-8 max-w-2xl mx-auto">
           Book a free career consultation session with our experts and get personalized guidance.

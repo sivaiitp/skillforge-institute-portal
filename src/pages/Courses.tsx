@@ -1,3 +1,4 @@
+
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -88,7 +89,7 @@ const Courses = () => {
             backgroundImage: `url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')`
           }}
         ></div>
-        <div className="container mx-auto px-4 text-center relative z-10">
+        <div className="w-full max-w-[85%] mx-auto px-4 text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Training Programs</h1>
           <p className="text-xl max-w-3xl mx-auto leading-relaxed">
             Discover comprehensive courses designed to transform your career and master in-demand technologies.
@@ -98,7 +99,7 @@ const Courses = () => {
 
       {/* Courses Grid */}
       <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="w-full max-w-[85%] mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayCourses.map((course) => (
               <Card key={course.id} className="hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group overflow-hidden">
@@ -193,7 +194,7 @@ const Courses = () => {
             backgroundImage: `url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80')`
           }}
         ></div>
-        <div className="container mx-auto px-4 text-center relative z-10">
+        <div className="w-full max-w-[85%] mx-auto px-4 text-center relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Not Sure Which Course to Choose?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Take our free career assessment to find the perfect program for your goals.

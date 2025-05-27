@@ -94,7 +94,7 @@ const CourseDetails = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        <div className="container mx-auto px-4 py-20 text-center">
+        <div className="w-full max-w-[85%] mx-auto px-4 py-20 text-center">
           <h1 className="text-3xl font-bold text-gray-800 mb-4">Course Not Found</h1>
           <p className="text-gray-600 mb-8">
             {id && !isValidUUID(id) 
@@ -146,7 +146,7 @@ const CourseDetails = () => {
       />
 
       <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+        <div className="w-full max-w-[85%] mx-auto px-4">
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-8">
               {/* Course Description */}

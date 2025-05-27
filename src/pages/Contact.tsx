@@ -62,7 +62,7 @@ const Contact = () => {
       
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4 text-center">
+        <div className="w-full max-w-[85%] mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             Get in Touch
           </h1>
@@ -74,7 +74,7 @@ const Contact = () => {
 
       {/* Contact Section */}
       <section className="py-20">
-        <div className="container mx-auto px-4">
+        <div className="w-full max-w-[85%] mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Contact Form */}
             <Card>
