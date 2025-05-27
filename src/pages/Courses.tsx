@@ -8,6 +8,7 @@ import { Clock, Users, Star, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Code } from "lucide-react";
 
 const Courses = () => {
   const navigate = useNavigate();
@@ -90,6 +91,7 @@ const Courses = () => {
           }}
         ></div>
         <div className="w-full max-w-[85%] mx-auto px-4 text-center relative z-10">
+          <Code className="mx-auto h-16 w-16 mb-6" />
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Training Programs</h1>
           <p className="text-xl max-w-3xl mx-auto leading-relaxed">
             Discover comprehensive courses designed to transform your career and master in-demand technologies.
