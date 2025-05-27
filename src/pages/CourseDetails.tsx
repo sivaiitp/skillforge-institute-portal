@@ -1,247 +1,180 @@
-
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/components/AuthProvider';
-import { useEnrollment } from '@/hooks/useEnrollment';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import CourseHero from '@/components/CourseHero';
-import CourseContent from '@/components/CourseContent';
-import CourseSidebar from '@/components/CourseSidebar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import CourseHero from "@/components/CourseHero";
+import CourseSidebar from "@/components/CourseSidebar";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthProvider";
+import { useEnrollment } from "@/hooks/useEnrollment";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, Clock, Users, Award, BookOpen } from "lucide-react";
+import { toast } from "sonner";
 
 const CourseDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { enrollInCourse, checkEnrollmentStatus, goToCourse, loading: enrollmentLoading } = useEnrollment();
-  const [isEnrolled, setIsEnrolled] = useState(false);
+  const { enrollInCourse, checkEnrollment } = useEnrollment();
 
-  console.log('Course ID from params:', id);
-
-  const { data: course, isLoading, error } = useQuery({
+  const { data: course, isLoading: courseLoading } = useQuery({
     queryKey: ['course', id],
     queryFn: async () => {
-      if (!id) {
-        throw new Error('Course ID is required');
-      }
-
-      // Check if the ID is a valid UUID format
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      
-      if (!uuidRegex.test(id)) {
-        console.log('Invalid UUID format, trying to find course by numeric ID');
-        // If it's not a UUID, try to find by a numeric ID or convert
-        // For now, let's try to query all courses and find one that matches
-        const { data: allCourses, error: coursesError } = await supabase
-          .from('courses')
-          .select('*')
-          .eq('is_active', true);
-        
-        if (coursesError) throw coursesError;
-        
-        // Try to find course by index or any other identifier
-        const courseIndex = parseInt(id) - 1; // Assuming 1-based indexing in URL
-        const foundCourse = allCourses?.[courseIndex];
-        
-        if (!foundCourse) {
-          throw new Error('Course not found');
-        }
-        
-        return foundCourse;
-      }
-
       const { data, error } = await supabase
         .from('courses')
         .select('*')
         .eq('id', id)
-        .eq('is_active', true)
-        .maybeSingle();
-      
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-      
-      if (!data) {
-        throw new Error('Course not found');
-      }
-      
-      return data;
-    },
-    enabled: !!id
-  });
-
-  // Check enrollment status when course data is loaded
-  useEffect(() => {
-    const checkEnrollment = async () => {
-      if (course && user) {
-        const enrolled = await checkEnrollmentStatus(course.id);
-        setIsEnrolled(enrolled);
-      }
-    };
-    
-    checkEnrollment();
-  }, [course, user, checkEnrollmentStatus]);
-
-  const { data: relatedCourses } = useQuery({
-    queryKey: ['related-courses', course?.category],
-    queryFn: async () => {
-      if (!course?.category) return [];
-      const { data, error } = await supabase
-        .from('courses')
-        .select('*')
-        .eq('category', course.category)
-        .neq('id', course.id)
-        .eq('is_active', true)
-        .limit(3);
+        .single();
       
       if (error) throw error;
       return data;
-    },
-    enabled: !!course?.category
+    }
   });
 
-  const handleEnrollment = async () => {
-    if (!user) {
-      toast.error('Please log in to enroll in courses');
-      navigate('/auth');
-      return;
-    }
-
-    if (!course) return;
-
-    if (isEnrolled) {
-      goToCourse(course.id);
-      return;
-    }
-
-    const success = await enrollInCourse(course.id);
-    if (success) {
-      setIsEnrolled(true);
-    }
-  };
+  const { data: isEnrolled, isLoading: enrollmentLoading } = useQuery({
+    queryKey: ['enrollment', id, user?.id],
+    queryFn: () => checkEnrollment(id!),
+    enabled: !!user && !!id
+  });
 
   const handleDownloadBrochure = () => {
     if (course?.brochure_url) {
       window.open(course.brochure_url, '_blank');
-      toast.success('Brochure download started!');
+      toast.success('Brochure downloaded successfully!');
     } else {
       toast.error('Brochure not available for this course');
     }
   };
 
-  if (isLoading) {
+  if (courseLoading || enrollmentLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        <div className="container mx-auto px-4 py-20">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p>Loading course details...</p>
-          </div>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
         </div>
         <Footer />
       </div>
     );
   }
 
-  if (error || !course) {
-    console.error('Course loading error:', error);
+  if (!course) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <Navigation />
-        <div className="container mx-auto px-4 py-20">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Course Not Found</h1>
-            <p className="text-gray-600 mb-6">
-              {error?.message || 'The course you are looking for does not exist or has been removed.'}
-            </p>
-            <Button onClick={() => navigate('/courses')}>Back to Courses</Button>
-          </div>
+        <div className="container mx-auto px-4 py-20 text-center">
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">Course Not Found</h1>
+          <p className="text-gray-600 mb-8">The course you're looking for doesn't exist.</p>
+          <button 
+            onClick={() => navigate('/courses')}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Back to Courses
+          </button>
         </div>
         <Footer />
       </div>
     );
   }
+
+  const syllabus = [
+    "Introduction to Web Technologies",
+    "Frontend Development with React",
+    "Backend Development with Node.js",
+    "Database Design and Management",
+    "API Development and Integration",
+    "Deployment and DevOps Basics",
+    "Project Development and Portfolio Building"
+  ];
+
+  const highlights = [
+    "Hands-on project-based learning",
+    "Industry-relevant curriculum",
+    "Expert instructor guidance",
+    "Career placement assistance",
+    "Lifetime access to course materials",
+    "Community support and networking"
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Navigation />
       
-      {/* Hero Section */}
       <CourseHero 
-        course={course}
-        onEnroll={handleEnrollment}
+        course={course} 
         onDownloadBrochure={handleDownloadBrochure}
-        isEnrolled={isEnrolled}
-        enrollmentLoading={enrollmentLoading}
       />
 
-      {/* Course Content */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-3 gap-12">
-            <CourseContent course={course} />
-            <CourseSidebar 
-              course={course}
-              onEnroll={handleEnrollment}
-              onDownloadBrochure={handleDownloadBrochure}
-              isEnrolled={isEnrolled}
-              enrollmentLoading={enrollmentLoading}
-            />
+            <div className="lg:col-span-2 space-y-8">
+              <CourseSidebar 
+                course={course} 
+                onDownloadBrochure={handleDownloadBrochure}
+              />
+              
+              {/* Course Description */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl">About This Course</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-700 leading-relaxed text-lg">
+                    {course.detailed_description || course.description}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Course Syllabus */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl flex items-center gap-2">
+                    <BookOpen className="w-6 h-6 text-blue-600" />
+                    Course Syllabus
+                  </CardTitle>
+                  <CardDescription>
+                    Comprehensive curriculum designed to build your expertise
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {syllabus.map((topic, index) => (
+                      <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                          {index + 1}
+                        </div>
+                        <span className="text-gray-800">{topic}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Course Highlights */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl flex items-center gap-2">
+                    <Award className="w-6 h-6 text-yellow-600" />
+                    Why Choose This Course?
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {highlights.map((highlight, index) => (
+                      <div key={index} className="flex items-center gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
+                        <span className="text-gray-700">{highlight}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </section>
-
-      {/* Related Courses */}
-      {relatedCourses && relatedCourses.length > 0 && (
-        <section className="py-20 bg-gray-50">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center mb-12">More {course.category} Courses</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {relatedCourses.map((relatedCourse) => (
-                <Card key={relatedCourse.id} className="hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                      onClick={() => navigate(`/courses/${relatedCourse.id}`)}>
-                  <div className="relative h-48 overflow-hidden">
-                    <img 
-                      src={relatedCourse.image_url || `https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80`}
-                      alt={relatedCourse.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <Badge variant="secondary" className="bg-white/90 text-gray-800">
-                        {relatedCourse.level}
-                      </Badge>
-                    </div>
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
-                      {relatedCourse.title}
-                    </CardTitle>
-                    <CardDescription>{relatedCourse.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex justify-between items-center">
-                      <span className="text-2xl font-bold text-blue-600">
-                        ₹{relatedCourse.price?.toLocaleString('en-IN') || '0'}
-                      </span>
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       <Footer />
     </div>

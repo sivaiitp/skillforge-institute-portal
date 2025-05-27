@@ -1,4 +1,3 @@
-
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -199,17 +198,12 @@ const Courses = () => {
                     </Badge>
                   </div>
                   
-                  <div className="space-y-2">
-                    <Button 
-                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                      onClick={() => navigate(`/courses/${course.id}`)}
-                    >
-                      View Details
-                    </Button>
-                    <Button variant="outline" className="w-full">
-                      Enroll Now
-                    </Button>
-                  </div>
+                  <Button 
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    onClick={() => navigate(`/courses/${course.id}`)}
+                  >
+                    View Details
+                  </Button>
                 </CardContent>
               </Card>
             ))}
