@@ -190,6 +190,7 @@ const AssessmentTaking = ({ assessmentId }: AssessmentTakingProps) => {
 
       if (updateError) throw updateError;
 
+      // Use upsert to handle both new results and updates for retakes
       const { error: resultError } = await supabase
         .from('assessment_results')
         .upsert({
@@ -199,6 +200,8 @@ const AssessmentTaking = ({ assessmentId }: AssessmentTakingProps) => {
           total_marks: assessment.total_marks,
           passed: passed,
           taken_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,assessment_id'
         });
 
       if (resultError) throw resultError;
