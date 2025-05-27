@@ -39,7 +39,7 @@ const CertificateVerification = () => {
             email
           )
         `)
-        .or(`certificate_number.eq.${certificateNumber.trim()},certificate_id.eq.${certificateNumber.trim()}`)
+        .eq('certificate_number', certificateNumber.trim())
         .eq('is_valid', true)
         .maybeSingle();
 
@@ -195,26 +195,10 @@ const CertificateVerification = () => {
                           </div>
                         </div>
                         
-                        {certificate.expiry_date && (
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <Calendar className="w-5 h-5 text-gray-600" />
-                              <Label className="text-sm font-semibold text-gray-600">Expiry Date</Label>
-                            </div>
-                            <p className="text-lg font-medium">
-                              {new Date(certificate.expiry_date).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                              })}
-                            </p>
-                          </div>
-                        )}
-                        
                         <div>
                           <Label className="text-sm font-semibold text-gray-600">Certificate Number</Label>
                           <p className="text-lg font-mono bg-gray-100 p-2 rounded mt-1">
-                            {certificate.certificate_number || certificate.certificate_id}
+                            {certificate.certificate_number}
                           </p>
                         </div>
                       </div>

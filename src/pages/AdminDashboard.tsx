@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -120,7 +119,7 @@ const AdminDashboard = () => {
                   <BookOpen className="w-8 h-8 text-green-500" />
                 </div>
               </div>
-              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/admin/certifications')}>
+              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/admin/certificates')}>
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-yellow-700 text-sm font-medium">Certificates Issued</p>
@@ -163,7 +162,7 @@ const AdminDashboard = () => {
                   Add New Course
                 </Button>
                 <Button 
-                  onClick={() => navigate('/admin/certifications')} 
+                  onClick={() => navigate('/admin/certificates')} 
                   className="w-full justify-start"
                   variant="outline"
                 >

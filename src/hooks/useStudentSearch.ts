@@ -55,6 +55,7 @@ export const useStudentSearch = () => {
         return;
       }
 
+      // Check for certificates for this student
       const { data: certificates, error: certError } = await supabase
         .from('certificates')
         .select('course_id')
@@ -93,45 +94,28 @@ export const useStudentSearch = () => {
 
     setIsSearching(true);
     const searchTerm = searchName.trim();
-    console.log('Searching for admin users with name (case-insensitive partial match):', searchTerm);
+    console.log('Searching for users with name (case-insensitive partial match):', searchTerm);
     
     try {
-      // First, let's check all users to see what we have
-      const { data: allUsers, error: allUsersError } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, role');
-
-      console.log('All users in database:', allUsers);
-      console.log('All users error:', allUsersError);
-
-      // Then search with our filter
+      // Search all users, not just admins
       const { data: users, error } = await supabase
-        .from('profiles')
-        .select('id, full_name, email, role')
-        .ilike('full_name', `%${searchTerm}%`)
-        .eq('role', 'admin');
-
-      console.log('Filtered search results (admin only):', { users, error, searchTerm, searchQuery: `%${searchTerm}%` });
-
-      // Also try without the role filter to see if the name search works
-      const { data: usersWithoutRoleFilter, error: errorWithoutRoleFilter } = await supabase
         .from('profiles')
         .select('id, full_name, email, role')
         .ilike('full_name', `%${searchTerm}%`);
 
-      console.log('Search results without role filter:', { usersWithoutRoleFilter, errorWithoutRoleFilter });
+      console.log('Search results for all users:', { users, error, searchTerm, searchQuery: `%${searchTerm}%` });
 
       if (error) {
-        console.error('Error searching admin user:', error);
-        toast.error('Error searching for admin user');
+        console.error('Error searching user:', error);
+        toast.error('Error searching for user');
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
       }
 
       if (!users || users.length === 0) {
-        console.log('No admin user found for name (partial match):', searchTerm);
-        toast.error(`No admin user found with name containing "${searchTerm}"`);
+        console.log('No user found for name (partial match):', searchTerm);
+        toast.error(`No user found with name containing "${searchTerm}"`);
         setSelectedStudent(null);
         setEnrolledCourses([]);
         return;
@@ -139,14 +123,14 @@ export const useStudentSearch = () => {
 
       // If multiple results, take the first one
       const foundUser = users[0];
-      console.log('Found admin user:', foundUser);
+      console.log('Found user:', foundUser);
 
       if (users.length > 1) {
-        console.log(`Found ${users.length} admin users matching "${searchTerm}", selecting first one:`, foundUser);
-        toast.info(`Found ${users.length} admin matches, selected: ${foundUser.full_name}`);
+        console.log(`Found ${users.length} users matching "${searchTerm}", selecting first one:`, foundUser);
+        toast.info(`Found ${users.length} matches, selected: ${foundUser.full_name}`);
       }
 
-      // User found and is admin - set as selected student
+      // User found - set as selected student
       setSelectedStudent({
         id: foundUser.id,
         full_name: foundUser.full_name || foundUser.email || 'Unknown',
@@ -154,11 +138,11 @@ export const useStudentSearch = () => {
       });
       
       await fetchStudentEnrollments(foundUser.id);
-      toast.success(`Found admin user: ${foundUser.full_name || foundUser.email}`);
+      toast.success(`Found user: ${foundUser.full_name || foundUser.email}`);
       
     } catch (error) {
-      console.error('Error searching admin user:', error);
-      toast.error('Error searching for admin user');
+      console.error('Error searching user:', error);
+      toast.error('Error searching for user');
       setSelectedStudent(null);
       setEnrolledCourses([]);
     } finally {

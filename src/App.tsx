@@ -24,6 +24,7 @@ import StudyMaterialManagement from "./pages/StudyMaterialManagement";
 import CourseMaterialsDetail from "./pages/CourseMaterialsDetail";
 import StudentManagement from "./pages/StudentManagement";
 import AssessmentManagement from "./pages/AssessmentManagement";
+import CertificateManagement from "./pages/CertificateManagement";
 import PaymentReports from "./pages/PaymentReports";
 
 // Student pages
@@ -64,6 +65,7 @@ function App() {
               <Route path="/admin/study-materials/course/:courseId" element={<CourseMaterialsDetail />} />
               <Route path="/admin/students" element={<StudentManagement />} />
               <Route path="/admin/assessments" element={<AssessmentManagement />} />
+              <Route path="/admin/certificates" element={<CertificateManagement />} />
               <Route path="/admin/payments" element={<PaymentReports />} />
               
               {/* Student routes */}
